@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_oil"]
+script = ExtResource("2_mod")
+stat = &"max_oil"
+mode = 0
+value = 20.0
+
+[resource]
+script = ExtResource("1_boon")
+id = &"cera_velha"
+display_name = "Cera Velha"
+description = "+20 de óleo máximo."
+rarity = 0
+modifiers = [SubResource("mod_oil")]
+tags = [&"oleo"]

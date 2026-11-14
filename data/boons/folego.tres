@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_dash"]
+script = ExtResource("2_mod")
+stat = &"dash_charges_max"
+mode = 0
+value = 1.0
+
+[resource]
+script = ExtResource("1_boon")
+id = &"folego"
+display_name = "Fôlego"
+description = "+1 carga de dash."
+rarity = 2
+modifiers = [SubResource("mod_dash")]
+tags = [&"corpo"]

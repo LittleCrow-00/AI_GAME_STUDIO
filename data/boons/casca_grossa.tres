@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_health"]
+script = ExtResource("2_mod")
+stat = &"max_health"
+mode = 0
+value = 25.0
+
+[resource]
+script = ExtResource("1_boon")
+id = &"casca_grossa"
+display_name = "Casca Grossa"
+description = "+25 de vida máxima."
+rarity = 0
+modifiers = [SubResource("mod_health")]
+tags = [&"corpo"]

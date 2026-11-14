@@ -14,6 +14,9 @@ signal player_damaged(amount: float, position: Vector2)
 signal player_died
 signal shake_requested(amount: float)
 signal projectile_fired(position: Vector2, direction: Vector2)
+signal boss_spawned(boss: Node)
+signal boss_health_changed(current: float, maximum: float)
+signal boss_defeated
 
 # --- Jogador / recursos ---
 signal health_changed(current: float, maximum: float)

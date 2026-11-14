@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_drain"]
+script = ExtResource("2_mod")
+stat = &"oil_drain_per_second"
+mode = 1
+value = 0.8
+
+[resource]
+script = ExtResource("1_boon")
+id = &"oleo_frio"
+display_name = "Óleo Frio"
+description = "O feixe gasta 20% menos óleo."
+rarity = 1
+modifiers = [SubResource("mod_drain")]
+tags = [&"oleo"]

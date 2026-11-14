@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="Script" path="res://scripts/vfx/damage_numbers.gd" id="4_damage"]
+[ext_resource type="Script" path="res://scripts/ui/sanctuary.gd" id="5_sanctuary"]
+[ext_resource type="Script" path="res://scripts/ui/summary.gd" id="6_summary"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -17,6 +19,12 @@ position = Vector2(640, 360)
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Hud" parent="UI" instance=ExtResource("3_hud")]
+
+[node name="Sanctuary" type="CanvasLayer" parent="UI"]
+script = ExtResource("5_sanctuary")
+
+[node name="Summary" type="CanvasLayer" parent="UI"]
+script = ExtResource("6_summary")
 
 [node name="DamageNumbers" type="Node2D" parent="."]
 script = ExtResource("4_damage")

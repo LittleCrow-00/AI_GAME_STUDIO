@@ -38,6 +38,10 @@ var _hint_left: float = 0.0
 var _hint_elapsed: float = 0.0
 var _pulse: float = 0.0
 
+var _boss_active: bool = false
+var _boss_health: float = 0.0
+var _boss_max: float = 1.0
+
 var _readout: Label
 var _banner: Label
 var _subtitle: Label
@@ -80,6 +84,23 @@ func _connect() -> void:
 	SignalBus.enemies_remaining_changed.connect(_on_enemies_changed)
 	SignalBus.message_requested.connect(show_banner)
 	SignalBus.beam_dried.connect(_on_beam_dried)
+	SignalBus.boss_spawned.connect(_on_boss_spawned)
+	SignalBus.boss_health_changed.connect(_on_boss_health_changed)
+	SignalBus.boss_defeated.connect(_on_boss_defeated)
+
+
+func _on_boss_spawned(_boss: Node) -> void:
+	_boss_active = true
+
+
+func _on_boss_health_changed(current: float, maximum: float) -> void:
+	_boss_health = current
+	_boss_max = maxf(1.0, maximum)
+	_boss_active = true
+
+
+func _on_boss_defeated() -> void:
+	_boss_active = false
 
 
 func _process(delta: float) -> void:
@@ -190,6 +211,21 @@ func _draw() -> void:
 		_room, _room_total, _wave, _wave_total, _enemies, _chain, _multiplier, _score,
 	]
 	_readout.add_theme_color_override("font_color", COL_HEALTH if _dry_flash > 0.0 else COL_TEXT)
+
+	if _boss_active:
+		_draw_boss_bar()
+
+
+func _draw_boss_bar() -> void:
+	var width := 520.0
+	var x := (1280.0 - width) * 0.5
+	var y := 40.0
+	var ratio := clampf(_boss_health / _boss_max, 0.0, 1.0)
+	var font := ThemeDB.fallback_font
+	draw_string(font, Vector2(x, y - 8), "COBRA GRANDE", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, COL_DIM)
+	draw_rect(Rect2(x, y, width, 12), Color(0.03, 0.05, 0.06))
+	draw_rect(Rect2(x, y, width * ratio, 12), Color(0.72, 0.34, 0.3))
+	draw_rect(Rect2(x, y, width, 12), Color(0.25, 0.32, 0.34), false, 1.0)
 
 
 func _draw_bar(origin: Vector2, ratio: float, color: Color, caption: String) -> void:

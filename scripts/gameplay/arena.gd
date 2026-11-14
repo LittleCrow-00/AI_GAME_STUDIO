@@ -15,6 +15,9 @@ const ENEMY_AFOGADO: EnemyData = preload("res://data/enemies/afogado.tres")
 const ENEMY_IARA: EnemyData = preload("res://data/enemies/iara.tres")
 const ENEMY_BOTO: EnemyData = preload("res://data/enemies/boto.tres")
 const ENEMY_CURUPIRA: EnemyData = preload("res://data/enemies/curupira.tres")
+const ENEMY_COBRA: EnemyData = preload("res://data/enemies/cobra_grande.tres")
+
+const FAROL_SCENE: PackedScene = preload("res://scenes/gameplay/farol.tscn")
 
 const WAVES_PER_ROOM: int = 3
 const BASE_BUDGET: int = 4
@@ -23,6 +26,8 @@ const WAVE_BREAK: float = 0.7
 
 @export var arena_size: Vector2 = Vector2(1120.0, 640.0)
 @export var room_index: int = 0
+@export var is_boss_room: bool = false
+@export var is_final_room: bool = false
 
 var _director: SpawnDirector
 var _wave_index: int = -1
@@ -30,6 +35,7 @@ var _alive: int = 0
 var _active: bool = false
 var _wave_finished: bool = true
 var _wave_clear_timer: float = 0.0
+var _farol: Farol
 var _rng := RandomNumberGenerator.new()
 
 
@@ -42,6 +48,9 @@ func _ready() -> void:
 	add_child(pool)
 
 	_spawn_light_wells()
+
+	if is_final_room:
+		_spawn_farol()
 
 	_director = SpawnDirector.new()
 	_director.name = "SpawnDirector"
@@ -87,19 +96,29 @@ func _process(delta: float) -> void:
 		return
 
 	_wave_finished = true
-	if _wave_index + 1 >= WAVES_PER_ROOM:
+	if _wave_index + 1 >= _waves_total():
 		_finish_room()
 	else:
 		_wave_clear_timer = WAVE_BREAK
 
 
+func _waves_total() -> int:
+	return 1 if is_boss_room else WAVES_PER_ROOM
+
+
 func _start_wave() -> void:
 	_wave_index += 1
-	if _wave_index >= WAVES_PER_ROOM:
+	if _wave_index >= _waves_total():
 		_finish_room()
 		return
 
 	_wave_finished = false
+	if is_boss_room:
+		_spawn_boss()
+		SignalBus.wave_started.emit(0, 1)
+		SignalBus.enemies_remaining_changed.emit(_alive)
+		return
+
 	var budget := BASE_BUDGET + _wave_index * 2 + room_index * 2
 	_director.configure(_enemy_pool(), budget, MAX_ALIVE)
 	_director.start()
@@ -107,13 +126,41 @@ func _start_wave() -> void:
 	SignalBus.enemies_remaining_changed.emit(_alive)
 
 
+func _spawn_boss() -> void:
+	var boss := ENEMY_COBRA.scene.instantiate() as Enemy
+	boss.position = Vector2(0.0, -160.0)
+	boss.apply_data(ENEMY_COBRA)
+	boss.max_health = ENEMY_COBRA.health
+	boss.health = boss.max_health
+	boss.move_speed = ENEMY_COBRA.move_speed
+	boss.contact_damage = ENEMY_COBRA.contact_damage
+	boss.oil_drop = ENEMY_COBRA.oil_drop
+	add_child(boss)
+	_alive += 1
+	SignalBus.enemies_remaining_changed.emit(_alive)
+
+
 func _finish_room() -> void:
 	if not _active:
 		return
+
+	if is_final_room and _farol != null and not _farol.is_lit():
+		_farol.set_active(true)
+		SignalBus.message_requested.emit("ACENDA O FAROL", 2.0)
+		return
+
 	_active = false
 	if _director != null:
 		_director.stop()
 	SignalBus.message_requested.emit("SALA LIMPA", 2.0)
+	room_cleared.emit()
+	SignalBus.room_cleared.emit()
+
+
+func _on_farol_lit() -> void:
+	if not _active:
+		return
+	_active = false
 	room_cleared.emit()
 	SignalBus.room_cleared.emit()
 
@@ -168,6 +215,13 @@ func _spawn_light_wells() -> void:
 		var well := LIGHT_WELL_SCENE.instantiate() as LightWell
 		well.position = offset
 		add_child(well)
+
+
+func _spawn_farol() -> void:
+	_farol = FAROL_SCENE.instantiate() as Farol
+	_farol.position = Vector2(0.0, -40.0)
+	_farol.lit.connect(_on_farol_lit)
+	add_child(_farol)
 
 
 func _random_spawn_position() -> Vector2:

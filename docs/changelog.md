@@ -2,6 +2,48 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.3.0] — 2026-11-14
+
+### Adicionado
+
+- **Fase 3 — Estrutura de run.**
+- **Santuário** (`Sanctuary`): escolha de 1 entre 3 oferendas, com teclado (1/2/3)
+  ou clique. Pausa a árvore durante a escolha.
+- **9 oferendas** em `data/boons/*.tres` (Lente Maior, Pavio Grosso, Óleo Frio,
+  Casca Grossa, Passo Leve, Fôlego, Foco Rápido, Ângulo Largo, Cera Velha).
+- **`StatSheet` ligado ao `Player`**: vida, óleo, dano, alcance, ângulo, cadência,
+  velocidade, cargas de dash e recarga em focos passam a ser derivados de
+  modificadores — não mais constantes no script.
+- **`BoonDatabase`** (autoload) com a lista de oferendas e o sorteio sem repetição.
+- **Chefe 1: Cobra Grande** (`CobraGrande`):
+  - **Blindada no escuro** (15% do dano) e **exposta** após 2,5 s de luz contínua.
+  - Ataques: investida (telegrafa 0,6 s), rajada radial de 12 projéteis e
+    invocação de 2 afogados.
+  - Barra de vida de chefe no HUD.
+  - Ao morrer, elimina os invocados.
+- **Sala do Farol** (`Farol`): ilumina depois de limpa; o jogador precisa ficar
+  2 s dentro do círculo para vencer. Saiu, o progresso escorre.
+- **Tela de fim de run** (`RunSummary`): salas limpas, abates, pontos, tempo e
+  semente.
+- **Run completa**: 4 salas, chefe na sala 3 e Farol na sala 4.
+- Testes: 22 asserções (incluindo blindagem/exposição do chefe, oferendas e Farol).
+- Integração validada de ponta a ponta: 4 salas, chefe derrotado, Farol aceso,
+  estado VITÓRIA.
+
+### Mudado
+
+- `Main` passou a controlar 4 salas, santuário, vitória e derrota.
+- `Player` deixou de usar `@export` para valores derivados; os `base_*` alimentam
+  o `StatSheet`.
+- **Cegueira por estouro agora é real:** com óleo em 0, a lanterna cai para 6% de
+  energia (tela quase preta) durante 1,5 s. Antes era só uma redução de luz.
+
+### Conhecido
+
+- Itens de run ainda não existem (só oferendas de santuário).
+- Sem áudio, sem Cera/loja, sem meta-progressão.
+- Sem *benchmark* de estresse no Web.
+
 ## [0.2.0] — 2026-11-14
 
 ### Adicionado

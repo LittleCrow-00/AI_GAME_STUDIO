@@ -2,41 +2,56 @@ class_name Player
 extends CharacterBody2D
 ## O Faroleiro.
 ##
-## Responsabilidades: movimento, dash (com i-frames), óleo, focos de luz e
-## integração com o Feixe. Nenhum conhecimento sobre HUD ou spawn: emite sinais.
+## Responsabilidades: movimento, dash (com i-frames), óleo, focos de luz,
+## integração com o Feixe e o `StatSheet` que as oferendas alimentam.
+## Nenhum conhecimento sobre HUD ou spawn: emite sinais.
 
 signal died
 
 const ACCELERATION := 2200.0
 const FRICTION := 2600.0
-const MAX_SPEED := 220.0
 
 const DASH_SPEED := 520.0
 const DASH_DURATION := 0.15
 const DASH_IFRAMES := 0.18
 const DASH_COOLDOWN := 0.45
-const DASH_CHARGES_MAX := 1
 
 ## Dentro de um foco de luz o Faroleiro recarrega, mas quase não anda.
 const LIGHT_SLOW_FACTOR := 0.4
 
-@export var max_health: float = 100.0
-@export var max_oil: float = 100.0
-@export var oil_drain_per_second: float = 6.0
+# --- Valores base (ponto de partida do StatSheet) ---
+@export var base_max_health: float = 100.0
+@export var base_max_oil: float = 100.0
+@export var base_oil_drain: float = 6.0
+@export var base_beam_damage: float = 8.0
+@export var base_beam_range: float = 260.0
+@export var base_beam_half_angle: float = 22.0
+@export var base_move_speed: float = 220.0
+@export var base_dash_charges: int = 1
+@export var base_light_oil: float = 26.0
 @export var dry_lockout: float = 1.5
 
 @onready var beam: Beam = $Beam
 @onready var vision_light: PointLight2D = $VisionLight
 
+var stats: StatSheet
+
+var max_health: float = 100.0
+var max_oil: float = 100.0
 var health: float = 100.0
 var oil: float = 100.0
 var is_firing: bool = false
+
+var _oil_drain: float = 6.0
+var _move_speed: float = 220.0
+var _dash_charges_max: int = 1
+var _light_mult: float = 1.0
 
 var _dead: bool = false
 var _iframes: float = 0.0
 var _dash_time_left: float = 0.0
 var _dash_cooldown_left: float = 0.0
-var _dash_charges: int = DASH_CHARGES_MAX
+var _dash_charges: int = 1
 var _dash_direction: Vector2 = Vector2.RIGHT
 var _dry_left: float = 0.0
 var _in_light: bool = false
@@ -45,10 +60,70 @@ var _light_rate: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
+	stats = StatSheet.new()
+	stats.set_base(&"max_health", base_max_health)
+	stats.set_base(&"max_oil", base_max_oil)
+	stats.set_base(&"oil_drain_per_second", base_oil_drain)
+	stats.set_base(&"beam_damage", base_beam_damage)
+	stats.set_base(&"beam_range", base_beam_range)
+	stats.set_base(&"beam_half_angle", base_beam_half_angle)
+	stats.set_base(&"move_speed", base_move_speed)
+	stats.set_base(&"dash_charges_max", float(base_dash_charges))
+	stats.set_base(&"light_oil_per_second", base_light_oil)
+	_refresh_stats(false)
+
 	health = max_health
 	oil = max_oil
 	SignalBus.enemy_died.connect(_on_enemy_died)
 	_emit_all()
+
+
+func _refresh_stats(heal_delta: bool = true) -> void:
+	var previous_max_health := max_health
+	var previous_max_oil := max_oil
+	var previous_dash_max := _dash_charges_max
+
+	max_health = stats.get_stat(&"max_health")
+	max_oil = stats.get_stat(&"max_oil")
+	_oil_drain = stats.get_stat(&"oil_drain_per_second")
+	_move_speed = stats.get_stat(&"move_speed")
+	_dash_charges_max = int(stats.get_stat(&"dash_charges_max"))
+	_light_mult = stats.get_stat(&"light_oil_per_second") / maxf(1.0, base_light_oil)
+
+	beam.configure(
+		stats.get_stat(&"beam_range"),
+		stats.get_stat(&"beam_half_angle"),
+		stats.get_stat(&"beam_damage"),
+	)
+
+	if heal_delta:
+		health = minf(max_health, health + maxf(0.0, max_health - previous_max_health))
+		oil = minf(max_oil, oil + maxf(0.0, max_oil - previous_max_oil))
+	else:
+		health = max_health
+		oil = max_oil
+
+	if _dash_charges_max > previous_dash_max:
+		_dash_charges = _dash_charges_max
+	_dash_charges = mini(_dash_charges, _dash_charges_max)
+
+
+## Aplica uma oferenda. Os modificadores carregam a origem para poderem ser
+## removidos depois (itens trocados, maldições, etc.).
+func apply_boon(boon: BoonData) -> void:
+	for modifier in boon.modifiers:
+		var copy := modifier.duplicate() as StatModifier
+		copy.set_meta("source_id", boon.id)
+		stats.add(copy)
+	_refresh_stats(true)
+	SignalBus.health_changed.emit(health, max_health)
+	SignalBus.oil_changed.emit(oil, max_oil)
+	_emit_dash()
+
+	if boon.heal_on_pick > 0.0:
+		heal(boon.heal_on_pick)
+	if boon.oil_on_pick > 0.0:
+		add_oil(boon.oil_on_pick)
 
 
 func _physics_process(delta: float) -> void:
@@ -78,7 +153,7 @@ func _handle_light_wells(delta: float) -> void:
 		if not well.contains_point(global_position):
 			continue
 		_in_light = true
-		_light_rate = maxf(_light_rate, well.oil_per_second)
+		_light_rate = maxf(_light_rate, well.oil_per_second * _light_mult)
 
 	if not _in_light:
 		return
@@ -93,7 +168,7 @@ func _handle_movement(delta: float) -> void:
 		return
 
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var speed_cap := MAX_SPEED * (LIGHT_SLOW_FACTOR if _in_light else 1.0)
+	var speed_cap := _move_speed * (LIGHT_SLOW_FACTOR if _in_light else 1.0)
 	if input.length_squared() > 0.01:
 		velocity = velocity.move_toward(input.normalized() * speed_cap, ACCELERATION * delta)
 	else:
@@ -140,7 +215,7 @@ func _handle_beam(delta: float) -> void:
 	beam.active = wants_fire
 
 	if wants_fire:
-		oil = maxf(0.0, oil - oil_drain_per_second * delta)
+		oil = maxf(0.0, oil - _oil_drain * delta)
 		if oil <= 0.0:
 			_dry_left = dry_lockout
 			SignalBus.beam_dried.emit()
@@ -148,6 +223,12 @@ func _handle_beam(delta: float) -> void:
 
 
 func _update_vision() -> void:
+	# Estouro: a lanterna morre. É o único momento em que a tela fica quase preta.
+	if _dry_left > 0.0:
+		vision_light.energy = 0.06
+		vision_light.scale = Vector2.ONE * 0.7
+		return
+
 	var ratio := clampf(oil / maxf(1.0, max_oil), 0.0, 1.0)
 	vision_light.energy = lerpf(0.26, 1.0, ratio)
 	vision_light.scale = Vector2.ONE * lerpf(0.8, 1.1, ratio)
@@ -210,7 +291,7 @@ func has_dash_charge() -> bool:
 
 
 func _on_enemy_died(_enemy: Node, _position: Vector2) -> void:
-	if _dash_charges < DASH_CHARGES_MAX:
+	if _dash_charges < _dash_charges_max:
 		_dash_charges += 1
 		_emit_dash()
 
@@ -222,7 +303,7 @@ func _emit_all() -> void:
 
 
 func _emit_dash() -> void:
-	SignalBus.dash_charges_changed.emit(_dash_charges, DASH_CHARGES_MAX)
+	SignalBus.dash_charges_changed.emit(_dash_charges, _dash_charges_max)
 
 
 func _draw() -> void:

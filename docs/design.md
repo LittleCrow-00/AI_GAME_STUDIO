@@ -181,30 +181,49 @@ cache. Nenhum item contém lógica própria.
 
 ---
 
-## 8. Estrutura de run
+## 8. Estrutura de run (implementada)
 
 ```
-Descida 1 (3 salas + mini-boss) → Santuário
-Descida 2 (4 salas + elite)     → Santuário
-Descida 3 (4 salas + Chefe)     → Santuário
-Descida 4 (sala do Farol: vitória)
+Sala 1 (3 ondas) → Santuário → Sala 2 (3 ondas) → Santuário
+   → Sala 3: COBRA GRANDE → Santuário → Sala 4: FAROL (vitória)
 ```
+
+- **Santuário:** o jogo pausa e oferece **1 entre 3 oferendas**. Cada oferenda
+  muda um modificador do `StatSheet` (não um número solto no script).
+- **Cobra Grande:** a sala 3 é uma arena de chefe. Ela é **imune no escuro** e
+  só pode ser ferida depois de receber luz contínua — a luta obriga a parar de
+  desviar e apontar.
+- **Farol:** a sala 4 é a vitória. Depois de limpa, o Farol acende; o jogador
+  precisa ficar 2 s dentro do círculo.
 
 Duração alvo: **25–40 min**. Sem "continue".
 
-**Loop:** entrar → ler ameaças → combater (óleo/cadeia/dash) → limpar → recompensa
-→ santuário → descer.
+**Loop:** entrar → ler ameaças → combater (óleo/cadeia/dash) → limpar → santuário
+→ descer.
 
-**Meta-progressão:** Cera acumulada desbloqueia **itens iniciais e personagens**
-(desbloqueios laterais), nunca apenas `+10% dano` — para não achatar a curva.
+**Meta-progressão (Fase 6):** Cera acumulada desbloqueia **itens iniciais e
+personagens** (desbloqueios laterais), nunca apenas `+10% de dano` — para não
+achatar a curva.
+
+## 8.1 Cobra Grande
+
+| Propriedade | Valor |
+|---|---|
+| Vida | 600 |
+| Blindagem no escuro | 15% do dano |
+| Exposição | 2,5 s de luz contínua → 4 s vulnerável |
+| Ataques | investida (0,6 s), rajada radial (12 tiros), invocação (2 afogados) |
+
+A leitura é simples e o HUD ajuda: um anel enche enquanto você segura a luz nela;
+quando enche, ela fica **exposta** e o anel vira vermelho.
 
 ---
 
 ## 9. O que ainda não existe
 
-- Itens e `StatSheet` conectado ao jogador (a classe existe, o uso não).
-- Santuário/loja, Cera e meta-progressão.
-- Chefe (Cobra Grande) e andares 3–4.
+- Itens de run (só oferendas de santuário) e sinergias compostas.
+- Cera, loja e meta-progressão.
+- Biomas, elite Boitatá e Mapinguari.
 - Áudio.
 - Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.
 

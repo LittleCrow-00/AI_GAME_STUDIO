@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemy_data.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cobra_grande.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"cobra_grande"
+display_name = "Cobra Grande"
+scene = ExtResource("2_scene")
+health = 600.0
+move_speed = 52.0
+contact_damage = 18.0
+oil_drop = 40.0
+body_color = Color(0.35, 0.75, 0.55, 1)
+cost = 0

@@ -24,6 +24,9 @@ func _ready() -> void:
 	await _test_hitstop()
 	_test_light_well()
 	_test_projectile_pool()
+	_test_boss_exposure()
+	await _test_boon_application()
+	await _test_farol()
 	await _test_arena_progression()
 
 	var status := "OK" if _failures == 0 else "FAILED"
@@ -119,6 +122,65 @@ func _test_projectile_pool() -> void:
 	_check(not projectile.active, "ProjectilePool: deactivate libera o projétil")
 
 	pool.queue_free()
+
+
+func _test_boss_exposure() -> void:
+	var boss := CobraGrande.new()
+	boss.max_health = 600.0
+	boss.health = 600.0
+	add_child(boss)
+
+	boss.take_damage(100.0, Vector2.ZERO)
+	_check(boss.health > 500.0, "Cobra Grande: blindada fora da luz")
+
+	for i in range(25):
+		boss._on_beam_hit(boss, 8.0)
+	_check(boss.is_exposed(), "Cobra Grande: exposta após luz contínua")
+
+	var before := boss.health
+	boss.take_damage(100.0, Vector2.ZERO)
+	_check(is_equal_approx(before - boss.health, 100.0), "Cobra Grande: dano cheio quando exposta")
+
+	boss.queue_free()
+
+
+func _test_boon_application() -> void:
+	var player := _spawn_player()
+	var before := player.max_oil
+	player.apply_boon(BoonDatabase.ALL[8])
+	_check(is_equal_approx(player.max_oil, before + 20.0), "Boon: aumenta óleo máximo")
+
+	var dash_before := player.stats.get_stat(&"dash_charges_max")
+	player.apply_boon(BoonDatabase.ALL[5])
+	_check(player.stats.get_stat(&"dash_charges_max") > dash_before, "Boon: adiciona carga de dash")
+
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_farol() -> void:
+	var farol := Farol.new()
+	farol.position = Vector2.ZERO
+	farol.set_active(true)
+	add_child(farol)
+
+	var player := _spawn_player()
+	player.position = Vector2.ZERO
+	player.set_physics_process(false)
+
+	await get_tree().create_timer(2.4, true, false, true).timeout
+	_check(farol.is_lit(), "Farol: acende com o jogador dentro")
+
+	player.queue_free()
+	farol.queue_free()
+	await get_tree().process_frame
+
+
+func _spawn_player() -> Player:
+	var scene := load("res://scenes/player/player.tscn") as PackedScene
+	var player := scene.instantiate() as Player
+	add_child(player)
+	return player
 
 
 func _test_arena_progression() -> void:

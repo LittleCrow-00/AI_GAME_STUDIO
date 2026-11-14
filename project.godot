@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 SignalBus="*res://autoload/signal_bus.gd"
 RngService="*res://autoload/rng_service.gd"
 TimeService="*res://autoload/time_service.gd"
+BoonDatabase="*res://autoload/boon_database.gd"
 
 [display]
 

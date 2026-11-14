@@ -65,19 +65,25 @@ passando; falta o *benchmark* de estresse.
 
 ---
 
-## Fase 3 — Estrutura de run
+## Fase 3 — Estrutura de run ✅
 
-- [ ] Santuário entre andares (escolha de 1 entre 3)
-- [ ] Chefe 1: Cobra Grande
-- [ ] 4º andar: sala do Farol (vitória)
-- [ ] Tela de morte com resumo da run
+- [x] **Santuário** entre andares: escolha de 1 entre 3 oferendas
+- [x] Oferendas ligadas ao `StatSheet` do jogador (9 oferendas em `data/boons/`)
+- [x] **Chefe 1: Cobra Grande** — blindada no escuro, exposta após 2,5 s de luz
+      contínua; investida, rajada radial e invocação
+- [x] **4º andar: sala do Farol** — acender o Farol para vencer
+- [x] **Tela de fim de run** com resumo (salas, abates, pontos, tempo, semente)
+- [x] Run completa validada de ponta a ponta (4 salas → vitória)
+
+**Critério de aceite:** ✅ run completa jogável, 22/22 testes passando.
 
 ---
 
-## Fase 4 — Itens e sinergias
+## Fase 4 — Itens e sinergias ⏭️ (próxima)
 
-- [ ] `StatSheet` ligado ao `Player` (hoje existe, não é usado)
+- [x] `StatSheet` ligado ao `Player` (feito na Fase 3, via oferendas)
 - [ ] 24+ itens em `data/items/*.tres`
+- [ ] Itens persistentes na run (hoje só oferendas de santuário)
 - [ ] Seleção de *boons* com *tags* e sinergias compostas
 - [ ] Pelo menos 2 archetypes viáveis
 
