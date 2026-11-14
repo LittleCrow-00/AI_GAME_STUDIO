@@ -151,10 +151,14 @@ passando; falta o *benchmark* de estresse.
 
 ## Fase 8 — Publicação
 
-- [ ] Export Web otimizado (< 20 MB wasm)
-- [ ] Deploy no GitHub Pages verificado
-- [ ] PWA opcional
-- [ ] Build para itch.io (gratuito, página do jogo)
+- [x] Export Web medido: `index.wasm` 43 MB → **9,5 MB gzip** (orçamento do
+      navegador), `index.pck` 0,5 MB. `tools/build_web.sh` roda testes + export
+      + zip e imprime o tamanho de transferência
+- [ ] Deploy no GitHub Pages verificado (workflow pronto; falta confirmar na
+      conta: Settings → Pages → Source: GitHub Actions)
+- [ ] PWA opcional (desligado de propósito: não é necessário para jogar)
+- [x] Build para itch.io (gratuito): `build/faroleiro-web.zip` +
+      `docs/publish.md` com o passo a passo e a nota de transparência sobre IA
 
 ---
 
