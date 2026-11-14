@@ -26,6 +26,8 @@ func _ready() -> void:
 	_test_light_well()
 	_test_projectile_pool()
 	_test_boss_exposure()
+	_test_boitata()
+	_test_mapinguari()
 	_test_item_pool()
 	_test_sanctuary_shop()
 	_test_settings()
@@ -293,6 +295,59 @@ func _test_boss_exposure() -> void:
 	_check(is_equal_approx(before - boss.health, 100.0), "Cobra Grande: dano cheio quando exposta")
 
 	boss.queue_free()
+
+
+func _test_boitata() -> void:
+	var player := _spawn_player()
+	var boitata := Boitata.new()
+	boitata.cool_time = 0.05
+	boitata.max_health = 200.0
+	boitata.health = 200.0
+	add_child(boitata)
+	boitata.position = Vector2(300.0, 0.0)
+
+	boitata._on_beam_hit(boitata, 8.0)
+	_check(boitata.heat_ratio() > 0.0, "Boitata: luz enche o calor")
+
+	for i in range(30):
+		boitata._on_beam_hit(boitata, 8.0)
+	_check(boitata.is_immune(), "Boitata: calor cheio explode e deixa imune")
+
+	var health_before := boitata.health
+	boitata.take_damage(10.0, Vector2.ZERO)
+	_check(is_equal_approx(boitata.health, health_before), "Boitata: imunidade ignora dano")
+
+	await get_tree().create_timer(0.25, true, false, true).timeout
+	_check(not boitata.is_immune(), "Boitata: imunidade acaba")
+
+	boitata.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_mapinguari() -> void:
+	var player := _spawn_player()
+	var mapinguari := Mapinguari.new()
+	mapinguari.max_health = 500.0
+	mapinguari.health = 500.0
+	add_child(mapinguari)
+
+	mapinguari.position = Vector2(400.0, 0.0)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	mapinguari.take_damage(100.0, Vector2.ZERO)
+	_check(mapinguari.health > 400.0, "Mapinguari: couraca reduz dano de longe")
+
+	mapinguari.position = Vector2(80.0, 0.0)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var before := mapinguari.health
+	mapinguari.take_damage(100.0, Vector2.ZERO)
+	_check(is_equal_approx(before - mapinguari.health, 100.0), "Mapinguari: dano cheio de perto")
+
+	mapinguari.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
 
 
 func _test_items_and_synergies() -> void:

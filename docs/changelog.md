@@ -2,6 +2,27 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.9.0] — 2026-11-14
+
+### Adicionado
+
+- **Fase 7 (passo 1) — inimigos que leem a luz.**
+- **Boitatá** (`scripts/enemies/boitata.gd`): serpente de fogo que só a luz fere.
+  Cada tique de feixe enche um medidor de calor; cheio, ela explode (onda de
+  `DeathBurst` + dano em área), fica imune por 1,8 s e zera o calor. Inverte a
+  decisão do jogo: aqui segurar o feixe é o erro.
+- **Mapinguari** (`scripts/enemies/mapinguari.gd`): couraçado lento com muita
+  vida. Dano de feixe a mais de 165 px é reduzido a 35% (o cone se espalha);
+  de perto, dano cheio — mas a investida de 0,45 s pune quem fica colado.
+- `DeathBurst` agora aceita `max_radius` e `duration` (reaproveitado pela
+  explosão da Boitatá).
+- Sprites SVG `assets/sprites/boitata.svg` e `mapinguari.svg`; cenas e
+  `data/enemies/*.tres` com custo de ameaça 3 e 4.
+- Testes: calor/imunidade da Boitatá e redução de dano do Mapinguari
+  (71 asserções).
+
+---
+
 ## [0.8.0] — 2026-11-14
 
 ### Adicionado

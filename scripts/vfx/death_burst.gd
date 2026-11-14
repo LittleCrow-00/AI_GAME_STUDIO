@@ -5,8 +5,9 @@ extends Node2D
 ## Puramente visual: nao consulta regras, so le a cor do corpo e se autodestrói.
 
 var tint: Color = Color(0.5, 0.9, 0.9)
+@export var max_radius: float = 26.0
+@export var duration: float = 0.45
 var _age: float = 0.0
-var _duration: float = 0.45
 
 
 func _ready() -> void:
@@ -16,17 +17,17 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_age += delta
 	queue_redraw()
-	if _age >= _duration:
+	if _age >= duration:
 		queue_free()
 
 
 func _draw() -> void:
-	var t := clampf(_age / _duration, 0.0, 1.0)
+	var t := clampf(_age / maxf(0.01, duration), 0.0, 1.0)
 	var fade := 1.0 - t
 
 	draw_arc(
 		Vector2.ZERO,
-		5.0 + 26.0 * t,
+		5.0 + max_radius * t,
 		0.0,
 		TAU,
 		22,
@@ -35,7 +36,7 @@ func _draw() -> void:
 	)
 	for i in range(6):
 		var angle := TAU * float(i) / 6.0 + 0.4
-		var distance := 3.0 + 20.0 * t
+		var distance := (3.0 + max_radius * 0.8) * t
 		draw_circle(
 			Vector2.from_angle(angle) * distance,
 			2.6 * fade + 0.4,

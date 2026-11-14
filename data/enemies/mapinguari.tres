@@ -1,0 +1,17 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemy_data.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/mapinguari.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"mapinguari"
+display_name = "Mapinguari"
+scene = ExtResource("2_scene")
+health = 150.0
+move_speed = 54.0
+contact_damage = 16.0
+oil_drop = 20.0
+cera_drop = 3
+body_color = Color(0.78, 0.70, 0.46, 1)
+cost = 4

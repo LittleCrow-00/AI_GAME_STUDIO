@@ -128,6 +128,9 @@ passando; falta o *benchmark* de estresse.
       anel dourado)
 - [x] Paleta da arena muda com a profundidade
 - [ ] 8+ inimigos, 2º chefe, biomas
+  - [x] Boitatá (elite de fogo: a luz enche o calor, explode e a deixa imune)
+  - [x] Mapinguari (couraçado: dano reduzido de longe, investida pune a proximidade)
+  - [ ] 1 inimigo final, 2º chefe e biomas próprios
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)
 - [x] Acessibilidade: menu de pausa (`ESC`) com reduzir tremor e flashes,

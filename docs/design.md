@@ -43,9 +43,9 @@ A **Fossa** guarda o que sobrou — e o que desceu junto.
 | Iara | Engodo | Mantém distância e dispara rajada que **drena óleo** *(implementado)* |
 | Boto | Metamorfo | Telegrafa e **avança em linha reta**; pune ficar parado *(implementado)* |
 | Curupira | Enganador | **Salta** para trás de você quando você tenta manter distância *(implementado)* |
-| Cobra Grande | Chefe 1 | Enterra/emerge; vulnerável só sob luz contínua |
-| Boitatá | Elite | Imune no escuro; queima se iluminado por muito tempo |
-| Mapinguari | Tanque | Couraça só quebra com cone estreito |
+| Cobra Grande | Chefe 1 | Enterra/emerge; vulnerável só sob luz contínua *(implementado)* |
+| Boitatá | Elite de fogo | **Só a luz a fere** — e a luz enche seu calor: cheio, explode e fica imune *(implementado)* |
+| Mapinguari | Tanque | **Couraça**: de longe o feixe se espalha e quase não fere; de perto, dano cheio — mas a investida pune a proximidade *(implementado)* |
 
 ---
 
@@ -254,7 +254,7 @@ quando enche, ela fica **exposta** e o anel vira vermelho.
 
 ## 9. O que ainda não existe
 
-- Biomas, elite Boitatá e Mapinguari.
+- Biomas (paletas por profundidade já existem) e o 2º chefe.
 - Áudio.
 - Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.
 
