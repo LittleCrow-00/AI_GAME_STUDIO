@@ -33,6 +33,8 @@ func _ready() -> void:
 	await _test_fire_patch()
 	await _test_dark_zone()
 	await _test_caipora()
+	_test_audio()
+	await _test_prologue()
 	await _test_final_room_boss()
 	_test_item_pool()
 	_test_sanctuary_shop()
@@ -468,6 +470,46 @@ func _test_caipora() -> void:
 	for node in get_tree().get_nodes_in_group("dark_zones"):
 		node.queue_free()
 	caipora.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_audio() -> void:
+	_check(AudioService.SOUNDS.size() == 8, "Audio: 8 efeitos carregados")
+	AudioService.set_muted(true)
+	_check(AudioService.is_muted(), "Audio: mute funciona")
+	AudioService.set_muted(false)
+	_check(not AudioService.is_muted(), "Audio: desmute funciona")
+
+
+func _test_prologue() -> void:
+	var player := _spawn_player()
+	var enemies_before := get_tree().get_nodes_in_group("enemies").size()
+	var arena := Arena.new()
+	arena.setup(-1)
+	arena.is_prologue = true
+	add_child(arena)
+	await get_tree().process_frame
+
+	var farol := arena.get("_farol") as Farol
+	_check(farol != null and farol.charge_by_light, "Prologo: farol acende com a luz")
+	_check(
+		get_tree().get_nodes_in_group("enemies").size() == enemies_before,
+		"Prologo: sem ondas",
+	)
+
+	# O feixe e posicionado direto: aqui interessa a regra do Farol, nao o input.
+	player.set_physics_process(false)
+	player.global_position = farol.global_position + Vector2(0.0, 160.0)
+	player.beam.active = true
+	player.beam.global_rotation = -PI * 0.5
+
+	await get_tree().create_timer(2.3, true, false, true).timeout
+
+	_check(farol.is_lit(), "Prologo: feixe acende o farol")
+
+	arena.stop()
+	arena.queue_free()
 	player.queue_free()
 	await get_tree().process_frame
 

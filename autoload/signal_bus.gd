@@ -17,11 +17,13 @@ signal projectile_fired(position: Vector2, direction: Vector2)
 signal boss_spawned(boss: Node)
 signal boss_health_changed(current: float, maximum: float)
 signal boss_defeated
+signal farol_lit
 
 # --- Jogador / recursos ---
 signal health_changed(current: float, maximum: float)
 signal oil_changed(current: float, maximum: float)
 signal oil_removed(amount: float)
+signal oil_pickup_collected(amount: float)
 signal dash_charges_changed(current: int, maximum: int)
 signal beam_dried
 signal light_well_entered(well: Node)

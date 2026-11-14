@@ -38,6 +38,7 @@ func _process(delta: float) -> void:
 	if to_player.length() <= pickup_radius:
 		player.add_oil(amount)
 		_collected = true
+		SignalBus.oil_pickup_collected.emit(amount)
 		queue_free()
 		return
 

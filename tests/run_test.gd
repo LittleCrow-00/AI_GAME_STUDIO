@@ -105,6 +105,12 @@ func _keep_player_at_farol(main: Node, player: Player) -> void:
 	var farol := arena.get("_farol") as Farol
 	if farol == null or farol.is_lit():
 		return
+	if arena.is_prologue:
+		# Prologo acende com o feixe: posiciona o jogador e segura o botao.
+		player.global_position = farol.global_position + Vector2(0.0, 160.0)
+		player.velocity = Vector2.ZERO
+		Input.action_press("fire")
+		return
 	player.global_position = farol.global_position
 	player.velocity = Vector2.ZERO
 

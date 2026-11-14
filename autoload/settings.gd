@@ -8,6 +8,7 @@ const PATH := "user://settings.cfg"
 
 var reduce_shake: bool = false
 var reduce_flashes: bool = false
+var muted: bool = false
 
 
 func _ready() -> void:
@@ -20,12 +21,14 @@ func load_settings() -> void:
 		return
 	reduce_shake = bool(config.get_value("video", "reduce_shake", false))
 	reduce_flashes = bool(config.get_value("video", "reduce_flashes", false))
+	muted = bool(config.get_value("audio", "muted", false))
 
 
 func save_settings() -> void:
 	var config := ConfigFile.new()
 	config.set_value("video", "reduce_shake", reduce_shake)
 	config.set_value("video", "reduce_flashes", reduce_flashes)
+	config.set_value("audio", "muted", muted)
 	config.save(PATH)
 
 
@@ -36,4 +39,9 @@ func set_reduce_shake(value: bool) -> void:
 
 func set_reduce_flashes(value: bool) -> void:
 	reduce_flashes = value
+	save_settings()
+
+
+func set_muted(value: bool) -> void:
+	muted = value
 	save_settings()

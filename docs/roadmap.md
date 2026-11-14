@@ -136,10 +136,13 @@ passando; falta o *benchmark* de estresse.
   - [x] Biomas como dados (`data/biomes/*.tres`, paleta por profundidade)
   - [x] 8 tipos de inimigos + 2 chefes
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
-- [ ] Áudio (drone, ping, clique seco, sino)
+- [x] Áudio procedural (drone ambiente, impacto, abate, coleta, dash, dano,
+      clique seco, sino) — `tools/gen_audio.gd` gera os WAVs, `AudioService` toca
+      e o `ESC` tem "Som: ligado/mudo"
 - [x] Acessibilidade: menu de pausa (`ESC`) com reduzir tremor e flashes,
       persistido em `user://settings.cfg`
-- [ ] Tutorial diegético no Farol inicial
+- [x] Tutorial diegético: o prólogo é o Farol apagado — a única ação é apontar o
+      feixe para acendê-lo (sem texto explicando o botão)
 
 ---
 

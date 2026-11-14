@@ -11,7 +11,7 @@ const COL_TEXT := Color(0.88, 0.91, 0.92)
 const COL_DIM := Color(0.52, 0.62, 0.65)
 const COL_ACCENT := Color(1.0, 0.72, 0.28)
 
-const PANEL_SIZE := Vector2(440.0, 330.0)
+const PANEL_SIZE := Vector2(440.0, 372.0)
 
 var _open: bool = false
 var _selected: int = 0
@@ -66,6 +66,7 @@ func _build() -> void:
 		"Continuar",
 		"Tremor de tela",
 		"Flashes",
+		"Som",
 		"Reiniciar run",
 		"Sair do jogo",
 	]
@@ -102,10 +103,12 @@ func _close_menu() -> void:
 func _refresh() -> void:
 	var shake_state := "reduzido" if Settings.reduce_shake else "normal"
 	var flash_state := "reduzido" if Settings.reduce_flashes else "normal"
+	var sound_state := "mudo" if Settings.muted else "ligado"
 	var texts := [
 		"Continuar",
 		"Tremor de tela: %s" % shake_state,
 		"Flashes: %s" % flash_state,
+		"Som: %s" % sound_state,
 		"Reiniciar run",
 		"Sair do jogo",
 	]
@@ -166,9 +169,13 @@ func _activate(index: int) -> void:
 			Settings.set_reduce_flashes(not Settings.reduce_flashes)
 			_refresh()
 		3:
+			Settings.set_muted(not Settings.muted)
+			AudioService.set_muted(Settings.muted)
+			_refresh()
+		4:
 			get_tree().paused = false
 			get_tree().reload_current_scene()
-		4:
+		5:
 			get_tree().paused = false
 			get_tree().quit()
 

@@ -11,6 +11,7 @@ enum State { COMBAT, SANCTUARY, DEAD, VICTORY }
 
 const ARENA_SCENE: PackedScene = preload("res://scenes/gameplay/arena.tscn")
 const ROOM_TOTAL: int = 4
+const PROLOGUE_ROOM: int = -1
 const BOSS_ROOM: int = 2
 const FINAL_ROOM: int = 3
 const BOSS_COBRA: EnemyData = preload("res://data/enemies/cobra_grande.tres")
@@ -77,6 +78,7 @@ func _start_room(index: int) -> void:
 
 	_arena = ARENA_SCENE.instantiate() as Arena
 	_arena.setup(index)
+	_arena.is_prologue = index == PROLOGUE_ROOM
 	_arena.boss = _boss_for(index)
 	_arena.biome = _biome_for(index)
 	_arena.is_boss_room = _arena.boss != null
@@ -89,10 +91,15 @@ func _start_room(index: int) -> void:
 	player.velocity = Vector2.ZERO
 	player.heal(25.0)
 
-	hud.set_room(index + 1, ROOM_TOTAL)
+	if index < 0:
+		hud.set_room(0, ROOM_TOTAL)
+		SignalBus.message_requested.emit("O FAROL", 1.6)
+	else:
+		hud.set_room(index + 1, ROOM_TOTAL)
+		SignalBus.message_requested.emit("DESCEU %d" % (index + 1), 1.4)
+
 	_state = State.COMBAT
 	SignalBus.run_state_changed.emit(_state)
-	SignalBus.message_requested.emit("DESCEU %d" % (index + 1), 1.4)
 
 
 ## Bioma por profundidade: a descida esfria e fica mais roxa.
@@ -110,6 +117,8 @@ func _biome_for(index: int) -> BiomeData:
 
 ## Chefe por sala: a Cobra Grande guarda a descida; a Cuca guarda o Farol.
 func _boss_for(index: int) -> EnemyData:
+	if index < 0:
+		return null
 	if index == BOSS_ROOM:
 		return BOSS_COBRA
 	if index == FINAL_ROOM:
@@ -121,6 +130,11 @@ func _on_room_cleared() -> void:
 	if _transitioning:
 		return
 	_transitioning = true
+	if _room_index == PROLOGUE_ROOM:
+		_transitioning = false
+		_start_room(0)
+		return
+
 	_rooms_cleared += 1
 
 	if _room_index + 1 >= ROOM_TOTAL:

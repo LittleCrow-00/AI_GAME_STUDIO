@@ -44,6 +44,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   cobre o jogador.
 - Testes: escurecimento dentro/fora da zona e semeadura da Caipora
   (83 asserções).
+- **Áudio procedural**: `tools/gen_audio.gd` sintetiza 8 WAVs (drone de 8 s em
+  loop, impacto, abate, coleta, dash, dano, clique seco, sino). `AudioService`
+  (autoload) escuta o `SignalBus` e toca; o drone é a única cama sonora.
+- `Settings.muted` persistido e entrada **"Som: ligado/mudo"** no `ESC`.
+- **Prólogo diegético**: a run começa no Farol apagado; a única ação é apontar o
+  feixe para acendê-lo. `Farol.charge_by_light` faz o mesmo Farol servir de
+  tutorial e de objetivo final (sem texto de instrução).
+- `SignalBus`: `oil_pickup_collected` e `farol_lit`.
+- Testes: 8 efeitos carregados, mute/desmute e prólogo (89 asserções).
 
 ---
 

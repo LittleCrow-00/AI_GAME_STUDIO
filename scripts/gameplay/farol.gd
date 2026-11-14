@@ -10,6 +10,8 @@ signal lit
 
 @export var radius: float = 72.0
 @export var charge_time: float = 2.0
+## Prologo: acende só com o feixe. Sala final: acende ficando dentro do círculo.
+@export var charge_by_light: bool = false
 
 var _progress: float = 0.0
 var _active: bool = false
@@ -38,13 +40,33 @@ func _process(delta: float) -> void:
 	_pulse += delta
 	if _active and not is_lit():
 		var player := get_tree().get_first_node_in_group("player") as Player
-		if player != null and global_position.distance_to(player.global_position) <= radius:
+		var charging := false
+		if player != null:
+			if charge_by_light:
+				charging = _beam_hits(player)
+			else:
+				charging = global_position.distance_to(player.global_position) <= radius
+
+		if charging:
 			_progress = minf(charge_time, _progress + delta)
 			if is_lit():
+				SignalBus.farol_lit.emit()
 				lit.emit()
 		else:
 			_progress = maxf(0.0, _progress - delta * 0.6)
 	queue_redraw()
+
+
+## O feixe apontado para o Farol também acende (usado no prologo).
+func _beam_hits(player: Player) -> bool:
+	var beam := player.beam
+	if beam == null or not beam.active:
+		return false
+	var to_me := global_position - player.global_position
+	if to_me.length() > beam.range_length:
+		return false
+	var facing := Vector2.RIGHT.rotated(beam.global_rotation)
+	return absf(facing.angle_to(to_me)) <= deg_to_rad(beam.half_angle_deg)
 
 
 func _draw() -> void:

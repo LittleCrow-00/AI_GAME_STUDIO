@@ -37,6 +37,8 @@ const WAVE_BREAK: float = 0.7
 @export var boss: EnemyData
 ## Bioma da sala. Vazio = `DEFAULT_BIOME`.
 @export var biome: BiomeData
+## Prologo: sem ondas, o Farol acende com o feixe.
+@export var is_prologue: bool = false
 ## Chance de um inimigo nascer elite (a partir da 2ª sala).
 @export var elite_chance: float = 0.12
 
@@ -60,8 +62,10 @@ func _ready() -> void:
 
 	_spawn_light_wells()
 
-	if is_final_room:
-		_spawn_farol()
+	if is_prologue:
+		_spawn_farol(true)
+	elif is_final_room:
+		_spawn_farol(false)
 
 	_director = SpawnDirector.new()
 	_director.name = "SpawnDirector"
@@ -81,6 +85,9 @@ func start() -> void:
 	if _active:
 		return
 	_active = true
+	if is_prologue:
+		SignalBus.message_requested.emit("APONTE O FEIXE PARA O FAROL", 3.0)
+		return
 	_start_wave()
 
 
@@ -241,10 +248,13 @@ func _spawn_light_wells() -> void:
 		add_child(well)
 
 
-func _spawn_farol() -> void:
+func _spawn_farol(charge_by_light: bool = false) -> void:
 	_farol = FAROL_SCENE.instantiate() as Farol
 	_farol.position = Vector2(0.0, -40.0)
+	_farol.charge_by_light = charge_by_light
 	_farol.lit.connect(_on_farol_lit)
+	if is_prologue:
+		_farol.set_active(true)
 	add_child(_farol)
 
 

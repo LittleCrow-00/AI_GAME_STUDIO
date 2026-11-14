@@ -48,7 +48,8 @@ autoload/
   time_service.gd        hitstop global (altera Engine.time_scale)
   item_database.gd       lista de itens + sorteio (sem repetição, maldições)
   threshold_database.gd  limiares da Ressonância (10/25/50) + cruzamento
-  settings.gd            preferências (tremor/flashes) em user://settings.cfg
+  settings.gd            preferências (tremor/flashes/som) em user://settings.cfg
+  audio_service.gd       toca os WAVs a partir do SignalBus (drone + efeitos)
   unlock_database.gd     desbloqueios da meta-progressão + consulta de itens iniciais
   save_system.gd         save JSON em user://save.json (cera, runs, recorde, unlocks)
 resources/
@@ -68,7 +69,10 @@ data/
   unlocks/               pavio_extra, oleo_frio, lente_estadio (.tres)
   biomes/                mare_baixa, fossa, cripta_afundada, coracao_do_farol
 assets/
+  audio/                 8 WAVs gerados por tools/gen_audio.gd
   sprites/               jogador, 4 inimigos e chefe em SVG (Sprite2D)
+tools/
+  gen_audio.gd           sintetiza os WAVs do jogo (--script, headless)
 scripts/
   player/player.gd       movimento, dash, óleo, focos, visão, StatSheet
   beam/beam.gd           cone de luz: dano por tick + LOS + visual procedural
@@ -93,7 +97,7 @@ scripts/
   gameplay/light_well.gd foco de luz: recarrega óleo, penaliza movimento
   gameplay/fire_patch.gd fogo no chão deixado pela Mula (dano por tique)
   gameplay/dark_zone.gd  poça de escuridão: encolhe o feixe de quem entra
-  gameplay/farol.gd      objetivo da sala final (carrega por proximidade)
+  gameplay/farol.gd      farol: carrega por proximidade (final) ou pelo feixe (prólogo)
   gameplay/main.gd       sequência de salas, santuário, vitória, derrota
   ui/hud.gd              barras, leitura, dicas, chefe
   ui/sanctuary.gd        escolha de 1 entre 3 oferendas (pausa a árvore)

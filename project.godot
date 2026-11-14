@@ -24,6 +24,7 @@ ThresholdDatabase="*res://autoload/threshold_database.gd"
 Settings="*res://autoload/settings.gd"
 UnlockDatabase="*res://autoload/unlock_database.gd"
 SaveSystem="*res://autoload/save_system.gd"
+AudioService="*res://autoload/audio_service.gd"
 
 [display]
 
