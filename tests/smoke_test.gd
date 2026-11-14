@@ -752,17 +752,24 @@ func _test_stress() -> void:
 	for i in range(30):
 		await get_tree().process_frame
 
+	var pool := ProjectilePool.new()
+	add_child(pool)
+	for i in range(48):
+		var angle := TAU * float(i) / 48.0
+		pool.spawn(Vector2.from_angle(angle) * 120.0, Vector2.from_angle(angle), 160.0, 1.0, 0.0, Color.WHITE)
+
 	var frames := 120
 	var start := Time.get_ticks_usec()
 	for i in range(frames):
 		await get_tree().process_frame
 	var elapsed_ms := float(Time.get_ticks_usec() - start) / 1000.0
 	var average := elapsed_ms / float(frames)
-	print("  INFO  60 inimigos: %.2f ms/frame (headless, CPU)" % average)
-	_check(average < 12.0, "Estresse: 60 inimigos abaixo de 12 ms/frame")
+	print("  INFO  60 inimigos + 48 projeteis: %.2f ms/frame (headless, CPU)" % average)
+	_check(average < 12.0, "Estresse: 60 inimigos + 48 projeteis abaixo de 12 ms/frame")
 
 	for enemy in spawned:
 		enemy.queue_free()
+	pool.queue_free()
 	player.queue_free()
 	await get_tree().process_frame
 
