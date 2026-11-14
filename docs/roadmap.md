@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.1.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.4.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -79,13 +79,17 @@ passando; falta o *benchmark* de estresse.
 
 ---
 
-## Fase 4 — Itens e sinergias ⏭️ (próxima)
+## Fase 4 — Itens e sinergias ✅ (parcial)
 
 - [x] `StatSheet` ligado ao `Player` (feito na Fase 3, via oferendas)
-- [ ] 24+ itens em `data/items/*.tres`
-- [ ] Itens persistentes na run (hoje só oferendas de santuário)
-- [ ] Seleção de *boons* com *tags* e sinergias compostas
-- [ ] Pelo menos 2 archetypes viáveis
+- [x] 25 itens em `data/items/*.tres`
+- [x] Itens com **tags** (`lente`, `oleo`, `corpo`, `resonancia`) e stacks
+- [x] Sinergias compostas em `Inventory.rebuild()` (4 sinergias)
+- [x] Comportamentos que mudam o *verbo*: refração, perfuração, óleo por acerto,
+      explosão ao matar
+- [x] Maldições no sorteio (12% a partir da 2ª sala)
+- [x] Pelo menos 2 archetypes viáveis (Estádio e Brasa)
+- [ ] Itens persistentes na run (só em memória; save é Fase 6)
 
 ---
 
@@ -127,7 +131,7 @@ passando; falta o *benchmark* de estresse.
 |---|---|---|
 | HUD com coordenadas absolutas | frágil a mudanças de layout | Fase 3 |
 | `Arena` usa um único `SpawnDirector` por sala | salas concorrentes não são suportadas (não há, por design) | Fase 3 |
-| `StatSheet` não usado pelo Player | itens não alteram o personagem | Fase 4 |
+| Itens não persistem entre recarregamentos | build perdido ao fechar o jogo | Fase 6 |
 | Sem save | progresso meta perdido ao recarregar | Fase 6 |
 | Teto de 14 inimigos vivos | ondas maiores podem pesar no Web | Fase 2 (medição) |
 | `WaveData` existe mas não é usado | dados de onda ainda são orçamento numérico | Fase 3 |

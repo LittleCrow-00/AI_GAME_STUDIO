@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_damage"]
+script = ExtResource("2_mod")
+stat = &"beam_damage"
+mode = 1
+value = 1.25
+
+[sub_resource type="Resource" id="mod_health"]
+script = ExtResource("2_mod")
+stat = &"max_health"
+mode = 0
+value = -20.0
+
+[resource]
+script = ExtResource("1_item")
+id = &"casca_fina"
+display_name = "Casca Fina"
+description = "+25% de dano, mas você perde 20 de vida máxima."
+rarity = 1
+tags = [&"corpo", &"lente"]
+modifiers = [SubResource("mod_damage"), SubResource("mod_health")]
+max_stacks = 2

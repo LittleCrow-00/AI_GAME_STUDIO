@@ -24,8 +24,12 @@ Ou seja: **atirar demais te deixa cego — mas matar devolve óleo.** O erro nã
 atacar; é segurar o botão em vazio. A decisão é constante: *atiro agora ou guardo
 óleo para não ficar cego?*
 
-**A run tem 4 salas:** combate → Santuário (1 de 3 oferendas) → combate →
+**A run tem 4 salas:** combate → Santuário (1 de 3 itens) → combate →
 Santuário → **Cobra Grande** → Santuário → **Farol** (vitória).
+
+> Os itens têm **tags** (`lente`, `oleo`, `corpo`, `resonancia`). Combiná-las
+> acende **sinergias** (Luz de Estádio, Cera Viva, Casco, Brasa Viva) que mudam
+> mais do que um número — e as maldições aparecem só a partir da 2ª sala.
 
 > A Cobra Grande é **imune no escuro**. Você precisa segurar a luz nela por 2,5 s
 > para expô-la — a luta obriga a parar de desviar e apontar.

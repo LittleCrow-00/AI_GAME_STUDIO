@@ -1,25 +1,26 @@
-[gd_resource type="Resource" load_steps=5 format=3]
+[gd_resource type="Resource" load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
 [ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
 
 [sub_resource type="Resource" id="mod_damage"]
 script = ExtResource("2_mod")
 stat = &"beam_damage"
 mode = 1
-value = 1.35
+value = 1.4
 
 [sub_resource type="Resource" id="mod_range"]
 script = ExtResource("2_mod")
 stat = &"beam_range"
 mode = 1
-value = 0.9
+value = 0.65
 
 [resource]
-script = ExtResource("1_boon")
-id = &"pavio_grosso"
-display_name = "Pavio Grosso"
-description = "+35% de dano, mas o feixe encurta."
+script = ExtResource("1_item")
+id = &"pavio_curto"
+display_name = "Pavio Curto"
+description = "+40% de dano, mas o feixe perde 35% de alcance."
 rarity = 1
-modifiers = [SubResource("mod_damage"), SubResource("mod_range")]
 tags = [&"lente"]
+modifiers = [SubResource("mod_damage"), SubResource("mod_range")]
+max_stacks = 2

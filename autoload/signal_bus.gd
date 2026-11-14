@@ -26,6 +26,8 @@ signal dash_charges_changed(current: int, maximum: int)
 signal beam_dried
 signal light_well_entered(well: Node)
 signal light_well_exited(well: Node)
+signal item_acquired(item: ItemData, stacks: int)
+signal synergy_activated(synergy: StringName)
 
 # --- Feixe ---
 signal beam_hit_enemy(enemy: Node, damage: float)

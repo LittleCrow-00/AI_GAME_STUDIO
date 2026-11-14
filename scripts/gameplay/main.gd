@@ -88,15 +88,15 @@ func _on_room_cleared() -> void:
 	_state = State.SANCTUARY
 	SignalBus.run_state_changed.emit(_state)
 
-	var boons := BoonDatabase.draw(3)
+	var items := ItemDatabase.draw(3, _room_index + 1)
 	get_tree().paused = true
-	sanctuary.open(boons)
-	var chosen: BoonData = await sanctuary.boon_chosen
+	sanctuary.open(items)
+	var chosen: ItemData = await sanctuary.item_chosen
 	sanctuary.close()
 	get_tree().paused = false
 
 	if chosen != null:
-		player.apply_boon(chosen)
+		player.apply_item(chosen)
 
 	_transitioning = false
 	_start_room(_room_index + 1)

@@ -25,7 +25,8 @@ func _ready() -> void:
 	_test_light_well()
 	_test_projectile_pool()
 	_test_boss_exposure()
-	await _test_boon_application()
+	_test_item_pool()
+	await _test_items_and_synergies()
 	await _test_farol()
 	await _test_arena_progression()
 
@@ -144,18 +145,53 @@ func _test_boss_exposure() -> void:
 	boss.queue_free()
 
 
-func _test_boon_application() -> void:
+func _test_items_and_synergies() -> void:
 	var player := _spawn_player()
-	var before := player.max_oil
-	player.apply_boon(BoonDatabase.ALL[8])
-	_check(is_equal_approx(player.max_oil, before + 20.0), "Boon: aumenta óleo máximo")
+	await get_tree().process_frame
+
+	var cera := ItemDatabase.get_item(&"cera_velha")
+	var oil_before := player.max_oil
+	player.apply_item(cera)
+	_check(is_equal_approx(player.max_oil, oil_before + 20.0), "Item: cera_velha aumenta óleo máximo")
 
 	var dash_before := player.stats.get_stat(&"dash_charges_max")
-	player.apply_boon(BoonDatabase.ALL[5])
-	_check(player.stats.get_stat(&"dash_charges_max") > dash_before, "Boon: adiciona carga de dash")
+	player.apply_item(ItemDatabase.get_item(&"folego"))
+	_check(player.stats.get_stat(&"dash_charges_max") > dash_before, "Item: folego adiciona carga de dash")
+
+	player.apply_item(ItemDatabase.get_item(&"fragmento"))
+	_check(player.beam.refraction == 1, "Item: fragmento ativa refração no feixe")
+
+	player.apply_item(ItemDatabase.get_item(&"olho_de_boto"))
+	_check(player.beam.refraction == 3, "Item: refração acumula entre itens")
+	_check(player._known_synergies.has(Inventory.SYNERGY_ESTADIO), "Sinergia: luz_de_estadio com 2 itens de lente")
+
+	player.apply_item(ItemDatabase.get_item(&"sangue_quente"))
+	_check(player._oil_on_kill_bonus > 0.0, "Sinergia: cera_viva com 2 itens de óleo")
+
+	var casco_before := player.stats.get_stat(&"dash_charges_max")
+	player.apply_item(ItemDatabase.get_item(&"amuleto_de_osso"))
+	player.apply_item(ItemDatabase.get_item(&"casca_grossa"))
+	_check(player.stats.get_stat(&"dash_charges_max") > casco_before, "Sinergia: casco com 3 itens de corpo")
+
+	player.apply_item(ItemDatabase.get_item(&"furador"))
+	_check(player.beam.pierce_walls, "Item: furador atravessa paredes")
+
+	var stacks_before := player.inventory.stacks_of(&"fragmento")
+	player.apply_item(ItemDatabase.get_item(&"fragmento"))
+	_check(
+		player.inventory.stacks_of(&"fragmento") == stacks_before
+		or player.inventory.stacks_of(&"fragmento") == stacks_before + 1,
+		"Item: respeita limite de stacks",
+	)
 
 	player.queue_free()
 	await get_tree().process_frame
+
+
+func _test_item_pool() -> void:
+	_check(ItemDatabase.count() >= 25, "ItemDatabase: ao menos 25 itens")
+	for item in ItemDatabase.draw(3, 0):
+		_check(item.rarity != ItemData.Rarity.CURSED, "ItemDatabase: sala 0 não oferece maldição")
 
 
 func _test_farol() -> void:

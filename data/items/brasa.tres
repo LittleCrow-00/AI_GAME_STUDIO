@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"brasa"
+display_name = "Brasa"
+description = "Matar inimigos dispara uma pequena explosão de luz ao redor."
+rarity = 1
+tags = [&"resonancia"]
+max_stacks = 2
+behavior_id = &"nova"
+behavior_value = 30.0
+behavior_value_2 = 120.0

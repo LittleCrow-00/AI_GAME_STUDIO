@@ -33,7 +33,7 @@
 │               RunManager, Stats                     │
 ├─────────────────────────────────────────────────────┤
 │ NÚCLEO        SignalBus, RngService, TimeService,   │  autoloads + Resources
-│               BoonDatabase, dados                   │
+│               ItemDatabase, Inventory, dados        │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -46,17 +46,17 @@ autoload/
   signal_bus.gd          barramento global de eventos
   rng_service.gd         aleatoriedade determinística por stream
   time_service.gd        hitstop global (altera Engine.time_scale)
-  boon_database.gd       lista de oferendas + sorteio sem repetição
+  item_database.gd       lista de itens + sorteio (sem repetição, maldições)
 resources/
   stat_modifier.gd       modificador atômico (ADD/MULTIPLY)
   stat_sheet.gd          agregação com cache (base → ADD → MULTIPLY)
-  item_data.gd           item de run (.tres) — Fase 4
-  boon_data.gd           oferenda de santuário (.tres)
+  item_data.gd           item de run (.tres): modificadores + 1 comportamento
+  inventory.gd           itens → modificadores, sinergias compostas, comportamentos
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres) — ainda não usado
 data/
   enemies/               afogado, iara, boto, curupira, cobra_grande (.tres)
-  boons/                 9 oferendas (.tres)
+  items/                 25 itens (.tres)
 scripts/
   player/player.gd       movimento, dash, óleo, focos, visão, StatSheet
   beam/beam.gd           cone de luz: dano por tick + LOS + visual procedural
@@ -94,8 +94,8 @@ Main._start_room(index)
   → Arena.setup(index) → add_child → Arena._ready
       → ProjectilePool + LightWells + (Farol?) + SpawnDirector
       → start() → _start_wave()
-  → sala limpa → Main pausa a árvore → Sanctuary.open(3 oferendas)
-      → jogador escolhe → Main.apply_boon() → _start_room(index + 1)
+  → sala limpa → Main pausa a árvore → Sanctuary.open(3 itens)
+      → jogador escolhe → Main.apply_item() → _start_room(index + 1)
   → sala 4 (Farol) acesa → VITÓRIA
 ```
 
@@ -154,9 +154,14 @@ CobraGrande._on_beam_hit()    → exposure += 0.04/tick
 
 - **Novos inimigos:** `EnemyData` + cena que estende `Enemy` e sobrescreve
   `_think` / `_on_telegraph_end`. **Nenhum código novo na arena.**
-- **Novos itens:** novo `ItemData` em `data/items/` — **sem tocar em código**.
-  O `Player.apply_boon()` já é o gancho.
-- **Novas oferendas:** novo `.tres` em `data/boons/` + uma linha no `BoonDatabase`.
+- **Novos itens:** novo `ItemData` em `data/items/` + uma linha no `ItemDatabase`.
+  Modificadores e o comportamento são dados; **nenhuma regra nova no Player**.
+- **Novas sinergias:** novo bloco em `Inventory.rebuild()` que devolve
+  modificadores/comportamentos com origem `synergies`. O Player não sabe quais
+  itens existem — só lê o resultado.
+- **Novos comportamentos:** um `match` em `Inventory.rebuild()` que soma/ativa o
+  efeito, e um alvo em `Player`/`Beam` (`refraction`, `oil_on_hit`, `nova`,
+  `pierce`).
 - **Refração/estados:** propriedades do `Beam` + `StatusSystem` (a criar).
 - **Meta-progressão:** `SaveSystem` (a criar), desbloqueios laterais.
 

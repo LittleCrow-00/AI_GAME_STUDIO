@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://resources/boon_data.gd" id="1_boon"]
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
 [ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
 
 [sub_resource type="Resource" id="mod_range"]
@@ -10,10 +10,11 @@ mode = 1
 value = 1.25
 
 [resource]
-script = ExtResource("1_boon")
+script = ExtResource("1_item")
 id = &"lente_maior"
 display_name = "Lente Maior"
 description = "O feixe alcança mais longe."
 rarity = 0
-modifiers = [SubResource("mod_range")]
 tags = [&"lente"]
+modifiers = [SubResource("mod_range")]
+max_stacks = 2

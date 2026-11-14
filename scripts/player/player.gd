@@ -3,7 +3,7 @@ extends CharacterBody2D
 ## O Faroleiro.
 ##
 ## Responsabilidades: movimento, dash (com i-frames), óleo, focos de luz,
-## integração com o Feixe e o `StatSheet` que as oferendas alimentam.
+## integração com o Feixe e o `StatSheet` que os itens alimentam.
 ## Nenhum conhecimento sobre HUD ou spawn: emite sinais.
 
 signal died
@@ -35,6 +35,7 @@ const LIGHT_SLOW_FACTOR := 0.4
 @onready var vision_light: PointLight2D = $VisionLight
 
 var stats: StatSheet
+var inventory: Inventory
 
 var max_health: float = 100.0
 var max_oil: float = 100.0
@@ -47,6 +48,14 @@ var _move_speed: float = 220.0
 var _dash_charges_max: int = 1
 var _light_mult: float = 1.0
 
+## Comportamentos agregados pelo inventário. Zero/desligado = sem efeito.
+var _refraction: int = 0
+var _pierce_walls: bool = false
+var _oil_on_hit: float = 0.0
+var _oil_on_kill_bonus: float = 0.0
+var _nova_damage: float = 0.0
+var _nova_radius: float = 0.0
+
 var _dead: bool = false
 var _iframes: float = 0.0
 var _dash_time_left: float = 0.0
@@ -56,6 +65,8 @@ var _dash_direction: Vector2 = Vector2.RIGHT
 var _dry_left: float = 0.0
 var _in_light: bool = false
 var _light_rate: float = 0.0
+var _in_nova: bool = false
+var _known_synergies: Array[StringName] = []
 
 
 func _ready() -> void:
@@ -70,11 +81,13 @@ func _ready() -> void:
 	stats.set_base(&"move_speed", base_move_speed)
 	stats.set_base(&"dash_charges_max", float(base_dash_charges))
 	stats.set_base(&"light_oil_per_second", base_light_oil)
+	inventory = Inventory.new()
 	_refresh_stats(false)
 
 	health = max_health
 	oil = max_oil
 	SignalBus.enemy_died.connect(_on_enemy_died)
+	SignalBus.enemy_hit.connect(_on_enemy_hit)
 	_emit_all()
 
 
@@ -95,6 +108,8 @@ func _refresh_stats(heal_delta: bool = true) -> void:
 		stats.get_stat(&"beam_half_angle"),
 		stats.get_stat(&"beam_damage"),
 	)
+	beam.set_refraction(_refraction)
+	beam.set_pierce_walls(_pierce_walls)
 
 	if heal_delta:
 		health = minf(max_health, health + maxf(0.0, max_health - previous_max_health))
@@ -108,22 +123,54 @@ func _refresh_stats(heal_delta: bool = true) -> void:
 	_dash_charges = mini(_dash_charges, _dash_charges_max)
 
 
-## Aplica uma oferenda. Os modificadores carregam a origem para poderem ser
-## removidos depois (itens trocados, maldições, etc.).
-func apply_boon(boon: BoonData) -> void:
-	for modifier in boon.modifiers:
-		var copy := modifier.duplicate() as StatModifier
-		copy.set_meta("source_id", boon.id)
-		stats.add(copy)
+## Adiciona um item ao inventário e recalcula tudo. Devolve `false` se o item já
+## está no máximo de stacks (o Santuário usa isso para não oferecer repetidos).
+func apply_item(item: ItemData) -> bool:
+	if item == null or inventory == null:
+		return false
+	if not inventory.add(item):
+		return false
+	_recompute_inventory()
+
+	if item.heal_on_pick > 0.0:
+		heal(item.heal_on_pick)
+	if item.oil_on_pick > 0.0:
+		add_oil(item.oil_on_pick)
+
+	SignalBus.item_acquired.emit(item, inventory.stacks_of(item.id))
+	return true
+
+
+## Refaz o `StatSheet` a partir do inventário. É a única ponte entre itens e
+## atributos: nada aqui decide "item X faz Y".
+func _recompute_inventory() -> void:
+	stats.remove_source(Inventory.SOURCE)
+	stats.remove_source(Inventory.SYNERGY_SOURCE)
+
+	var result := inventory.rebuild()
+	for modifier in result["modifiers"]:
+		stats.add(modifier as StatModifier)
+
+	_refraction = int(result["refraction"])
+	_oil_on_hit = float(result["oil_on_hit"])
+	_oil_on_kill_bonus = float(result["oil_on_kill_bonus"])
+	_nova_damage = float(result["nova_damage"])
+	_nova_radius = float(result["nova_radius"])
+	_pierce_walls = bool(result["pierce"])
+
 	_refresh_stats(true)
+
+	var current: Array[StringName] = []
+	for synergy in result["synergies"]:
+		current.append(synergy)
+	for synergy in current:
+		if not _known_synergies.has(synergy):
+			SignalBus.synergy_activated.emit(synergy)
+	_known_synergies = current
+
 	SignalBus.health_changed.emit(health, max_health)
 	SignalBus.oil_changed.emit(oil, max_oil)
 	_emit_dash()
-
-	if boon.heal_on_pick > 0.0:
-		heal(boon.heal_on_pick)
-	if boon.oil_on_pick > 0.0:
-		add_oil(boon.oil_on_pick)
 
 
 func _physics_process(delta: float) -> void:
@@ -290,10 +337,35 @@ func has_dash_charge() -> bool:
 	return _dash_charges > 0 and _dash_cooldown_left <= 0.0 and _dash_time_left <= 0.0
 
 
-func _on_enemy_died(_enemy: Node, _position: Vector2) -> void:
+func _on_enemy_hit(_enemy: Node, _damage: float, _position: Vector2) -> void:
+	if _oil_on_hit > 0.0:
+		add_oil(_oil_on_hit)
+
+
+func _on_enemy_died(_enemy: Node, position: Vector2) -> void:
 	if _dash_charges < _dash_charges_max:
 		_dash_charges += 1
 		_emit_dash()
+
+	if _oil_on_kill_bonus > 0.0:
+		add_oil(_oil_on_kill_bonus)
+
+	if _nova_damage > 0.0 and _nova_radius > 0.0 and not _in_nova:
+		_detonate_nova(position)
+
+
+## Explosão de luz ao matar. `_in_nova` impede que a explosão se auto-alimente.
+func _detonate_nova(position: Vector2) -> void:
+	_in_nova = true
+	for node in get_tree().get_nodes_in_group("enemies"):
+		var enemy := node as Enemy
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if enemy.global_position.distance_to(position) > _nova_radius:
+			continue
+		enemy.take_damage(_nova_damage, position)
+	_in_nova = false
+	SignalBus.shake_requested.emit(0.18)
 
 
 func _emit_all() -> void:

@@ -2,6 +2,41 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.4.0] — 2026-11-14
+
+### Adicionado
+
+- **Fase 4 — Itens e sinergias.**
+- **25 itens** em `data/items/*.tres` (Lente, Pavio, Óleo, Casca, Corpo,
+  Ressonância e Maldições), cada um com **um** comportamento no máximo.
+- **`ItemData`** (`resources/item_data.gd`): modificadores, tags, stacks e
+  `behavior_id` (`refraction`, `oil_on_hit`, `nova`, `pierce`).
+- **`Inventory`** (`resources/inventory.gd`): única ponte entre itens e atributos.
+  Agrega modificadores por stack e reconhece **sinergias compostas**:
+  - **Luz de Estádio** — 2× `lente` + refração → +10% dano e alcance
+  - **Cera Viva** — 2× `oleo` + óleo por acerto → +1 de óleo por abate
+  - **Casco** — 3× `corpo` → +1 carga de dash
+  - **Brasa Viva** — 2× `resonancia` + explosão → explosão 1,5× maior
+- **`ItemDatabase`** (autoload) com sorteio sem repetição e **maldições** (12% a
+  partir da 2ª sala; sala 0 nunca oferece maldição).
+- **`Beam`**: **refração** (até 4 feixes extras) e **perfuração** (`pierce`
+  ignora paredes no LOS).
+- **`Player`**: `apply_item()`, recálculo via `Inventory`, óleo por acerto,
+  explosão ao matar (`_in_nova` evita recursão) e bônus de óleo por abate.
+- **Santuário** mostra nome, raridade (com "maldito"), tags e descrição do item.
+
+### Removido
+
+- Sistema antigo de oferendas: `BoonData`, `BoonDatabase`, `data/boons/*.tres` e
+  `Player.apply_boon()`.
+
+### Alterado
+
+- `main.gd` sorteia itens por andar (`ItemDatabase.draw(3, room + 1)`).
+- Testes de fumaça cobrem itens, stacks, refração e as 4 sinergias (33 asserções).
+
+---
+
 ## [0.3.0] — 2026-11-14
 
 ### Adicionado

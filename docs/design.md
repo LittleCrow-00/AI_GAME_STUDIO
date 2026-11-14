@@ -163,9 +163,28 @@ Ressonância (multiplicadores), Maldição (alto custo, alto poder).
 **Regra de design inviolável:** todo item deve mudar **uma decisão**, não apenas
 um número. Item que só aumenta dano **não entra**.
 
-**Implementação:** `ItemData` (`Resource` em `data/items/*.tres`) com lista de
-`StatModifier`. O `StatSheet` agrega (soma dos ADD, produto dos MULTIPLY) com
-cache. Nenhum item contém lógica própria.
+**Implementação:** `ItemData` (`Resource` em `data/items/*.tres`) carrega
+`StatModifier`s, tags e no máximo **um** comportamento (`refraction`,
+`oil_on_hit`, `nova`, `pierce`). O `Inventory` (`resources/inventory.gd`) é a
+única ponte: transforma itens + stacks em modificadores, reconhece sinergias por
+tags e devolve comportamentos agregados. O `Player`/`Beam` só executam. Nenhum
+item contém lógica própria e o Player nunca compara item por item.
+
+**Sinergias implementadas:**
+
+| Sinergia | Condição | Efeito |
+|---|---|---|
+| Luz de Estádio | 2× `lente` + refração | +10% dano e alcance do feixe |
+| Cera Viva | 2× `oleo` + óleo por acerto | +1 de óleo por abate |
+| Casco | 3× `corpo` | +1 carga de dash |
+| Brasa Viva | 2× `resonancia` + explosão | explosão 1,5× maior |
+
+**Comportamentos:** `refraction` (feixes extras do `Beam`), `pierce` (ignora
+paredes no LOS), `oil_on_hit` (óleo por acerto) e `nova` (explosão ao matar, com
+guarda `_in_nova` para não se auto-alimentar).
+
+**Maldições:** entram no sorteio a partir da 2ª sala, com 12% de chance por item.
+Sala 0 nunca oferece maldição.
 
 **Archetypes alvo:**
 

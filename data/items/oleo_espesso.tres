@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_drain"]
+script = ExtResource("2_mod")
+stat = &"oil_drain_per_second"
+mode = 1
+value = 0.65
+
+[sub_resource type="Resource" id="mod_damage"]
+script = ExtResource("2_mod")
+stat = &"beam_damage"
+mode = 1
+value = 0.85
+
+[resource]
+script = ExtResource("1_item")
+id = &"oleo_espesso"
+display_name = "Óleo Espesso"
+description = "Gasta 35% menos óleo, mas o feixe perde 15% de dano."
+rarity = 1
+tags = [&"oleo"]
+modifiers = [SubResource("mod_drain"), SubResource("mod_damage")]
+max_stacks = 2

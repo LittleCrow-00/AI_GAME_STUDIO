@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"sangue_quente"
+display_name = "Sangue Quente"
+description = "Cada acerto do feixe devolve um pouco de óleo."
+rarity = 1
+tags = [&"oleo"]
+max_stacks = 2
+behavior_id = &"oil_on_hit"
+behavior_value = 1.0
