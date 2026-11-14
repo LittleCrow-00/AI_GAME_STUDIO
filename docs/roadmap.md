@@ -183,6 +183,22 @@ Plano detalhado em **`docs/polish.md`**. Resumo:
 
 ---
 
+## Fase 10 — Passo visual (pixel art)
+
+- [x] Faroleiro redesenhado em pixel art 32×32, paleta fixa, escala inteira e
+      âncora nos pés (`tools/gen_sprites.mjs`)
+- [x] 10 inimigos convertidos para a mesma paleta (64×64, sem gradiente)
+      (`tools/pixelate_sprites.mjs`)
+- [x] Filtro nearest global + `CanvasModulate` de 0,22 → 0,78 + paletas de
+      bioma mais claras: pretos de 88,7% → 0%, p99 do feixe 0,326 → 0,781
+- [x] `docs/art.md` (regras do pixel art) e `docs/art/preview.html` com todos
+      os sprites e capturas do jogo
+- [ ] Sombra, rim light e props no chão (pedras, poças, mato)
+- [ ] Animação por quadros (passada, capa, lanterna) no lugar do bob atual
+- [ ] Revisão do jogador: feedback de dano, dash e óleo (ver `docs/polish.md`)
+
+---
+
 ## Dívida técnica conhecida
 
 | Item | Impacto | Onde resolver |

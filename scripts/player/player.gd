@@ -22,6 +22,10 @@ const LIGHT_SLOW_FACTOR := 0.4
 ## Origem única dos bônus temporários de limiar da Ressonância.
 const THRESHOLD_SOURCE := &"threshold"
 
+## Altura final do sprite em pixels de tela. A escala é inteira para o pixel
+## art não nascer com meio-pixel (filtro nearest).
+const SPRITE_HEIGHT := 64.0
+
 # --- Valores base (ponto de partida do StatSheet) ---
 @export var base_max_health: float = 100.0
 @export var base_max_oil: float = 100.0
@@ -252,10 +256,12 @@ func _build_sprite() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.name = "Body"
 	_sprite.texture = preload("res://assets/sprites/player.svg")
-	_sprite.position = Vector2(0.0, -2.0)
-	var height := float(_sprite.texture.get_height())
-	if height > 0.0:
-		_sprite.scale = Vector2.ONE * (46.0 / height)
+	var size := _sprite.texture.get_size()
+	# Pixel art: escala inteira e âncora nos pés (nada de meia-pixel).
+	var scale_factor := maxf(1.0, roundf(SPRITE_HEIGHT / size.y))
+	_sprite.scale = Vector2.ONE * scale_factor
+	_sprite.centered = false
+	_sprite.offset = Vector2(-size.x * 0.5, -size.y)
 	add_child(_sprite)
 	move_child(_sprite, 0)
 

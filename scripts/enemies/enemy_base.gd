@@ -73,13 +73,17 @@ func _build_sprite() -> void:
 
 
 ## Ajusta a escala para que o sprite tenha ~2.8x o diâmetro de colisão.
+## A escala final é inteira: pixel art com filtro nearest não aceita
+## meia-pixel, senão o inimigo "treme" ao se mover.
 func _fit_sprite() -> void:
 	if _sprite_node == null or _sprite_node.texture == null:
 		return
 	var height := float(_sprite_node.texture.get_height())
 	if height <= 0.0:
 		return
-	_sprite_node.scale = Vector2.ONE * (body_radius * 2.8 / height) * _sprite_scale_mult
+	var target := body_radius * 2.8 * _sprite_scale_mult
+	var factor := maxf(1.0, roundf(target / height))
+	_sprite_node.scale = Vector2.ONE * factor
 	_sprite_node.position = Vector2(0.0, -1.0)
 	_base_scale = _sprite_node.scale
 

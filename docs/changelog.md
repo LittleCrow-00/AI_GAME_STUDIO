@@ -6,6 +6,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Adicionado
 
+- **Fase 10 (passo visual) — pixel art.**
+- Faroleiro redesenhado em 32×32 com paleta fixa (`tools/gen_sprites.mjs`), e os
+  10 inimigos convertidos para a mesma paleta em 64×64
+  (`tools/pixelate_sprites.mjs`).
+- `docs/art.md` (grade, paleta, filtro nearest, escala inteira) e
+  `docs/art/preview.html` com todos os sprites e capturas do build rodando.
 - **Plano da Fase 9 (polimento)** em `docs/polish.md`: game feel/juice,
   áudio (buses, variação, música por bioma), 12 itens novos (8 imediatos + 4
   com comportamento) e 2 sinergias, com ordem de execução e teste cego de
@@ -76,6 +82,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Corrigido
 
+- **Escuro demais:** a cena estava com 88,7% dos pixels quase pretos (média de
+  luminância 0,018). `CanvasModulate` subiu de 0,22 para 0,78, as paletas de
+  bioma foram clareadas e o filtro nearest entrou no projeto — a média foi para
+  0,054, os pretos para 0% e o p99 da área do feixe de 0,326 para 0,781.
+- Sprites de inimigos agora usam escala inteira: sem meia-pixel, sem "tremer"
+  ao andar.
 - `TitleScreen` chamava `set_input_as_handled()` depois de trocar de cena, o que
   gerava `Condition "!is_inside_tree()" is true` no console ao clicar em
   **DESCER**. O envio do evento agora é protegido por `is_inside_tree()`.

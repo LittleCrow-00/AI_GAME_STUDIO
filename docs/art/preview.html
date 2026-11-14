@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAROLEIRO — arte</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 24px; background: #0b1418; color: #cfe3e6; font: 14px/1.5 system-ui, sans-serif; }
+  h1 { font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: #ffb347; margin: 28px 0 10px; }
+  h1:first-child { margin-top: 0; }
+  p { max-width: 62ch; color: #8fa8ad; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+  .cell { background: #101d22; border: 1px solid #1d3a42; padding: 10px; }
+  .cell img { display: block; image-rendering: pixelated; background: #0d1a1f; }
+  .cell small { display: block; margin-top: 6px; color: #6f8a90; text-align: center; }
+  .swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sw { width: 30px; height: 30px; border: 1px solid #000; }
+  .shots img { width: 100%; max-width: 620px; height: auto; image-rendering: auto; border: 1px solid #1d3a42; }
+</style>
+</head>
+<body>
+<h1>Faroleiro</h1>
+<div class="row">
+  <div class="cell"><img src="../assets/sprites/player.svg" width="128" height="128" alt="Faroleiro 4x"><small>4×</small></div>
+  <div class="cell"><img src="../assets/sprites/player.svg" width="256" height="256" alt="Faroleiro 8x"><small>8×</small></div>
+  <div class="cell"><img src="../assets/sprites/player.svg" width="512" height="512" alt="Faroleiro 16x"><small>16×</small></div>
+</div>
+
+<h1>Inimigos</h1>
+<div class="row">
+  <div class="cell"><img src="../assets/sprites/afogado.svg" width="128" height="128" alt="Afogado"><small>afogado</small></div>
+  <div class="cell"><img src="../assets/sprites/boto.svg" width="128" height="128" alt="Boto"><small>boto</small></div>
+  <div class="cell"><img src="../assets/sprites/iara.svg" width="128" height="128" alt="Iara"><small>iara</small></div>
+  <div class="cell"><img src="../assets/sprites/curupira.svg" width="128" height="128" alt="Curupira"><small>curupira</small></div>
+  <div class="cell"><img src="../assets/sprites/caipora.svg" width="128" height="128" alt="Caipora"><small>caipora</small></div>
+  <div class="cell"><img src="../assets/sprites/mula.svg" width="128" height="128" alt="Mula"><small>mula</small></div>
+  <div class="cell"><img src="../assets/sprites/boitata.svg" width="128" height="128" alt="Boitata"><small>boitatá</small></div>
+  <div class="cell"><img src="../assets/sprites/mapinguari.svg" width="128" height="128" alt="Mapinguari"><small>mapinguari</small></div>
+  <div class="cell"><img src="../assets/sprites/cobra_grande.svg" width="128" height="128" alt="Cobra Grande"><small>cobra grande</small></div>
+  <div class="cell"><img src="../assets/sprites/cuca.svg" width="128" height="128" alt="Cuca"><small>cuca</small></div>
+</div>
+
+<h1>Paleta</h1>
+<div class="swatches">
+  <span class="sw" style="background:#070b0d"></span><span class="sw" style="background:#0d1519"></span>
+  <span class="sw" style="background:#122229"></span><span class="sw" style="background:#1a333b"></span>
+  <span class="sw" style="background:#21505c"></span><span class="sw" style="background:#2c7382"></span>
+  <span class="sw" style="background:#3f9aa8"></span><span class="sw" style="background:#6cc0cc"></span>
+  <span class="sw" style="background:#a8e0e6"></span><span class="sw" style="background:#3a2a18"></span>
+  <span class="sw" style="background:#6b4a22"></span><span class="sw" style="background:#a8763a"></span>
+  <span class="sw" style="background:#d9a066"></span><span class="sw" style="background:#f2c98a"></span>
+  <span class="sw" style="background:#fff0c8"></span><span class="sw" style="background:#4a1414"></span>
+  <span class="sw" style="background:#7f2420"></span><span class="sw" style="background:#b83a2c"></span>
+  <span class="sw" style="background:#e8623c"></span><span class="sw" style="background:#1d3a1a"></span>
+  <span class="sw" style="background:#2f5c26"></span><span class="sw" style="background:#4f8a34"></span>
+  <span class="sw" style="background:#7ab84a"></span><span class="sw" style="background:#2a1a3a"></span>
+  <span class="sw" style="background:#4a2f66"></span><span class="sw" style="background:#7a55a8"></span>
+  <span class="sw" style="background:#e8f4f8"></span><span class="sw" style="background:#4a4f55"></span>
+  <span class="sw" style="background:#8a949a"></span>
+</div>
+
+<h1>Do jogo (build Web, 1280×720)</h1>
+<div class="shots row">
+  <div class="cell"><img src="shot_title.png" alt="Tela de título"><small>título</small></div>
+  <div class="cell"><img src="shot_run.png" alt="Partida"><small>partida</small></div>
+  <div class="cell"><img src="shot_player.png" alt="Faroleiro em jogo"><small>faroleiro em jogo</small></div>
+</div>
+</body>
+</html>

@@ -6,9 +6,9 @@
 script = ExtResource("1_biome")
 id = &"fossa"
 display_name = "Fossa"
-base_color = Color(0.026, 0.05, 0.07, 1)
-tile_color = Color(0.046, 0.084, 0.106, 1)
-puddle_color = Color(0.1, 0.21, 0.27, 1)
-wall_color = Color(0.018, 0.03, 0.042, 1)
-edge_color = Color(0.14, 0.25, 0.31, 1)
-rim_color = Color(0.26, 0.42, 0.5, 1)
+base_color = Color(0.05, 0.085, 0.11, 1)
+tile_color = Color(0.085, 0.14, 0.17, 1)
+puddle_color = Color(0.14, 0.28, 0.35, 1)
+wall_color = Color(0.03, 0.05, 0.07, 1)
+edge_color = Color(0.22, 0.36, 0.44, 1)
+rim_color = Color(0.40, 0.58, 0.68, 1)
