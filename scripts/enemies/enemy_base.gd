@@ -28,12 +28,11 @@ func _ready() -> void:
 
 func apply_data(data: EnemyData) -> void:
 	max_health = data.health
+	health = data.health
 	move_speed = data.move_speed
 	contact_damage = data.contact_damage
 	oil_drop = data.oil_drop
 	body_color = data.body_color
-	if health <= 0.0 or is_equal_approx(health, max_health):
-		health = max_health
 
 
 func _physics_process(delta: float) -> void:

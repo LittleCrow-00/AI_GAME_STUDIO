@@ -6,7 +6,7 @@ extends Node2D
 signal room_cleared
 signal wave_changed(index: int, total: int)
 
-const ENEMY_SCENE: PackedScene = preload("res://scenes/enemies/afogado.tscn")
+const ENEMY_DATA: EnemyData = preload("res://data/enemies/afogado.tres")
 const OIL_DROP_SCENE: PackedScene = preload("res://scenes/pickups/oil_drop.tscn")
 
 @export var arena_size: Vector2 = Vector2(1120.0, 640.0)
@@ -68,11 +68,14 @@ func _next_wave() -> void:
 
 
 func _spawn_enemy() -> void:
-	var enemy := ENEMY_SCENE.instantiate() as Enemy
+	var enemy := ENEMY_DATA.scene.instantiate() as Enemy
 	enemy.position = _random_spawn_position()
-	enemy.max_health = enemy.max_health * difficulty
-	enemy.move_speed = enemy.move_speed * (1.0 + 0.04 * (difficulty - 1.0))
-	enemy.contact_damage = enemy.contact_damage * (1.0 + 0.2 * (difficulty - 1.0))
+	enemy.apply_data(ENEMY_DATA)
+	enemy.max_health = ENEMY_DATA.health * difficulty
+	enemy.health = enemy.max_health
+	enemy.move_speed = ENEMY_DATA.move_speed * (1.0 + 0.04 * (difficulty - 1.0))
+	enemy.contact_damage = ENEMY_DATA.contact_damage * (1.0 + 0.2 * (difficulty - 1.0))
+	enemy.oil_drop = ENEMY_DATA.oil_drop
 	add_child(enemy)
 
 

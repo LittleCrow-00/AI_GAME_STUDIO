@@ -47,6 +47,8 @@ resources/
   item_data.gd           item de run (.tres)
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres)
+data/
+  enemies/afogado.tres   dados do inimigo base (consumido por Arena)
 scripts/
   player/player.gd       movimento, dash, óleo, integração com o feixe
   beam/beam.gd           cone de luz: dano por tick + LOS + visual procedural

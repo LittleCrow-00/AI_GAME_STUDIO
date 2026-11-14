@@ -31,6 +31,8 @@
 - [x] Feixe: cone, dano por tick, linha de visão contra paredes
 - [x] Óleo: consumo, gotas de inimigos, *estouro* (cegueira de 1,5 s)
 - [x] Inimigo base (Afogado): perseguição, dano por contato, morte, drop
+- [x] Inimigo definido por dados (`data/enemies/afogado.tres` → `EnemyData`),
+      não por constantes no script da arena
 - [x] Arena com paredes, 3 ondas por sala, dificuldade por andar
 - [x] Loop de run: 3 salas → vitória; morte → restart (`R`)
 - [x] HUD: vida, óleo, cargas de dash, cadeia, pontos, ondas
