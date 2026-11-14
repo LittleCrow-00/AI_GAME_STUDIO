@@ -31,6 +31,8 @@ func _ready() -> void:
 	await _test_cuca_aura()
 	await _test_mula()
 	await _test_fire_patch()
+	await _test_dark_zone()
+	await _test_caipora()
 	await _test_final_room_boss()
 	_test_item_pool()
 	_test_sanctuary_shop()
@@ -419,6 +421,53 @@ func _test_fire_patch() -> void:
 	_check(player.health < before, "Fogo: dano no chão")
 	_check(get_tree().get_nodes_in_group("fire_patches").is_empty(), "Fogo: some depois do tempo de vida")
 
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_dark_zone() -> void:
+	var player := _spawn_player()
+	var base_range := player.stats.get_stat(&"beam_range")
+
+	var zone := DarkZone.new()
+	zone.radius = 120.0
+	add_child(zone)
+
+	player.global_position = zone.global_position
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	_check(player.stats.get_stat(&"beam_range") < base_range, "Escuridao: encolhe o feixe dentro")
+
+	player.global_position = Vector2(600.0, 0.0)
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	_check(
+		is_equal_approx(player.stats.get_stat(&"beam_range"), base_range),
+		"Escuridao: luz volta ao sair",
+	)
+
+	zone.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_caipora() -> void:
+	var player := _spawn_player()
+	var caipora := Caipora.new()
+	caipora.max_health = 200.0
+	caipora.health = 200.0
+	add_child(caipora)
+	caipora.global_position = Vector2(0.0, -150.0)
+
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	caipora._on_telegraph_end()
+
+	_check(get_tree().get_nodes_in_group("dark_zones").size() > 0, "Caipora: semeia escuridao")
+
+	for node in get_tree().get_nodes_in_group("dark_zones"):
+		node.queue_free()
+	caipora.queue_free()
 	player.queue_free()
 	await get_tree().process_frame
 

@@ -47,6 +47,7 @@ A **Fossa** guarda o que sobrou — e o que desceu junto.
 | Boitatá | Elite de fogo | **Só a luz a fere** — e a luz enche seu calor: cheio, explode e fica imune *(implementado)* |
 | Mapinguari | Tanque | **Couraça**: de longe o feixe se espalha e quase não fere; de perto, dano cheio — mas a investida pune a proximidade *(implementado)* |
 | Mula-sem-cabeça | Galopadora | **Galopa em linha reta** deixando rastro de fogo; depois **ofega** e apanha 40% mais *(implementado)* |
+| Caipora | Guardiã | **Semeia poças de escuridão** que encolhem o feixe de quem está dentro *(implementado)* |
 
 ---
 

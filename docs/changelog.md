@@ -36,6 +36,14 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 - **FirePatch** (`scripts/gameplay/fire_patch.gd`): fogo no chão com dano por
   tique e tempo de vida.
 - Testes: galope/fogo/ofego e dano/expiração do fogo (80 asserções).
+- **Caipora** (`scripts/enemies/caipora.gd`): oitava criatura. Mantém distância e
+  semeia **poças de escuridão**; dentro delas o feixe encolhe 45%. Se já há zonas
+  demais, ela ri e teleporta.
+- **DarkZone** (`scripts/gameplay/dark_zone.gd`): zona que aplica a aura
+  `beam_range` (origem `dark_zone`) e só devolve a luz quando nenhuma outra zona
+  cobre o jogador.
+- Testes: escurecimento dentro/fora da zona e semeadura da Caipora
+  (83 asserções).
 
 ---
 

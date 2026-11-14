@@ -58,6 +58,7 @@ resources/
   inventory.gd           itens → modificadores, sinergias compostas, comportamentos
   threshold_data.gd      recompensa de limiar (.tres): óleo, modificador, explosão
   unlock_data.gd         desbloqueio (.tres): id, nome, custo, item inicial
+  biome_data.gd          paleta do bioma (.tres)
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres) — ainda não usado
 data/
@@ -65,6 +66,7 @@ data/
   items/                 25 itens (.tres)
   thresholds/            chain_10, chain_25, chain_50 (.tres)
   unlocks/               pavio_extra, oleo_frio, lente_estadio (.tres)
+  biomes/                mare_baixa, fossa, cripta_afundada, coracao_do_farol
 assets/
   sprites/               jogador, 4 inimigos e chefe em SVG (Sprite2D)
 scripts/
@@ -76,6 +78,9 @@ scripts/
   enemies/boto.gd        orbita, telegrafa, avança em linha reta
   enemies/curupira.gd    salta para trás do jogador
   enemies/cobra_grande.gd chefe: blindagem/exposição + 3 ataques
+  enemies/cuca.gd        chefe 2: aura de escuridão + 3 ataques
+  enemies/mula.gd        galope em linha reta, rastro de fogo, ofego
+  enemies/caipora.gd     semeia zonas de escuridão, teleporta
   systems/ressonancia.gd cadeia de acertos, multiplicador, pontos
   systems/spawn_director.gd orçamento de ameaça + teto de vivos
   vfx/death_burst.gd     explosão de fragmentos ao matar (visual puro)
@@ -86,6 +91,8 @@ scripts/
   systems/tutorial_director.gd dicas de alpha baixo, 1x por run
   gameplay/arena.gd      geometria, focos, pool, ondas, chefe, farol
   gameplay/light_well.gd foco de luz: recarrega óleo, penaliza movimento
+  gameplay/fire_patch.gd fogo no chão deixado pela Mula (dano por tique)
+  gameplay/dark_zone.gd  poça de escuridão: encolhe o feixe de quem entra
   gameplay/farol.gd      objetivo da sala final (carrega por proximidade)
   gameplay/main.gd       sequência de salas, santuário, vitória, derrota
   ui/hud.gd              barras, leitura, dicas, chefe

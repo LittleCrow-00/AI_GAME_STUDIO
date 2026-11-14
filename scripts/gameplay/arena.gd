@@ -18,6 +18,7 @@ const ENEMY_CURUPIRA: EnemyData = preload("res://data/enemies/curupira.tres")
 const ENEMY_BOITATA: EnemyData = preload("res://data/enemies/boitata.tres")
 const ENEMY_MAPINGUARI: EnemyData = preload("res://data/enemies/mapinguari.tres")
 const ENEMY_MULA: EnemyData = preload("res://data/enemies/mula.tres")
+const ENEMY_CAIPORA: EnemyData = preload("res://data/enemies/caipora.tres")
 
 const FAROL_SCENE: PackedScene = preload("res://scenes/gameplay/farol.tscn")
 
@@ -179,6 +180,7 @@ func _enemy_pool() -> Array[EnemyData]:
 		pool.append(ENEMY_BOTO)
 		pool.append(ENEMY_BOITATA)
 		pool.append(ENEMY_MULA)
+		pool.append(ENEMY_CAIPORA)
 	if room_index >= 3:
 		pool.append(ENEMY_MAPINGUARI)
 	return pool

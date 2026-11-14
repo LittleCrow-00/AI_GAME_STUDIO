@@ -132,8 +132,9 @@ passando; falta o *benchmark* de estresse.
   - [x] Mapinguari (couraçado: dano reduzido de longe, investida pune a proximidade)
   - [x] Cuca (2º chefe: encolhe o alcance do feixe em 35% enquanto viva)
   - [x] Mula-sem-cabeça (galopa deixando rastro de fogo, ofega e apanha mais)
+  - [x] Caipora (semeia poças de escuridão que encolhem o feixe)
   - [x] Biomas como dados (`data/biomes/*.tres`, paleta por profundidade)
-  - [ ] 1 inimigo comum para fechar 8 tipos
+  - [x] 8 tipos de inimigos + 2 chefes
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)
 - [x] Acessibilidade: menu de pausa (`ESC`) com reduzir tremor e flashes,

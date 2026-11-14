@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="body" cx="0.5" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#7fbf6a"/>
+      <stop offset="1" stop-color="#2c4a24"/>
+    </radialGradient>
+    <radialGradient id="smoke" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6a5a9a" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#241a3a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="32" cy="34" r="19" fill="url(#smoke)"/>
+  <circle cx="32" cy="34" r="11" fill="url(#body)" stroke="#16240f" stroke-width="1.6"/>
+  <circle cx="32" cy="34" r="6" fill="#a8d894" opacity="0.45"/>
+
+  <path d="M22 30 C18 24 20 16 26 12 M42 30 C46 24 44 16 38 12"
+        fill="none" stroke="#3d6b32" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M26 12 C22 8 24 4 28 6 C30 3 34 3 35 7 C39 5 41 9 38 12 Z" fill="#8fd47a" opacity="0.9"/>
+
+  <circle cx="28" cy="33" r="2" fill="#ffe066"/>
+  <circle cx="36" cy="33" r="2" fill="#ffe066"/>
+  <circle cx="28" cy="33" r="0.9" fill="#1b1408"/>
+  <circle cx="36" cy="33" r="0.9" fill="#1b1408"/>
+
+  <path d="M32 42 C34 46 38 46 39 43 C41 47 38 50 34 48 C31 50 28 47 30 44 Z" fill="#5a3a2a" opacity="0.85"/>
+
+  <path d="M44 22 C50 18 54 22 50 26 C54 28 52 33 47 31 C48 35 43 36 42 32 Z" fill="#6a5a9a" opacity="0.45"/>
+</svg>
