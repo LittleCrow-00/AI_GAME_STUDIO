@@ -15,6 +15,10 @@ const BOSS_ROOM: int = 2
 const FINAL_ROOM: int = 3
 const BOSS_COBRA: EnemyData = preload("res://data/enemies/cobra_grande.tres")
 const BOSS_CUCA: EnemyData = preload("res://data/enemies/cuca.tres")
+const BIOME_MARE: BiomeData = preload("res://data/biomes/mare_baixa.tres")
+const BIOME_FOSSA: BiomeData = preload("res://data/biomes/fossa.tres")
+const BIOME_CRIPTA: BiomeData = preload("res://data/biomes/cripta_afundada.tres")
+const BIOME_CORACAO: BiomeData = preload("res://data/biomes/coracao_do_farol.tres")
 
 ## Economia da run. Preço sobe por andar para a cera continuar sendo decisão.
 @export var room_clear_cera: int = 5
@@ -74,6 +78,7 @@ func _start_room(index: int) -> void:
 	_arena = ARENA_SCENE.instantiate() as Arena
 	_arena.setup(index)
 	_arena.boss = _boss_for(index)
+	_arena.biome = _biome_for(index)
 	_arena.is_boss_room = _arena.boss != null
 	_arena.is_final_room = index == FINAL_ROOM
 	add_child(_arena)
@@ -88,6 +93,19 @@ func _start_room(index: int) -> void:
 	_state = State.COMBAT
 	SignalBus.run_state_changed.emit(_state)
 	SignalBus.message_requested.emit("DESCEU %d" % (index + 1), 1.4)
+
+
+## Bioma por profundidade: a descida esfria e fica mais roxa.
+func _biome_for(index: int) -> BiomeData:
+	match index:
+		1:
+			return BIOME_FOSSA
+		2:
+			return BIOME_CRIPTA
+		3:
+			return BIOME_CORACAO
+		_:
+			return BIOME_MARE
 
 
 ## Chefe por sala: a Cobra Grande guarda a descida; a Cuca guarda o Farol.

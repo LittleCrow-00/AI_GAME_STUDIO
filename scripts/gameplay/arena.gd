@@ -17,8 +17,11 @@ const ENEMY_BOTO: EnemyData = preload("res://data/enemies/boto.tres")
 const ENEMY_CURUPIRA: EnemyData = preload("res://data/enemies/curupira.tres")
 const ENEMY_BOITATA: EnemyData = preload("res://data/enemies/boitata.tres")
 const ENEMY_MAPINGUARI: EnemyData = preload("res://data/enemies/mapinguari.tres")
+const ENEMY_MULA: EnemyData = preload("res://data/enemies/mula.tres")
 
 const FAROL_SCENE: PackedScene = preload("res://scenes/gameplay/farol.tscn")
+
+const DEFAULT_BIOME: BiomeData = preload("res://data/biomes/mare_baixa.tres")
 
 const WAVES_PER_ROOM: int = 3
 const BASE_BUDGET: int = 4
@@ -31,6 +34,8 @@ const WAVE_BREAK: float = 0.7
 @export var is_final_room: bool = false
 ## Chefe da sala. Vazio = sala de ondas normais.
 @export var boss: EnemyData
+## Bioma da sala. Vazio = `DEFAULT_BIOME`.
+@export var biome: BiomeData
 ## Chance de um inimigo nascer elite (a partir da 2ª sala).
 @export var elite_chance: float = 0.12
 
@@ -173,6 +178,7 @@ func _enemy_pool() -> Array[EnemyData]:
 	if room_index >= 2:
 		pool.append(ENEMY_BOTO)
 		pool.append(ENEMY_BOITATA)
+		pool.append(ENEMY_MULA)
 	if room_index >= 3:
 		pool.append(ENEMY_MAPINGUARI)
 	return pool
@@ -306,36 +312,20 @@ func _draw() -> void:
 		y += step
 
 	_draw_puddles(half, palette["puddle"] as Color)
-	_draw_walls(half)
+	_draw_walls(half, palette)
 
 
 ## A profundidade muda a paleta: mais fundo, mais frio e mais roxo.
 func _palette() -> Dictionary:
-	match room_index % 4:
-		1:
-			return {
-				"base": Color(0.026, 0.050, 0.070),
-				"tile": Color(0.046, 0.084, 0.106),
-				"puddle": Color(0.10, 0.21, 0.27),
-			}
-		2:
-			return {
-				"base": Color(0.038, 0.042, 0.068),
-				"tile": Color(0.062, 0.068, 0.104),
-				"puddle": Color(0.14, 0.17, 0.28),
-			}
-		3:
-			return {
-				"base": Color(0.050, 0.044, 0.052),
-				"tile": Color(0.082, 0.072, 0.080),
-				"puddle": Color(0.22, 0.18, 0.19),
-			}
-		_:
-			return {
-				"base": Color(0.030, 0.055, 0.068),
-				"tile": Color(0.052, 0.090, 0.104),
-				"puddle": Color(0.10, 0.20, 0.24),
-			}
+	var palette := biome if biome != null else DEFAULT_BIOME
+	return {
+		"base": palette.base_color,
+		"tile": palette.tile_color,
+		"puddle": palette.puddle_color,
+		"wall": palette.wall_color,
+		"edge": palette.edge_color,
+		"rim": palette.rim_color,
+	}
 
 
 func _draw_puddles(half: Vector2, tint: Color) -> void:
@@ -355,11 +345,11 @@ func _draw_puddles(half: Vector2, tint: Color) -> void:
 		draw_arc(center, radius * 0.9, PI * 0.15, PI * 0.85, 18, Color(0.45, 0.62, 0.66, 0.18), 1.6)
 
 
-func _draw_walls(half: Vector2) -> void:
+func _draw_walls(half: Vector2, palette: Dictionary) -> void:
 	var thickness := 60.0
-	var wall_color := Color(0.020, 0.032, 0.040)
-	var edge := Color(0.16, 0.27, 0.31)
-	var rim := Color(0.30, 0.44, 0.48, 0.55)
+	var wall_color := palette["wall"] as Color
+	var edge := palette["edge"] as Color
+	var rim := Color(palette["rim"], 0.55)
 
 	var outer := Rect2(
 		-half - Vector2(thickness, thickness),
@@ -378,5 +368,5 @@ func _draw_walls(half: Vector2) -> void:
 		Vector2(-half.x - pillar * 0.5, half.y - pillar * 0.5),
 		half - Vector2(pillar * 0.5, pillar * 0.5),
 	]:
-		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(0.05, 0.08, 0.09))
-		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(0.24, 0.36, 0.39), false, 1.5)
+		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(wall_color.lightened(0.6), 0.9))
+		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(rim, 0.75), false, 1.5)

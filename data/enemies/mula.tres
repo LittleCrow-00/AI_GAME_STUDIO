@@ -1,0 +1,17 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemy_data.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/mula.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"mula"
+display_name = "Mula-sem-cabeça"
+scene = ExtResource("2_scene")
+health = 85.0
+move_speed = 78.0
+contact_damage = 12.0
+oil_drop = 12.0
+cera_drop = 2
+body_color = Color(0.95, 0.45, 0.18, 1)
+cost = 3

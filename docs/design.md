@@ -46,6 +46,7 @@ A **Fossa** guarda o que sobrou — e o que desceu junto.
 | Cobra Grande | Chefe 1 | Enterra/emerge; vulnerável só sob luz contínua *(implementado)* |
 | Boitatá | Elite de fogo | **Só a luz a fere** — e a luz enche seu calor: cheio, explode e fica imune *(implementado)* |
 | Mapinguari | Tanque | **Couraça**: de longe o feixe se espalha e quase não fere; de perto, dano cheio — mas a investida pune a proximidade *(implementado)* |
+| Mula-sem-cabeça | Galopadora | **Galopa em linha reta** deixando rastro de fogo; depois **ofega** e apanha 40% mais *(implementado)* |
 
 ---
 

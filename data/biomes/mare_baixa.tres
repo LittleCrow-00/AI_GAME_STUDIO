@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/biome_data.gd" id="1_biome"]
+
+[resource]
+script = ExtResource("1_biome")
+id = &"mare_baixa"
+display_name = "Maré Baixa"
+base_color = Color(0.03, 0.055, 0.068, 1)
+tile_color = Color(0.052, 0.09, 0.104, 1)
+puddle_color = Color(0.1, 0.2, 0.24, 1)
+wall_color = Color(0.02, 0.032, 0.04, 1)
+edge_color = Color(0.16, 0.27, 0.31, 1)
+rim_color = Color(0.3, 0.44, 0.48, 1)

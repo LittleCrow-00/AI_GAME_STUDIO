@@ -27,6 +27,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   por sala (`_boss_for`) e o `Arena` recebe `boss: EnemyData`.
 - `Player.apply_aura()`: caminho único para modificadores temporários de inimigos.
 - Testes: aura aplicada/removida e chefe na sala final (74 asserções).
+- **Biomas como dados**: `resources/biome_data.gd` + `data/biomes/*.tres`
+  (Maré Baixa, Fossa, Cripta Afundada, Coração do Farol). A arena lê a paleta
+  do bioma (`Arena.biome`) e o `Main` escolhe por profundidade — o `match` de
+  cores saiu da lógica.
+- **Mula-sem-cabeça** (`scripts/enemies/mula.gd`): galopa em linha reta deixando
+  rastro de fogo; depois do galope **ofega** (1,3 s) e apanha 40% mais.
+- **FirePatch** (`scripts/gameplay/fire_patch.gd`): fogo no chão com dano por
+  tique e tempo de vida.
+- Testes: galope/fogo/ofego e dano/expiração do fogo (80 asserções).
 
 ---
 

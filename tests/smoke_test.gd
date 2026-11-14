@@ -29,6 +29,8 @@ func _ready() -> void:
 	await _test_boitata()
 	await _test_mapinguari()
 	await _test_cuca_aura()
+	await _test_mula()
+	await _test_fire_patch()
 	await _test_final_room_boss()
 	_test_item_pool()
 	_test_sanctuary_shop()
@@ -164,11 +166,11 @@ func _test_elite_and_palette() -> void:
 	enemy.queue_free()
 
 	var arena := Arena.new()
-	arena.room_index = 0
 	var shallow: Color = arena._palette()["base"]
-	arena.room_index = 1
+	arena.biome = preload("res://data/biomes/coracao_do_farol.tres") as BiomeData
 	var deeper: Color = arena._palette()["base"]
-	_check(not shallow.is_equal_approx(deeper), "Arena: paleta muda por andar")
+	_check(not shallow.is_equal_approx(deeper), "Arena: bioma muda a paleta")
+	_check(arena._palette()["wall"] is Color, "Arena: bioma define a cor da parede")
 	arena.queue_free()
 
 	await get_tree().process_frame
@@ -371,6 +373,51 @@ func _test_cuca_aura() -> void:
 		is_equal_approx(player.stats.get_stat(&"beam_range"), base_range),
 		"Cuca: morte devolve o alcance",
 	)
+
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_mula() -> void:
+	var player := _spawn_player()
+	var mula := Mula.new()
+	mula.max_health = 300.0
+	mula.health = 300.0
+	add_child(mula)
+	mula.position = Vector2(0.0, -200.0)
+
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	mula._on_telegraph_end()
+
+	await get_tree().create_timer(0.4, true, false, true).timeout
+	_check(get_tree().get_nodes_in_group("fire_patches").size() > 0, "Mula: galope deixa fogo")
+
+	await get_tree().create_timer(0.8, true, false, true).timeout
+	_check(mula.is_resting(), "Mula: para ofegante depois do galope")
+
+	var before := mula.health
+	mula.take_damage(50.0, Vector2.ZERO)
+	_check(before - mula.health > 50.0, "Mula: dano extra enquanto ofega")
+
+	for node in get_tree().get_nodes_in_group("fire_patches"):
+		node.queue_free()
+	mula.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_fire_patch() -> void:
+	var player := _spawn_player()
+	var patch := FirePatch.new()
+	patch.lifetime = 0.15
+	patch.radius = 40.0
+	add_child(patch)
+
+	var before := player.health
+	await get_tree().create_timer(0.5, true, false, true).timeout
+	_check(player.health < before, "Fogo: dano no chão")
+	_check(get_tree().get_nodes_in_group("fire_patches").is_empty(), "Fogo: some depois do tempo de vida")
 
 	player.queue_free()
 	await get_tree().process_frame

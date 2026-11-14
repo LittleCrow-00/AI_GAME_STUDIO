@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/biome_data.gd" id="1_biome"]
+
+[resource]
+script = ExtResource("1_biome")
+id = &"coracao_do_farol"
+display_name = "Coração do Farol"
+base_color = Color(0.05, 0.044, 0.052, 1)
+tile_color = Color(0.082, 0.072, 0.08, 1)
+puddle_color = Color(0.22, 0.18, 0.19, 1)
+wall_color = Color(0.034, 0.028, 0.032, 1)
+edge_color = Color(0.24, 0.2, 0.21, 1)
+rim_color = Color(0.42, 0.35, 0.34, 1)

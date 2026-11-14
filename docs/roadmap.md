@@ -127,11 +127,13 @@ passando; falta o *benchmark* de estresse.
 - [x] Elite: 12% de chance a partir da 2ª sala (2,2× vida, 1,3× dano, 3× cera,
       anel dourado)
 - [x] Paleta da arena muda com a profundidade
-- [ ] 8+ inimigos, biomas
+- [x] 8+ inimigos, biomas
   - [x] Boitatá (elite de fogo: a luz enche o calor, explode e a deixa imune)
   - [x] Mapinguari (couraçado: dano reduzido de longe, investida pune a proximidade)
   - [x] Cuca (2º chefe: encolhe o alcance do feixe em 35% enquanto viva)
-  - [ ] 2 inimigos comuns e biomas próprios
+  - [x] Mula-sem-cabeça (galopa deixando rastro de fogo, ofega e apanha mais)
+  - [x] Biomas como dados (`data/biomes/*.tres`, paleta por profundidade)
+  - [ ] 1 inimigo comum para fechar 8 tipos
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)
 - [x] Acessibilidade: menu de pausa (`ESC`) com reduzir tremor e flashes,
@@ -145,6 +147,7 @@ passando; falta o *benchmark* de estresse.
 - [ ] Export Web otimizado (< 20 MB wasm)
 - [ ] Deploy no GitHub Pages verificado
 - [ ] PWA opcional
+- [ ] Build para itch.io (gratuito, página do jogo)
 
 ---
 
