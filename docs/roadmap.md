@@ -166,6 +166,23 @@ passando; falta o *benchmark* de estresse.
 
 ---
 
+## Fase 9 — Game feel, áudio e itens
+
+Plano detalhado em **`docs/polish.md`**. Resumo:
+
+- [ ] **9.1** Juice de combate: flash, knockback, faísca, lean, rastro de dash,
+      feedback de óleo baixo/seco
+- [ ] **9.2** Áudio: variação de pitch, buses (Master/Music/SFX/UI), limiter,
+     8 SFX faltantes
+- [ ] **9.3** Itens: 8 itens com sistemas existentes + 4 comportamentos novos
+      (`ricochet`, `lingering`, `magnet`, `phase`) + 2 sinergias
+- [ ] **9.4** Música por bioma (3 camadas) + intensidade de combate (0–3)
+- [ ] **9.5** Câmera (look-ahead, punch-in), sinergia visual, resumo animado,
+     opções e gamepad
+- [ ] Teste cego de 10 minutos com zero eventos importantes em silêncio
+
+---
+
 ## Dívida técnica conhecida
 
 | Item | Impacto | Onde resolver |

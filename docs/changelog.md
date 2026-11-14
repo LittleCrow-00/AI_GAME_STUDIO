@@ -6,6 +6,10 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Adicionado
 
+- **Plano da Fase 9 (polimento)** em `docs/polish.md`: game feel/juice,
+  áudio (buses, variação, música por bioma), 12 itens novos (8 imediatos + 4
+  com comportamento) e 2 sinergias, com ordem de execução e teste cego de
+  aceite. `docs/roadmap.md` aponta para o documento.
 - **Fase 8 (publicação) — build web verificado em navegador real.**
 - `tools/web_check.mjs`: sobe um servidor estático, abre o export Web em
   Chromium headless com WebGL2 e confere título, canvas 1280×720, cena de
