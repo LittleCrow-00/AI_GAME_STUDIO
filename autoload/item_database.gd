@@ -50,12 +50,13 @@ func get_item(item_id: StringName) -> ItemData:
 ## Sorteia `count` itens distintos. Maldições só aparecem a partir da 2ª sala.
 func draw(count: int, room_index: int = 0, stream: StringName = &"loot") -> Array[ItemData]:
 	var pool := ALL.duplicate()
-	var result: Array[ItemData] = []
-
 	if room_index < 1:
+		pool = _without_cursed(pool)
+	else:
 		pool = _filter_cursed(pool)
 
 	var picks := mini(count, pool.size())
+	var result: Array[ItemData] = []
 	for i in range(picks):
 		var index := RngService.randi_range(stream, 0, pool.size() - 1)
 		result.append(pool[index])
@@ -63,6 +64,16 @@ func draw(count: int, room_index: int = 0, stream: StringName = &"loot") -> Arra
 	return result
 
 
+## Sala 0 é determinística: nenhuma maldição, sem sorteio.
+func _without_cursed(pool: Array) -> Array:
+	var filtered := []
+	for item in pool:
+		if item.rarity != ItemData.Rarity.CURSED:
+			filtered.append(item)
+	return filtered
+
+
+## A partir da 2ª sala, cada maldição tem 12% de chance de entrar no sorteio.
 func _filter_cursed(pool: Array) -> Array:
 	var filtered := []
 	for item in pool:

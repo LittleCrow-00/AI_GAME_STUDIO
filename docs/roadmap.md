@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.7.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.7.1 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -120,6 +120,9 @@ passando; falta o *benchmark* de estresse.
       rastro de projétil, gota de óleo com anel
 - [x] HUD com ícones, moeda de cera e barra do próximo limiar
 - [x] Santuário com selo por tag
+- [x] Elite: 12% de chance a partir da 2ª sala (2,2× vida, 1,3× dano, 3× cera,
+      anel dourado)
+- [x] Paleta da arena muda com a profundidade
 - [ ] 8+ inimigos, 2º chefe, biomas
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)

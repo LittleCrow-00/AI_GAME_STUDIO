@@ -2,6 +2,24 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.7.1] — 2026-11-14
+
+### Adicionado
+
+- **Elites:** 12% de chance por inimigo a partir da 2ª sala. `Enemy.make_elite()`
+  aplica 2,2× de vida, 1,3× de dano de contato, 3× de cera e um anel dourado; o
+  sprite cresce 15%. A chance é um `@export` da `Arena`.
+- **Paleta por profundidade:** a arena muda de tom a cada andar (mais fria e roxa
+  conforme você desce).
+
+### Corrigido
+
+- **Maldição na sala 0:** o filtro sorteava `randf()` por item, então uma maldição
+  podia escapar (falha intermitente no teste). Agora a sala 0 exclui maldições de
+  forma determinística; o sorteio de 12% vale só da 2ª sala em diante.
+
+---
+
 ## [0.7.0] — 2026-11-14
 
 ### Adicionado

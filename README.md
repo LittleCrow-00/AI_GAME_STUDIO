@@ -37,6 +37,9 @@ Santuário → **Cobra Grande** → Santuário → **Farol** (vitória).
 
 > A Cobra Grande é **imune no escuro**. Você precisa segurar a luz nela por 2,5 s
 > para expô-la — a luta obriga a parar de desviar e apontar.
+>
+> A partir da 2ª sala, **elites** aparecem: mais vida, mais dano e 3× de cera — e
+> um anel dourado para você decidir se vale a pena gastar óleo nelas.
 
 ---
 

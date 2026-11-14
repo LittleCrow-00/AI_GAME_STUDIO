@@ -29,6 +29,7 @@ func _ready() -> void:
 	_test_item_pool()
 	_test_sanctuary_shop()
 	_test_settings()
+	_test_elite_and_palette()
 	await _test_pause_menu()
 	await _test_items_and_synergies()
 	await _test_farol()
@@ -141,6 +142,29 @@ func _test_pause_menu() -> void:
 	_check(not menu.is_open() and not get_tree().paused, "Pause: fecha e retoma a árvore")
 
 	menu.queue_free()
+	await get_tree().process_frame
+
+
+func _test_elite_and_palette() -> void:
+	var enemy := ENEMY_SCRIPT.new() as Enemy
+	enemy.max_health = 30.0
+	enemy.health = 30.0
+	enemy.cera_drop = 1
+	add_child(enemy)
+	enemy.make_elite()
+	_check(enemy.elite, "Elite: marca a variante")
+	_check(enemy.max_health > 60.0, "Elite: aumenta a vida")
+	_check(enemy.cera_drop >= 3, "Elite: rende mais cera")
+	enemy.queue_free()
+
+	var arena := Arena.new()
+	arena.room_index = 0
+	var shallow: Color = arena._palette()["base"]
+	arena.room_index = 1
+	var deeper: Color = arena._palette()["base"]
+	_check(not shallow.is_equal_approx(deeper), "Arena: paleta muda por andar")
+	arena.queue_free()
+
 	await get_tree().process_frame
 
 

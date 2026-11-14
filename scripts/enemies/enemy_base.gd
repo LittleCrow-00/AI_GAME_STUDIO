@@ -23,6 +23,8 @@ const ACCEL: float = 900.0
 @export var sprite_texture: Texture2D
 
 var health: float = 30.0
+## Variante de elite: mais vida, mais dano, mais cera e um anel dourado.
+var elite: bool = false
 
 var _contact_cooldown: float = 0.0
 var _flash_left: float = 0.0
@@ -30,6 +32,7 @@ var _dead: bool = false
 var _glow: Polygon2D
 var _sprite_node: Sprite2D
 var _base_scale: Vector2 = Vector2.ONE
+var _sprite_scale_mult: float = 1.0
 var _anim_time: float = 0.0
 var _target: Player
 
@@ -63,9 +66,23 @@ func _fit_sprite() -> void:
 	var height := float(_sprite_node.texture.get_height())
 	if height <= 0.0:
 		return
-	_sprite_node.scale = Vector2.ONE * (body_radius * 2.8 / height)
+	_sprite_node.scale = Vector2.ONE * (body_radius * 2.8 / height) * _sprite_scale_mult
 	_sprite_node.position = Vector2(0.0, -1.0)
 	_base_scale = _sprite_node.scale
+
+
+## Transforma este inimigo em elite (usado pelo `Arena`).
+func make_elite(health_mult: float = 2.2, cera_mult: float = 3.0) -> void:
+	if elite:
+		return
+	elite = true
+	max_health *= health_mult
+	health = max_health
+	contact_damage *= 1.3
+	cera_drop = int(round(float(cera_drop) * cera_mult))
+	_sprite_scale_mult = 1.15
+	_fit_sprite()
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -252,8 +269,28 @@ func _build_glow() -> void:
 
 func _draw() -> void:
 	if _sprite_node != null:
+		if elite:
+			draw_arc(
+				Vector2.ZERO,
+				body_radius + 5.0,
+				0.0,
+				TAU,
+				26,
+				Color(1.0, 0.82, 0.35, 0.55),
+				1.8,
+			)
 		return
 	var body := body_color.darkened(0.35)
+	if elite:
+		draw_arc(
+			Vector2.ZERO,
+			body_radius + 5.0,
+			0.0,
+			TAU,
+			26,
+			Color(1.0, 0.82, 0.35, 0.55),
+			1.8,
+		)
 	draw_circle(Vector2.ZERO, body_radius, Color(0.03, 0.06, 0.07))
 	draw_circle(Vector2.ZERO, body_radius - 2.0, body)
 	draw_circle(Vector2.ZERO, body_radius * 0.45, body_color.darkened(0.15))

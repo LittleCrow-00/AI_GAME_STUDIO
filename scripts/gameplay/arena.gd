@@ -28,6 +28,8 @@ const WAVE_BREAK: float = 0.7
 @export var room_index: int = 0
 @export var is_boss_room: bool = false
 @export var is_final_room: bool = false
+## Chance de um inimigo nascer elite (a partir da 2ª sala).
+@export var elite_chance: float = 0.12
 
 var _director: SpawnDirector
 var _wave_index: int = -1
@@ -185,6 +187,8 @@ func _on_spawn_enemy(data: EnemyData) -> void:
 	enemy.move_speed = data.move_speed * (1.0 + 0.03 * float(room_index))
 	enemy.contact_damage = data.contact_damage * (1.0 + 0.15 * float(room_index))
 	enemy.oil_drop = data.oil_drop
+	if room_index >= 1 and _rng.randf() < elite_chance:
+		enemy.make_elite()
 
 	add_child(enemy)
 	_alive += 1
@@ -278,8 +282,9 @@ func _build_room() -> void:
 func _draw() -> void:
 	var half := arena_size * 0.5
 	var floor_rect := Rect2(-half, arena_size)
+	var palette := _palette()
 
-	draw_rect(floor_rect, Color(0.030, 0.055, 0.068))
+	draw_rect(floor_rect, palette["base"] as Color)
 
 	var step := 80.0
 	var y := -half.y
@@ -290,18 +295,48 @@ func _draw() -> void:
 			var shade := 0.88 + float(tile_hash % 9) * 0.025
 			var w := minf(step, half.x - x)
 			var h := minf(step, half.y - y)
+			var tile := palette["tile"] as Color
 			draw_rect(
 				Rect2(x + 1.5, y + 1.5, w - 3.0, h - 3.0),
-				Color(0.052 * shade, 0.090 * shade, 0.104 * shade),
+				Color(tile.r * shade, tile.g * shade, tile.b * shade),
 			)
 			x += step
 		y += step
 
-	_draw_puddles(half)
+	_draw_puddles(half, palette["puddle"] as Color)
 	_draw_walls(half)
 
 
-func _draw_puddles(half: Vector2) -> void:
+## A profundidade muda a paleta: mais fundo, mais frio e mais roxo.
+func _palette() -> Dictionary:
+	match room_index % 4:
+		1:
+			return {
+				"base": Color(0.026, 0.050, 0.070),
+				"tile": Color(0.046, 0.084, 0.106),
+				"puddle": Color(0.10, 0.21, 0.27),
+			}
+		2:
+			return {
+				"base": Color(0.038, 0.042, 0.068),
+				"tile": Color(0.062, 0.068, 0.104),
+				"puddle": Color(0.14, 0.17, 0.28),
+			}
+		3:
+			return {
+				"base": Color(0.050, 0.044, 0.052),
+				"tile": Color(0.082, 0.072, 0.080),
+				"puddle": Color(0.22, 0.18, 0.19),
+			}
+		_:
+			return {
+				"base": Color(0.030, 0.055, 0.068),
+				"tile": Color(0.052, 0.090, 0.104),
+				"puddle": Color(0.10, 0.20, 0.24),
+			}
+
+
+func _draw_puddles(half: Vector2, tint: Color) -> void:
 	var spots: Array[Vector3] = [
 		Vector3(-0.28, -0.18, 62.0),
 		Vector3(0.31, 0.22, 48.0),
@@ -312,8 +347,8 @@ func _draw_puddles(half: Vector2) -> void:
 		var center := Vector2(spot.x * half.x, spot.y * half.y)
 		var radius := spot.z
 		draw_set_transform(center, 0.0, Vector2(1.0, 0.55))
-		draw_circle(Vector2.ZERO, radius, Color(0.10, 0.20, 0.24, 0.55))
-		draw_circle(Vector2.ZERO, radius * 0.72, Color(0.14, 0.27, 0.31, 0.35))
+		draw_circle(Vector2.ZERO, radius, Color(tint.r, tint.g, tint.b, 0.55))
+		draw_circle(Vector2.ZERO, radius * 0.72, Color(tint.r * 1.3, tint.g * 1.3, tint.b * 1.3, 0.35))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		draw_arc(center, radius * 0.9, PI * 0.15, PI * 0.85, 18, Color(0.45, 0.62, 0.66, 0.18), 1.6)
 
