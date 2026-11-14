@@ -69,6 +69,10 @@ salvas em `user://settings.cfg`.
 
 Requisitos: **Godot 4.4+** (versão alvo: 4.4.x estável).
 
+Compatibilidade verificada também no **Godot 4.7.2**: o projeto abre, importa e
+passa nos testes sem conversão de `config/features` (o CI continua em 4.4.1).
+Para exportar Web pelo 4.7, instale os templates de exportação do 4.7.
+
 ```bash
 # abrir o editor
 godot --path .
