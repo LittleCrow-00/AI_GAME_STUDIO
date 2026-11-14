@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemy_data.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/iara.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"iara"
+display_name = "Iara"
+scene = ExtResource("2_scene")
+health = 24.0
+move_speed = 62.0
+contact_damage = 4.0
+oil_drop = 8.0
+body_color = Color(0.45, 0.62, 0.95, 1)
+cost = 2

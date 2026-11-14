@@ -6,7 +6,7 @@ O mar subiu e engoliu o litoral. Você é o último Faroleiro e desce pela Fossa
 reacender os Faróis — mas a luz que você carrega é a única coisa que os habitantes
 do escuro conseguem ver.
 
-**Status:** Fase 1 (vertical slice jogável) — em desenvolvimento.
+**Status:** Fase 2 (combate com peso) — em desenvolvimento.
 
 ---
 
@@ -33,8 +33,10 @@ godot --path .
 | Reiniciar | `R` |
 
 **O feixe consome óleo.** O óleo não regenera sozinho: ele é recuperado ao matar
-inimigos (gotas) ou ficando parado em um foco de luz. Sem óleo, você fica cego
-por 1,5 s — e vulnerável.
+inimigos (gotas) ou ficando **parado dentro de um foco de luz** — mas dentro do
+foco você anda a 40% da velocidade. Sem óleo, você fica cego por 1,5 s.
+
+**Dica:** a lanterna encolhe quando o óleo está baixo. É o jogo te avisando.
 
 ---
 

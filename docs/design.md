@@ -40,9 +40,9 @@ A **Fossa** guarda o que sobrou — e o que desceu junto.
 | Criatura | Papel | Interação com a luz |
 |---|---|---|
 | Afogado | Base, perseguidor lento | Hesita sob o feixe *(implementado)* |
-| Iara | Engodo | Emite foco falso que drena óleo |
-| Boto | Metamorfo | Assume sua silhueta; só conta dano quando iluminado |
-| Curupira | Ágil, teleporte | Pegadas invertidas reposicionam |
+| Iara | Engodo | Mantém distância e dispara rajada que **drena óleo** *(implementado)* |
+| Boto | Metamorfo | Telegrafa e **avança em linha reta**; pune ficar parado *(implementado)* |
+| Curupira | Enganador | **Salta** para trás de você quando você tenta manter distância *(implementado)* |
 | Cobra Grande | Chefe 1 | Enterra/emerge; vulnerável só sob luz contínua |
 | Boitatá | Elite | Imune no escuro; queima se iluminado por muito tempo |
 | Mapinguari | Tanque | Couraça só quebra com cone estreito |
@@ -100,11 +100,40 @@ penetração, frequência/cor (estados), duração do rastro de luz.
 
 **Movimento:** aceleração 2200 px/s², atrito 2600 px/s², velocidade máx 220 px/s.
 **Dash:** 0,15 s, 520 px/s, i-frames 0,18 s, cooldown 0,45 s. Recarrega ao matar.
-**Impacto:** hitstop (20 ms normal / 60 ms crítico), screen shake por trauma,
-flash branco, knockback, damage numbers.
-**Telegrafia:** todo ataque inimigo tem *wind-up* ≥ 0,35 s com silhueta piscando.
+**Impacto:** hitstop (45 ms em abate, 70 ms em dano), screen shake por trauma
+(shake = trauma²), flash branco, knockback, damage numbers.
+**Telegrafia:** todo ataque especial tem *wind-up* de 0,35–0,55 s com *tint*
+pulsante — o inimigo para e avisa antes de agir.
 
-> Pendente: hitstop, screen shake e cancelamento de dash (Fase 2).
+**Por que hitstop só em eventos grandes:** o feixe tica 10×/s. Se cada tick
+congelasse o jogo, o combate viraria pudim. Congelamos abates e dano recebido.
+
+---
+
+## 5.1 Focos de luz
+
+Dois focos por sala. Dentro do raio, o óleo recarrega a **26/s**, mas o
+Faroleiro anda a **40%** da velocidade.
+
+É a decisão que faltava: *ficar e recarregar, ou sair e lutar*. O foco é visível
+de longe (poça de luz quente), então o jogador escolhe o momento de usá-lo.
+
+## 5.2 Tutorial quase imperceptível
+
+Sem modal, sem parede de texto, sem bloquear *input*. O ensino é quase todo
+diegético:
+
+- A lanterna **encolhe e escurece** conforme o óleo cai (o jogador aprende a
+  relação óleo↔visão sem ler nada).
+- O foco de luz **pulsa**; a gota de óleo **voa** até o jogador após o abate.
+- Texto só confirma, em alpha 0,34, uma vez por run:
+  - 1ª onda: *"segure o feixe · a luz gasta"*
+  - óleo < 30%: *"óleo baixo · você está quase cego"*
+  - 1º foco: *"a luz te enche · mas te prende"*
+  - 1º abate: *"o óleo volta"*
+  - 1º dano sofrido: *"shift · o dash atravessa o perigo"*
+
+Nada disso aparece duas vezes.
 
 ---
 
@@ -173,11 +202,10 @@ Duração alvo: **25–40 min**. Sem "continue".
 
 ## 9. O que ainda não existe
 
-- Focos de luz (recarga por ambiente) — pilar da economia de óleo.
 - Itens e `StatSheet` conectado ao jogador (a classe existe, o uso não).
-- Mais inimigos, elites e chefes.
-- Santuário/loja e meta-progressão.
+- Santuário/loja, Cera e meta-progressão.
+- Chefe (Cobra Grande) e andares 3–4.
 - Áudio.
-- Hitstop, screen shake, telegrafia de ataques especiais.
+- Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.
 
 Ver `docs/roadmap.md`.

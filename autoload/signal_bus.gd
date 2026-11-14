@@ -12,12 +12,17 @@ signal enemy_hit(enemy: Node, damage: float, position: Vector2)
 signal damage_number_requested(amount: float, position: Vector2, is_critical: bool)
 signal player_damaged(amount: float, position: Vector2)
 signal player_died
+signal shake_requested(amount: float)
+signal projectile_fired(position: Vector2, direction: Vector2)
 
 # --- Jogador / recursos ---
 signal health_changed(current: float, maximum: float)
 signal oil_changed(current: float, maximum: float)
+signal oil_removed(amount: float)
 signal dash_charges_changed(current: int, maximum: int)
 signal beam_dried
+signal light_well_entered(well: Node)
+signal light_well_exited(well: Node)
 
 # --- Feixe ---
 signal beam_hit_enemy(enemy: Node, damage: float)

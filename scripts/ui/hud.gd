@@ -33,14 +33,24 @@ var _dry_flash: float = 0.0
 var _banner_text: String = ""
 var _banner_left: float = 0.0
 
+var _hint: Label
+var _hint_left: float = 0.0
+var _hint_elapsed: float = 0.0
+var _pulse: float = 0.0
+
 var _readout: Label
 var _banner: Label
 var _subtitle: Label
 
 
 func _ready() -> void:
+	add_to_group("hud")
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	_hint = _make_label(15, Color(0.80, 0.86, 0.88), HORIZONTAL_ALIGNMENT_LEFT)
+	_hint.size = Vector2(520.0, 24.0)
+	_hint.modulate.a = 0.0
 
 	_readout = _make_label(22, COL_TEXT, HORIZONTAL_ALIGNMENT_RIGHT)
 	_readout.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
@@ -75,9 +85,30 @@ func _connect() -> void:
 func _process(delta: float) -> void:
 	_banner_left = maxf(0.0, _banner_left - delta)
 	_dry_flash = maxf(0.0, _dry_flash - delta)
+	_pulse += delta
 	_banner.modulate.a = clampf(_banner_left, 0.0, 1.0)
 	_subtitle.modulate.a = clampf(_banner_left, 0.0, 1.0)
+	_update_hint(delta)
 	queue_redraw()
+
+
+func show_hint(text: String, duration: float = 1.6, at: Vector2 = Vector2(300.0, 74.0)) -> void:
+	_hint.text = text
+	_hint.position = at
+	_hint_left = duration
+	_hint_elapsed = 0.0
+	_hint.modulate.a = 0.0
+
+
+func _update_hint(delta: float) -> void:
+	if _hint_left <= 0.0:
+		_hint.modulate.a = 0.0
+		return
+	_hint_left -= delta
+	_hint_elapsed += delta
+	var fade_in := clampf(_hint_elapsed / 0.25, 0.0, 1.0)
+	var fade_out := clampf(_hint_left / 0.5, 0.0, 1.0)
+	_hint.modulate.a = minf(fade_in, fade_out) * 0.34
 
 
 func set_room(index: int, total: int) -> void:
@@ -146,7 +177,13 @@ func _on_beam_dried() -> void:
 
 func _draw() -> void:
 	_draw_bar(BAR_ORIGIN, _health / _health_max, COL_HEALTH, "VIDA")
-	_draw_bar(BAR_ORIGIN + Vector2(0, BAR_HEIGHT + BAR_GAP), _oil / _oil_max, COL_OIL, "OLEO")
+	var oil_ratio := clampf(_oil / _oil_max, 0.0, 1.0)
+	var oil_origin := BAR_ORIGIN + Vector2(0, BAR_HEIGHT + BAR_GAP)
+	_draw_bar(oil_origin, oil_ratio, COL_OIL, "OLEO")
+	if oil_ratio < 0.25:
+		var urgency := 1.0 - (oil_ratio / 0.25)
+		var alpha := (0.18 + 0.22 * (0.5 + 0.5 * sin(_pulse * 6.0))) * urgency
+		draw_rect(Rect2(oil_origin - Vector2(2, 2), Vector2(BAR_WIDTH + 4, BAR_HEIGHT + 4)), Color(1.0, 0.6, 0.25, alpha), false, 2.0)
 	_draw_dash(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 2.0 + 6.0))
 
 	_readout.text = "SALA %d / %d\nONDA %d / %d\nINIMIGOS  %d\n\nCADEIA  %d\nx%.1f\n\nPONTOS  %d" % [

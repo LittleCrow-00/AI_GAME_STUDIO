@@ -18,5 +18,5 @@ position = Vector2(640, 360)
 
 [node name="Hud" parent="UI" instance=ExtResource("3_hud")]
 
-[node name="DamageNumbers" type="CanvasLayer" parent="."]
+[node name="DamageNumbers" type="Node2D" parent="."]
 script = ExtResource("4_damage")

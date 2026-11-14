@@ -1,8 +1,14 @@
 class_name Enemy
 extends CharacterBody2D
-## Inimigo base. Comportamento padrao: perseguir o jogador e causar dano por
-## contato. Variantes futuras compoem este no trocando o brain por um no filho
-## (ver docs/architecture.md: composicao sobre heranca).
+## Inimigo base: vida, dano por contato, morte e telegrafia.
+##
+## Comportamento fica em `_think(delta)`, que subclasses sobrescrevem. Nada de
+## herança para "tipos de ataque": a base só conhece o esqueleto (perseguir,
+## esperar, agir, morrer). Variantes trocam o cérebro, não o corpo.
+
+signal died(enemy: Enemy)
+
+const ACCEL: float = 900.0
 
 @export var max_health: float = 30.0
 @export var move_speed: float = 70.0
@@ -11,6 +17,7 @@ extends CharacterBody2D
 @export var oil_drop: float = 6.0
 @export var body_color: Color = Color(0.34, 0.88, 0.85)
 @export var body_radius: float = 11.0
+@export var keep_distance: float = 0.0
 
 var health: float = 30.0
 
@@ -18,6 +25,10 @@ var _contact_cooldown: float = 0.0
 var _flash_left: float = 0.0
 var _dead: bool = false
 var _glow: Polygon2D
+var _target: Player
+
+var _telegraph_left: float = 0.0
+var _telegraph_total: float = 1.0
 
 
 func _ready() -> void:
@@ -38,26 +49,72 @@ func apply_data(data: EnemyData) -> void:
 func _physics_process(delta: float) -> void:
 	if _dead:
 		return
+
 	_contact_cooldown = maxf(0.0, _contact_cooldown - delta)
 	_flash_left = maxf(0.0, _flash_left - delta)
-	modulate = Color(4, 4, 4) if _flash_left > 0.0 else Color.WHITE
+	_target = _find_target()
 
-	var target := _find_target()
-	if target == null:
-		velocity = velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+	if _telegraph_left > 0.0:
+		_telegraph_left = maxf(0.0, _telegraph_left - delta)
+		velocity = velocity.move_toward(Vector2.ZERO, ACCEL * 2.0 * delta)
 		move_and_slide()
+		_update_tint()
+		if _telegraph_left <= 0.0:
+			_on_telegraph_end()
 		return
 
-	var to_target: Vector2 = target.global_position - global_position
-	if to_target.length() > 4.0:
-		velocity = velocity.move_toward(to_target.normalized() * move_speed, 900.0 * delta)
-	else:
-		velocity = velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+	_think(delta)
 	move_and_slide()
+	_try_contact()
+	_update_tint()
 
-	if _contact_cooldown <= 0.0 and global_position.distance_to(target.global_position) < body_radius + 16.0:
-		target.take_damage(contact_damage, global_position)
-		_contact_cooldown = contact_interval
+
+## Comportamento. Subclasses sobrescrevem.
+func _think(delta: float) -> void:
+	_chase(delta)
+
+
+## Persegue (ou mantém distância, se `keep_distance` > 0).
+func _chase(delta: float) -> void:
+	if _target == null:
+		velocity = velocity.move_toward(Vector2.ZERO, ACCEL * delta)
+		return
+
+	var to_target: Vector2 = _target.global_position - global_position
+	var distance := to_target.length()
+	var heading := Vector2.ZERO
+
+	if distance > 4.0:
+		heading = to_target.normalized()
+	if keep_distance > 0.0 and distance < keep_distance:
+		heading = -to_target.normalized()
+
+	velocity = velocity.move_toward(heading * move_speed, ACCEL * delta)
+
+
+## Inicia a telegrafia. O inimigo para e "avisa" antes de agir.
+func _start_telegraph(duration: float) -> void:
+	_telegraph_total = maxf(0.01, duration)
+	_telegraph_left = _telegraph_total
+	velocity = Vector2.ZERO
+
+
+func is_telegraphing() -> bool:
+	return _telegraph_left > 0.0
+
+
+## Chamado quando a telegrafia termina. Subclasses implementam o ataque.
+func _on_telegraph_end() -> void:
+	pass
+
+
+func _try_contact() -> void:
+	if _target == null or _contact_cooldown > 0.0:
+		return
+	if global_position.distance_to(_target.global_position) > body_radius + 16.0:
+		return
+	_target.take_damage(contact_damage, global_position)
+	_contact_cooldown = contact_interval
 
 
 func take_damage(amount: float, source_position: Vector2) -> void:
@@ -78,6 +135,7 @@ func take_damage(amount: float, source_position: Vector2) -> void:
 
 func _die() -> void:
 	_dead = true
+	died.emit(self)
 	SignalBus.enemy_died.emit(self, global_position)
 	SignalBus.enemy_killed.emit(global_position, oil_drop)
 	queue_free()
@@ -85,6 +143,30 @@ func _die() -> void:
 
 func _find_target() -> Player:
 	return get_tree().get_first_node_in_group("player") as Player
+
+
+func _spawn_projectile(
+	heading: Vector2,
+	travel_speed: float,
+	hit_damage: float,
+	oil_cost: float,
+) -> void:
+	var pool := get_tree().get_first_node_in_group("projectile_pool") as ProjectilePool
+	if pool == null:
+		return
+	pool.spawn(global_position, heading, travel_speed, hit_damage, oil_cost, body_color)
+	SignalBus.projectile_fired.emit(global_position, heading)
+
+
+func _update_tint() -> void:
+	if _flash_left > 0.0:
+		modulate = Color(4, 4, 4)
+	elif _telegraph_left > 0.0:
+		var progress := 1.0 - (_telegraph_left / _telegraph_total)
+		var pulse := 0.5 + 0.5 * sin(progress * TAU * 3.0)
+		modulate = Color(1.0 + pulse * 1.4, 1.0 + pulse * 0.5, 1.0 + pulse * 0.5)
+	else:
+		modulate = Color.WHITE
 
 
 func _build_glow() -> void:

@@ -1,11 +1,12 @@
 extends Node
-## Teste de fumaca dos sistemas criticos da Fase 1.
+## Teste de fumaça dos sistemas críticos.
 ##
 ## Executar:
 ##   godot --headless --path . res://tests/smoke_test.tscn
 ##
-## Nao e um framework de teste: e um gate barato que impede regressao nos
-## sistemas que sustentam a arquitetura (stats, pontuacao, morte, feixe).
+## Não é um framework: é um gate barato que impede regressão nos sistemas que
+## sustentam a arquitetura (stats, pontuação, morte, feixe, tempo, poo,
+## focos de luz e ciclo de sala).
 
 const ENEMY_SCRIPT := preload("res://scripts/enemies/enemy_base.gd")
 
@@ -20,6 +21,9 @@ func _ready() -> void:
 	_test_ressonancia()
 	_test_enemy_death()
 	await _test_beam_damage()
+	await _test_hitstop()
+	_test_light_well()
+	_test_projectile_pool()
 	await _test_arena_progression()
 
 	var status := "OK" if _failures == 0 else "FAILED"
@@ -86,6 +90,37 @@ func _test_beam_damage() -> void:
 	_check(is_equal_approx(enemy.health, after_far), "Beam: ignora inimigo fora de alcance")
 
 
+func _test_hitstop() -> void:
+	TimeService.hitstop(60)
+	_check(Engine.time_scale < 1.0, "TimeService: hitstop reduz o time_scale")
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	_check(is_equal_approx(Engine.time_scale, 1.0), "TimeService: hitstop restaura o time_scale")
+
+
+func _test_light_well() -> void:
+	var well := LightWell.new()
+	well.position = Vector2(100.0, 0.0)
+	add_child(well)
+
+	_check(well.contains_point(Vector2(150.0, 0.0)), "LightWell: contém ponto dentro do raio")
+	_check(not well.contains_point(Vector2(400.0, 0.0)), "LightWell: rejeita ponto fora do raio")
+	_check(well.oil_per_second > 0.0, "LightWell: regenera óleo")
+	well.queue_free()
+
+
+func _test_projectile_pool() -> void:
+	var pool := ProjectilePool.new()
+	add_child(pool)
+
+	var projectile := pool.spawn(Vector2.ZERO, Vector2.RIGHT, 100.0, 5.0, 0.0, Color.WHITE)
+	_check(projectile != null and projectile.active, "ProjectilePool: spawn ativa projétil")
+
+	projectile.deactivate()
+	_check(not projectile.active, "ProjectilePool: deactivate libera o projétil")
+
+	pool.queue_free()
+
+
 func _test_arena_progression() -> void:
 	var arena := Arena.new()
 	arena.setup(0)
@@ -94,12 +129,13 @@ func _test_arena_progression() -> void:
 	var cleared := [false]
 	arena.room_cleared.connect(func() -> void: cleared[0] = true)
 
-	for _wave in range(3):
-		await get_tree().physics_frame
+	var elapsed := 0.0
+	while not cleared[0] and elapsed < 30.0:
 		for node in get_tree().get_nodes_in_group("enemies"):
 			if is_instance_valid(node):
 				(node as Enemy).take_damage(99999.0, Vector2.ZERO)
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(0.2, true, false, true).timeout
+		elapsed += 0.2
 
 	_check(cleared[0], "Arena: limpa 3 ondas e emite room_cleared")
 	arena.stop()

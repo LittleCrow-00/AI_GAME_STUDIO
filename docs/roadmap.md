@@ -48,18 +48,20 @@ ataques especiais, focos de luz.
 
 ---
 
-## Fase 2 — Combate com peso ⏭️ (próxima)
+## Fase 2 — Combate com peso ✅ (parcial)
 
-- [ ] Hitstop (20 ms normal / 60 ms crítico) e screen shake por trauma
-- [ ] Focos de luz (recarga de óleo por ambiente, com risco)
-- [ ] 4 inimigos com comportamentos distintos (Iara, Boto, Curupira, estouro)
-- [ ] Spawn director com orçamento de ameaça (substitui contagem fixa)
-- [ ] Pool de números de dano e projéteis
-- [ ] Telegrafia de ataques (wind-up ≥ 0,35 s)
-- [ ] Ajuste de *game feel* com medição de FPS headless
+- [x] Hitstop (45 ms em abate, 70 ms em dano) e screen shake por trauma
+- [x] Focos de luz: recarga de óleo por ambiente, com penalidade de movimento
+- [x] 4 inimigos com comportamentos distintos (Afogado, Iara, Boto, Curupira)
+- [x] Spawn director com orçamento de ameaça (substitui contagem fixa)
+- [x] Pool de números de dano (40) e de projéteis (48)
+- [x] Telegrafia de ataques (0,35–0,55 s, com *tint* pulsante)
+- [x] **Tutorial quase imperceptível**: dicas em alpha 0,34, uma vez por run,
+      sem modal e sem bloquear *input*; lanterna encolhe com o óleo (diegético)
+- [ ] Medição de FPS com 40+ inimigos (o teto atual é 14 vivos por sala)
 
-**Critério de aceite:** combate com peso perceptível; sala de 60 s mantém 60 fps
-com 40+ inimigos vivos.
+**Critério de aceite:** parcialmente atendido — peso perceptível e 16/16 testes
+passando; falta o *benchmark* de estresse.
 
 ---
 
@@ -117,8 +119,9 @@ com 40+ inimigos vivos.
 
 | Item | Impacto | Onde resolver |
 |---|---|---|
-| Sem pool de objetos | Performance em ondas grandes | Fase 2 |
 | HUD com coordenadas absolutas | frágil a mudanças de layout | Fase 3 |
-| `Arena._on_enemy_died` com `await` + token | frágil se houver salas concorrentes | Fase 3 |
+| `Arena` usa um único `SpawnDirector` por sala | salas concorrentes não são suportadas (não há, por design) | Fase 3 |
 | `StatSheet` não usado pelo Player | itens não alteram o personagem | Fase 4 |
 | Sem save | progresso meta perdido ao recarregar | Fase 6 |
+| Teto de 14 inimigos vivos | ondas maiores podem pesar no Web | Fase 2 (medição) |
+| `WaveData` existe mas não é usado | dados de onda ainda são orçamento numérico | Fase 3 |

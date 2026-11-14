@@ -27,10 +27,15 @@ var _transitioning: bool = false
 
 func _ready() -> void:
 	RngService.new_run()
+	TimeService.clear()
 
 	_ressonancia = Ressonancia.new()
 	_ressonancia.name = "Ressonancia"
 	add_child(_ressonancia)
+
+	var tutorial := TutorialDirector.new()
+	tutorial.name = "TutorialDirector"
+	add_child(tutorial)
 
 	SignalBus.player_died.connect(_on_player_died)
 	_start_room(0)

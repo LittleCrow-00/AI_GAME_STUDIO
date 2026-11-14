@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/enemy_data.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/boto.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"boto"
+display_name = "Boto"
+scene = ExtResource("2_scene")
+health = 42.0
+move_speed = 84.0
+contact_damage = 14.0
+oil_drop = 9.0
+body_color = Color(0.92, 0.55, 0.85, 1)
+cost = 3
