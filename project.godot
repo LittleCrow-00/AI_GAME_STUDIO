@@ -10,7 +10,7 @@ config_version=5
 config/name="FAROLEIRO"
 config/description="Roguelite de acao top-down onde a luz e sua arma, sua visao e sua municao."
 config/version="0.1.0"
-run/main_scene="res://scenes/main/main.tscn"
+run/main_scene="res://scenes/main/title.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -22,6 +22,8 @@ TimeService="*res://autoload/time_service.gd"
 ItemDatabase="*res://autoload/item_database.gd"
 ThresholdDatabase="*res://autoload/threshold_database.gd"
 Settings="*res://autoload/settings.gd"
+UnlockDatabase="*res://autoload/unlock_database.gd"
+SaveSystem="*res://autoload/save_system.gd"
 
 [display]
 

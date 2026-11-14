@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.7.1 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.8.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -104,10 +104,14 @@ passando; falta o *benchmark* de estresse.
 
 ---
 
-## Fase 6 — Meta-progressão
+## Fase 6 — Meta-progressão ✅ (parcial)
 
-- [ ] `SaveSystem` (`user://save.json`, fallback Web)
-- [ ] Desbloqueios laterais (itens iniciais, personagens)
+- [x] `SaveSystem` (`user://save.json`): cera total, runs, recorde e desbloqueios
+- [x] Tela de título (`scenes/main/title.tscn`): desce, mostra saldo e recordes
+- [x] 3 desbloqueios que entregam **itens iniciais** na run (Pavio Extra, Óleo
+      Frio, Lente de Estádio)
+- [x] Cera da run é depositada no fim (vitória ou morte)
+- [ ] Mais desbloqueios e personagens
 
 ---
 

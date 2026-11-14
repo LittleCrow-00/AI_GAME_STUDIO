@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/unlock_data.gd" id="1_unlock"]
+
+[resource]
+script = ExtResource("1_unlock")
+id = &"pavio_extra"
+display_name = "Pavio Extra"
+description = "Começa a run com Fôlego: +1 carga de dash."
+cost = 40
+item_id = &"folego"

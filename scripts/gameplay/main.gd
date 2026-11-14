@@ -53,6 +53,10 @@ func _ready() -> void:
 	SignalBus.player_died.connect(_on_player_died)
 	SignalBus.enemy_died.connect(_on_enemy_died)
 	sanctuary.purchase_requested.connect(_on_purchase_requested)
+
+	for unlock_item in SaveSystem.starting_items():
+		player.apply_item(unlock_item)
+
 	_start_room(0)
 
 
@@ -140,6 +144,7 @@ func _on_player_died() -> void:
 	SignalBus.run_state_changed.emit(_state)
 	if _arena != null:
 		_arena.stop()
+	SaveSystem.record_run(_cera, _ressonancia.score)
 	summary.show_summary("A LUZ SE APAGOU", _summary_lines(), Color(0.85, 0.30, 0.30))
 
 
@@ -148,6 +153,7 @@ func _win() -> void:
 	SignalBus.run_state_changed.emit(_state)
 	if _arena != null:
 		_arena.stop()
+	SaveSystem.record_run(_cera, _ressonancia.score)
 	summary.show_summary("O FAROL ACENDEU", _summary_lines(), Color(1.0, 0.86, 0.55))
 
 

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/unlock_data.gd" id="1_unlock"]
+
+[resource]
+script = ExtResource("1_unlock")
+id = &"oleo_frio"
+display_name = "Óleo Frio"
+description = "Começa a run com Cera Velha: +20 de óleo máximo."
+cost = 30
+item_id = &"cera_velha"

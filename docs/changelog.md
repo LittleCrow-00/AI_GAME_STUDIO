@@ -2,6 +2,31 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.8.0] — 2026-11-14
+
+### Adicionado
+
+- **Fase 6 — Meta-progressão (parcial).**
+- **`SaveSystem`** (autoload): `user://save.json` com cera total, número de runs,
+  recorde de pontos e desbloqueios. O caminho é um campo (`path`) para os testes
+  usarem um arquivo temporário sem tocar no save real.
+- **Tela de título** (`scenes/main/title.tscn`): é a nova cena inicial; mostra
+  saldo, runs e recorde, lista os desbloqueios com preço e o botão `DESCER`.
+- **`UnlockDatabase` + `UnlockData`**: 3 desbloqueios que entregam **itens
+  iniciais** na próxima run — Pavio Extra (`folego`), Óleo Frio (`cera_velha`) e
+  Lente de Estádio (`fragmento`).
+- **`Main`** aplica os itens desbloqueados no início da run e deposita a cera da
+  run no fim (vitória ou morte).
+- Testes: save/load, compra sem e com cera, item inicial e integração no
+  `run_test` (65 + 7 asserções).
+
+### Alterado
+
+- `run/main_scene` passa a ser a tela de título; a run é carregada por
+  `change_scene_to_file`.
+
+---
+
 ## [0.7.1] — 2026-11-14
 
 ### Adicionado

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/unlock_data.gd" id="1_unlock"]
+
+[resource]
+script = ExtResource("1_unlock")
+id = &"lente_estadio"
+display_name = "Lente de Estádio"
+description = "Começa a run com Fragmento: o feixe se divide."
+cost = 60
+item_id = &"fragmento"

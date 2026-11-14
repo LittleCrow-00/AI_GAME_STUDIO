@@ -24,10 +24,24 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	await get_tree().process_frame
 
+	# Isola o save: o teste deposita cera de verdade, mas em arquivo temporário.
+	var real_path := SaveSystem.path
+	SaveSystem.path = "user://test_run_save.json"
+	SaveSystem.reset()
+
+	SaveSystem.total_cera = 100
+	SaveSystem.purchase(&"oleo_frio")
+
 	var main := MAIN_SCENE.instantiate() as Node
 	main.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(main)
 	await get_tree().process_frame
+
+	var player_at_start := main.get("player") as Player
+	_check(
+		player_at_start != null and player_at_start.inventory.has(&"cera_velha"),
+		"Run: desbloqueio vira item inicial",
+	)
 
 	var bought := false
 	var deadline := Time.get_ticks_msec() + 120000
@@ -71,6 +85,10 @@ func _ready() -> void:
 
 	main.queue_free()
 	await get_tree().process_frame
+
+	SaveSystem.reset()
+	SaveSystem.path = real_path
+	SaveSystem.load_game()
 
 	var status := "OK" if _failures == 0 else "FAILED"
 	print("RUN TEST: %s (%d checks, %d failures)" % [status, _checks, _failures])

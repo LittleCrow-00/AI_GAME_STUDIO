@@ -29,7 +29,9 @@ func _ready() -> void:
 	_test_item_pool()
 	_test_sanctuary_shop()
 	_test_settings()
+	_test_meta_progression()
 	_test_elite_and_palette()
+	await _test_title_screen()
 	await _test_pause_menu()
 	await _test_items_and_synergies()
 	await _test_farol()
@@ -165,6 +167,41 @@ func _test_elite_and_palette() -> void:
 	_check(not shallow.is_equal_approx(deeper), "Arena: paleta muda por andar")
 	arena.queue_free()
 
+	await get_tree().process_frame
+
+
+func _test_meta_progression() -> void:
+	var real_path := SaveSystem.path
+	SaveSystem.path = "user://test_meta_save.json"
+	SaveSystem.reset()
+
+	SaveSystem.record_run(25, 120)
+	_check(SaveSystem.total_cera == 25 and SaveSystem.runs == 1, "Save: deposita cera e conta a run")
+
+	SaveSystem.total_cera = 0
+	SaveSystem.load_game()
+	_check(SaveSystem.total_cera == 25, "Save: recarrega do disco")
+
+	var unlock := UnlockDatabase.get_unlock(&"oleo_frio")
+	_check(unlock != null and unlock.cost == 30, "Unlock: banco carrega o custo")
+	_check(not SaveSystem.purchase(&"oleo_frio"), "Unlock: recusa sem cera")
+
+	SaveSystem.record_run(10, 0)
+	_check(SaveSystem.purchase(&"oleo_frio"), "Unlock: compra com cera suficiente")
+	_check(SaveSystem.has_unlock(&"oleo_frio"), "Unlock: fica registrado")
+	_check(SaveSystem.starting_items().size() == 1, "Unlock: entrega item inicial")
+
+	SaveSystem.reset()
+	SaveSystem.path = real_path
+	SaveSystem.load_game()
+
+
+func _test_title_screen() -> void:
+	var title := TitleScreen.new()
+	add_child(title)
+	await get_tree().process_frame
+	_check(title._rows.size() == UnlockDatabase.count() + 1, "Title: monta uma linha por desbloqueio")
+	title.queue_free()
 	await get_tree().process_frame
 
 
