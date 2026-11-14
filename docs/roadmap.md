@@ -99,7 +99,8 @@ passando; falta o *benchmark* de estresse.
 - [x] Cera: ganha por abate (`Enemy.cera_drop`) e por sala limpa
 - [x] Loja no Santuário: 1ª escolha grátis, extras custam cera (10 + 4/andar)
 - [x] HUD mostra saldo de cera e o próximo limiar da cadeia
-- [ ] Curva de dificuldade calibrada (inimigos/ondas por andar)
+- [x] Curva de dificuldade calibrada (inimigos/ondas por andar) — `DifficultyData`
+      + `data/difficulty/*.tres` (vida, dano, velocidade, orçamento e elite)
 - [ ] Cera acumulada entre runs (meta-progressão → Fase 6)
 
 ---
@@ -111,7 +112,7 @@ passando; falta o *benchmark* de estresse.
 - [x] 3 desbloqueios que entregam **itens iniciais** na run (Pavio Extra, Óleo
       Frio, Lente de Estádio)
 - [x] Cera da run é depositada no fim (vitória ou morte)
-- [ ] Mais desbloqueios e personagens
+- [ ] Mais desbloqueios e personagens (5 desbloqueios hoje; personagens depois)
 
 ---
 
@@ -135,7 +136,9 @@ passando; falta o *benchmark* de estresse.
   - [x] Caipora (semeia poças de escuridão que encolhem o feixe)
   - [x] Biomas como dados (`data/biomes/*.tres`, paleta por profundidade)
   - [x] 8 tipos de inimigos + 2 chefes
-- [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
+- [x] Animação por gait (sprites estáticos + passada por código): 5 estilos
+      (`walk`, `lope`, `slither`, `hover`, `crawl`) com passada, inclinação e
+      balanço próprios, escolhidos por `EnemyData.anim_style`
 - [x] Áudio procedural (drone ambiente, impacto, abate, coleta, dash, dano,
       clique seco, sino) — `tools/gen_audio.gd` gera os WAVs, `AudioService` toca
       e o `ESC` tem "Som: ligado/mudo"

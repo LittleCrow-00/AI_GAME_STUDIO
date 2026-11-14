@@ -10,6 +10,16 @@ signal died(enemy: Enemy)
 
 const ACCEL: float = 900.0
 
+## Animação por "gait": cada espécie tem passada, inclinação e balanço próprios.
+## Sem spritesheet — o sprite é o mesmo, o movimento é que dá a espécie.
+const GAITS := {
+	&"walk": {"bob": 1.5, "freq": 9.0, "idle_freq": 3.0, "tilt": 0.04, "sway": 0.8},
+	&"lope": {"bob": 3.0, "freq": 11.0, "idle_freq": 3.4, "tilt": 0.09, "sway": 1.6},
+	&"slither": {"bob": 2.4, "freq": 5.0, "idle_freq": 2.0, "tilt": 0.13, "sway": 2.4},
+	&"hover": {"bob": 3.4, "freq": 3.0, "idle_freq": 2.2, "tilt": 0.02, "sway": 1.2},
+	&"crawl": {"bob": 1.0, "freq": 7.0, "idle_freq": 2.6, "tilt": 0.03, "sway": 0.6},
+}
+
 @export var max_health: float = 30.0
 @export var move_speed: float = 70.0
 @export var contact_damage: float = 10.0
@@ -19,6 +29,8 @@ const ACCEL: float = 900.0
 @export var body_color: Color = Color(0.34, 0.88, 0.85)
 @export var body_radius: float = 11.0
 @export var keep_distance: float = 0.0
+## Estilo de animação (ver `GAITS`).
+@export var anim_style: StringName = &"walk"
 ## Sprite opcional (SVG). Vazio = corpo procedural de reserva.
 @export var sprite_texture: Texture2D
 
@@ -34,6 +46,7 @@ var _sprite_node: Sprite2D
 var _base_scale: Vector2 = Vector2.ONE
 var _sprite_scale_mult: float = 1.0
 var _anim_time: float = 0.0
+var _facing_angle: float = 0.0
 var _target: Player
 
 var _telegraph_left: float = 0.0
@@ -92,13 +105,20 @@ func _process(delta: float) -> void:
 
 
 ## "Respiração" por código: o sprite balança ao andar e achata ao apanhar.
+## O `gait` define o ritmo da espécie (pular, rastejar, flutuar).
 func _animate_sprite() -> void:
 	if _sprite_node == null:
 		return
 
+	var gait: Dictionary = GAITS.get(anim_style, GAITS[&"walk"])
 	var moving := velocity.length() > 20.0
-	var bob := sin(_anim_time * (9.0 if moving else 3.0)) * (1.5 if moving else 0.7)
-	_sprite_node.position.y = -1.0 + bob
+	var freq := float(gait["freq"]) if moving else float(gait["idle_freq"])
+	var bob_amount := float(gait["bob"]) * (1.0 if moving else 0.45)
+	var sway_amount := float(gait["sway"]) * (1.0 if moving else 0.4)
+
+	var bob := sin(_anim_time * freq) * bob_amount
+	var sway := cos(_anim_time * freq * 0.5) * sway_amount
+	_sprite_node.position = Vector2(sway, -1.0 + bob)
 
 	var squash := 1.0
 	if _flash_left > 0.0:
@@ -107,6 +127,9 @@ func _animate_sprite() -> void:
 		var progress := 1.0 - (_telegraph_left / maxf(0.01, _telegraph_total))
 		squash += 0.06 * sin(progress * TAU * 3.0)
 	_sprite_node.scale = Vector2(_base_scale.x / squash, _base_scale.y * squash)
+
+	var tilt := sin(_anim_time * freq * 0.5) * float(gait["tilt"]) * (1.0 if moving else 0.3)
+	_sprite_node.rotation = _facing_angle + tilt
 
 
 ## Sprites são desenhados "para cima"; giramos para o alvo (ou para a velocidade).
@@ -118,7 +141,7 @@ func _update_sprite_facing() -> void:
 		heading = _target.global_position - global_position
 	if heading.length_squared() < 0.01:
 		return
-	_sprite_node.rotation = heading.angle() + PI * 0.5
+	_facing_angle = heading.angle() + PI * 0.5
 
 
 func apply_data(data: EnemyData) -> void:
@@ -129,6 +152,7 @@ func apply_data(data: EnemyData) -> void:
 	oil_drop = data.oil_drop
 	cera_drop = data.cera_drop
 	body_color = data.body_color
+	anim_style = data.anim_style
 
 
 func _physics_process(delta: float) -> void:

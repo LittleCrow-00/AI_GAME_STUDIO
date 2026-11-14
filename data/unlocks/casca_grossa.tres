@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/unlock_data.gd" id="1_unlock"]
+
+[resource]
+script = ExtResource("1_unlock")
+id = &"casca_grossa"
+display_name = "Casca Grossa"
+description = "Começa a run com Casca Grossa: +25 de vida máxima."
+cost = 35
+item_id = &"casca_grossa"

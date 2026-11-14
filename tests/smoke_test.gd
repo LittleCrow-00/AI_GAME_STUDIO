@@ -34,6 +34,8 @@ func _ready() -> void:
 	await _test_dark_zone()
 	await _test_caipora()
 	_test_audio()
+	await _test_gaits()
+	_test_difficulty()
 	await _test_prologue()
 	await _test_final_room_boss()
 	_test_item_pool()
@@ -482,9 +484,66 @@ func _test_audio() -> void:
 	_check(not AudioService.is_muted(), "Audio: desmute funciona")
 
 
+func _test_gaits() -> void:
+	_check(Enemy.GAITS.size() == 5, "Animacao: 5 estilos de passada")
+
+	var data := preload("res://data/enemies/afogado.tres") as EnemyData
+	var enemy := ENEMY_SCRIPT.new() as Enemy
+	enemy.sprite_texture = preload("res://assets/sprites/afogado.svg")
+	add_child(enemy)
+	enemy.apply_data(data)
+	_check(enemy.anim_style == &"walk", "Animacao: EnemyData define o estilo")
+
+	enemy.anim_style = &"slither"
+	enemy.velocity = Vector2(80.0, 0.0)
+	enemy._animate_sprite()
+	var y_before: float = enemy._sprite_node.position.y
+	enemy._anim_time += 0.2
+	enemy._animate_sprite()
+	_check(
+		not is_equal_approx(enemy._sprite_node.position.y, y_before),
+		"Animacao: a passada move o sprite",
+	)
+
+	enemy.queue_free()
+	await get_tree().process_frame
+
+
+func _test_difficulty() -> void:
+	var rooms: Array[DifficultyData] = [
+		preload("res://data/difficulty/flor_da_agua.tres") as DifficultyData,
+		preload("res://data/difficulty/fossa.tres") as DifficultyData,
+		preload("res://data/difficulty/cripta_afundada.tres") as DifficultyData,
+		preload("res://data/difficulty/coracao_do_farol.tres") as DifficultyData,
+	]
+	_check(rooms.size() == 4, "Dificuldade: 4 andares com dados")
+
+	var growing := true
+	for i in range(1, rooms.size()):
+		if rooms[i].health_scale <= rooms[i - 1].health_scale:
+			growing = false
+		if rooms[i].budget_bonus < rooms[i - 1].budget_bonus:
+			growing = false
+	_check(growing, "Dificuldade: vida e orcamento crescem por andar")
+
+	var arena := Arena.new()
+	arena.setup(3)
+	arena.difficulty = rooms[3]
+	add_child(arena)
+	# Para antes do primeiro frame: o diretor nasceria uma onda de teste.
+	arena.stop()
+	await get_tree().process_frame
+	var director := arena.get("_director") as SpawnDirector
+	_check(director != null, "Dificuldade: arena recebe o diretor")
+	arena.stop()
+	arena.queue_free()
+
+
 func _test_prologue() -> void:
 	var player := _spawn_player()
-	var enemies_before := get_tree().get_nodes_in_group("enemies").size()
+	var known := {}
+	for node in get_tree().get_nodes_in_group("enemies"):
+		known[node.get_instance_id()] = true
 	var arena := Arena.new()
 	arena.setup(-1)
 	arena.is_prologue = true
@@ -493,10 +552,12 @@ func _test_prologue() -> void:
 
 	var farol := arena.get("_farol") as Farol
 	_check(farol != null and farol.charge_by_light, "Prologo: farol acende com a luz")
-	_check(
-		get_tree().get_nodes_in_group("enemies").size() == enemies_before,
-		"Prologo: sem ondas",
-	)
+
+	var spawned: Array[String] = []
+	for node in get_tree().get_nodes_in_group("enemies"):
+		if not known.has(node.get_instance_id()):
+			spawned.append("%s parent=%s" % [node.name, node.get_parent()])
+	_check(spawned.is_empty(), "Prologo: sem ondas")
 
 	# O feixe e posicionado direto: aqui interessa a regra do Farol, nao o input.
 	player.set_physics_process(false)

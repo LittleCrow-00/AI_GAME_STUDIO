@@ -15,3 +15,4 @@ oil_drop = 20.0
 cera_drop = 3
 body_color = Color(0.78, 0.70, 0.46, 1)
 cost = 4
+anim_style = &"crawl"

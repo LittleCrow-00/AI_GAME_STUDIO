@@ -39,6 +39,8 @@ const WAVE_BREAK: float = 0.7
 @export var biome: BiomeData
 ## Prologo: sem ondas, o Farol acende com o feixe.
 @export var is_prologue: bool = false
+## Curva de dificuldade do andar. Vazio = multiplicadores neutros.
+@export var difficulty: DifficultyData
 ## Chance de um inimigo nascer elite (a partir da 2ª sala).
 @export var elite_chance: float = 0.12
 
@@ -137,7 +139,7 @@ func _start_wave() -> void:
 		SignalBus.enemies_remaining_changed.emit(_alive)
 		return
 
-	var budget := BASE_BUDGET + _wave_index * 2 + room_index * 2
+	var budget := BASE_BUDGET + _wave_index * 2 + room_index * 2 + _budget_bonus()
 	_director.configure(_enemy_pool(), budget, MAX_ALIVE)
 	_director.start()
 	SignalBus.wave_started.emit(_wave_index, WAVES_PER_ROOM)
@@ -193,18 +195,26 @@ func _enemy_pool() -> Array[EnemyData]:
 	return pool
 
 
+func _budget_bonus() -> int:
+	return difficulty.budget_bonus if difficulty != null else 0
+
+
 func _on_spawn_enemy(data: EnemyData) -> void:
 	var enemy := data.scene.instantiate() as Enemy
 	enemy.position = _random_spawn_position()
 	enemy.apply_data(data)
 
-	var health_scale := 1.0 + 0.18 * float(room_index)
+	var health_scale := difficulty.health_scale if difficulty != null else 1.0
+	var damage_scale := difficulty.damage_scale if difficulty != null else 1.0
+	var speed_scale := difficulty.speed_scale if difficulty != null else 1.0
+	var roll_chance := difficulty.elite_chance if difficulty != null else elite_chance
+
 	enemy.max_health = data.health * health_scale
 	enemy.health = enemy.max_health
-	enemy.move_speed = data.move_speed * (1.0 + 0.03 * float(room_index))
-	enemy.contact_damage = data.contact_damage * (1.0 + 0.15 * float(room_index))
+	enemy.move_speed = data.move_speed * speed_scale
+	enemy.contact_damage = data.contact_damage * damage_scale
 	enemy.oil_drop = data.oil_drop
-	if room_index >= 1 and _rng.randf() < elite_chance:
+	if room_index >= 1 and _rng.randf() < roll_chance:
 		enemy.make_elite()
 
 	add_child(enemy)

@@ -15,3 +15,4 @@ oil_drop = 12.0
 cera_drop = 2
 body_color = Color(0.95, 0.45, 0.18, 1)
 cost = 3
+anim_style = &"lope"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/unlock_data.gd" id="1_unlock"]
+
+[resource]
+script = ExtResource("1_unlock")
+id = &"pavio_duplo"
+display_name = "Pavio Duplo"
+description = "Começa a run com Pavio Duplo: cone maior, mais dano, menos alcance."
+cost = 50
+item_id = &"pavio_duplo"

@@ -8,6 +8,8 @@ const ALL: Array[UnlockData] = [
 	preload("res://data/unlocks/pavio_extra.tres"),
 	preload("res://data/unlocks/oleo_frio.tres"),
 	preload("res://data/unlocks/lente_estadio.tres"),
+	preload("res://data/unlocks/casca_grossa.tres"),
+	preload("res://data/unlocks/pavio_duplo.tres"),
 ]
 
 

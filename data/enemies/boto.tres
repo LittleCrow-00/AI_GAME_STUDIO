@@ -14,3 +14,4 @@ contact_damage = 14.0
 oil_drop = 9.0
 body_color = Color(0.92, 0.55, 0.85, 1)
 cost = 3
+anim_style = &"slither"

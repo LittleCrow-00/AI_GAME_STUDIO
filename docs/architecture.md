@@ -60,6 +60,7 @@ resources/
   threshold_data.gd      recompensa de limiar (.tres): óleo, modificador, explosão
   unlock_data.gd         desbloqueio (.tres): id, nome, custo, item inicial
   biome_data.gd          paleta do bioma (.tres)
+  difficulty_data.gd     curva de dificuldade por andar (.tres)
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres) — ainda não usado
 data/
@@ -68,6 +69,7 @@ data/
   thresholds/            chain_10, chain_25, chain_50 (.tres)
   unlocks/               pavio_extra, oleo_frio, lente_estadio (.tres)
   biomes/                mare_baixa, fossa, cripta_afundada, coracao_do_farol
+  difficulty/            flor_da_agua, fossa, cripta_afundada, coracao_do_farol
 assets/
   audio/                 8 WAVs gerados por tools/gen_audio.gd
   sprites/               jogador, 4 inimigos e chefe em SVG (Sprite2D)

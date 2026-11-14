@@ -20,6 +20,10 @@ const BIOME_MARE: BiomeData = preload("res://data/biomes/mare_baixa.tres")
 const BIOME_FOSSA: BiomeData = preload("res://data/biomes/fossa.tres")
 const BIOME_CRIPTA: BiomeData = preload("res://data/biomes/cripta_afundada.tres")
 const BIOME_CORACAO: BiomeData = preload("res://data/biomes/coracao_do_farol.tres")
+const DIFF_FLOR: DifficultyData = preload("res://data/difficulty/flor_da_agua.tres")
+const DIFF_FOSSA: DifficultyData = preload("res://data/difficulty/fossa.tres")
+const DIFF_CRIPTA: DifficultyData = preload("res://data/difficulty/cripta_afundada.tres")
+const DIFF_CORACAO: DifficultyData = preload("res://data/difficulty/coracao_do_farol.tres")
 
 ## Economia da run. Preço sobe por andar para a cera continuar sendo decisão.
 @export var room_clear_cera: int = 5
@@ -81,6 +85,7 @@ func _start_room(index: int) -> void:
 	_arena.is_prologue = index == PROLOGUE_ROOM
 	_arena.boss = _boss_for(index)
 	_arena.biome = _biome_for(index)
+	_arena.difficulty = _difficulty_for(index)
 	_arena.is_boss_room = _arena.boss != null
 	_arena.is_final_room = index == FINAL_ROOM
 	add_child(_arena)
@@ -113,6 +118,19 @@ func _biome_for(index: int) -> BiomeData:
 			return BIOME_CORACAO
 		_:
 			return BIOME_MARE
+
+
+## Curva de dificuldade por andar (dados, não conta na lógica).
+func _difficulty_for(index: int) -> DifficultyData:
+	match index:
+		1:
+			return DIFF_FOSSA
+		2:
+			return DIFF_CRIPTA
+		3:
+			return DIFF_CORACAO
+		_:
+			return DIFF_FLOR
 
 
 ## Chefe por sala: a Cobra Grande guarda a descida; a Cuca guarda o Farol.

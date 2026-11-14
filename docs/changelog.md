@@ -53,6 +53,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   tutorial e de objetivo final (sem texto de instrução).
 - `SignalBus`: `oil_pickup_collected` e `farol_lit`.
 - Testes: 8 efeitos carregados, mute/desmute e prólogo (89 asserções).
+- **Animação por gait**: `Enemy.GAITS` define passada, frequência, inclinação e
+  balanço de 5 estilos (`walk`, `lope`, `slither`, `hover`, `crawl`). Cada
+  `EnemyData` escolhe o seu (`anim_style`), então o sprite é o mesmo e o
+  movimento dá a espécie.
+- **Curva de dificuldade como dados**: `DifficultyData` + `data/difficulty/*.tres`
+  (4 andares). O `Arena` não calcula mais `1 + 0.18 * sala`; o `Main` injeta o
+  andar.
+- **Mais 2 desbloqueios**: Casca Grossa (35) e Pavio Duplo (50) — 5 no total.
+- Testes: gaits e curva de dificuldade (95 asserções).
 
 ---
 

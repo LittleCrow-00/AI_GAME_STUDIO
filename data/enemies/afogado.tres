@@ -14,3 +14,4 @@ contact_damage = 10.0
 oil_drop = 6.0
 body_color = Color(0.34, 0.88, 0.85, 1)
 cost = 1
+anim_style = &"walk"

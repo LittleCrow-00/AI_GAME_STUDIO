@@ -14,3 +14,4 @@ contact_damage = 4.0
 oil_drop = 8.0
 body_color = Color(0.45, 0.62, 0.95, 1)
 cost = 2
+anim_style = &"hover"
