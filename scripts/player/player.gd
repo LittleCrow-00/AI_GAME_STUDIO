@@ -73,6 +73,10 @@ var _known_synergies: Array[StringName] = []
 var _active_thresholds: Array[ThresholdData] = []
 var _threshold_timers: Dictionary = {}
 
+## Apresentação: tempo de animação e rastro do dash (desenho procedural).
+var _anim_time: float = 0.0
+var _trail: Array[Vector2] = []
+
 
 func _ready() -> void:
 	add_to_group("player")
@@ -231,6 +235,17 @@ func _tick_thresholds(delta: float) -> void:
 
 	if changed:
 		_apply_threshold_modifiers()
+
+
+func _process(delta: float) -> void:
+	_anim_time += delta
+	if _dash_time_left > 0.0:
+		_trail.push_front(global_position)
+		if _trail.size() > 9:
+			_trail.pop_back()
+	elif not _trail.is_empty():
+		_trail.pop_back()
+	queue_redraw()
 
 
 func _physics_process(delta: float) -> void:
@@ -439,11 +454,70 @@ func _emit_dash() -> void:
 	SignalBus.dash_charges_changed.emit(_dash_charges, _dash_charges_max)
 
 
+func _draw_trail() -> void:
+	var count := _trail.size()
+	for i in range(count):
+		var t := 1.0 - float(i) / float(maxi(1, count))
+		draw_circle(to_local(_trail[i]), 4.0 + 8.0 * t, Color(1.0, 0.78, 0.40, 0.15 * t))
+
+
 func _draw() -> void:
-	draw_circle(Vector2.ZERO, 13.0, Color(0.05, 0.08, 0.09))
-	draw_circle(Vector2.ZERO, 11.0, Color(0.85, 0.72, 0.45))
-	draw_circle(Vector2(0, -2), 4.0, Color(1.0, 0.88, 0.55))
+	var aim := beam.global_rotation - global_rotation
+	var bob := 0.0 if _dead else sin(_anim_time * 4.0) * 1.1
+
+	_draw_trail()
+
+	draw_set_transform(Vector2(0.0, 9.0), 0.0, Vector2(1.0, 0.45))
+	draw_circle(Vector2.ZERO, 14.0, Color(0.0, 0.0, 0.0, 0.38))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+	var coat := Color(0.13, 0.27, 0.30)
+	var coat_dark := Color(0.07, 0.15, 0.17)
+	var trim := Color(0.82, 0.68, 0.38)
+
+	var coat_shape := PackedVector2Array([
+		Vector2(-7.5, -7.0), Vector2(7.5, -7.0),
+		Vector2(10.5, 8.0), Vector2(5.0, 12.0 + bob),
+		Vector2(-5.0, 12.0 + bob), Vector2(-10.5, 8.0),
+	])
+	draw_colored_polygon(coat_shape, coat_dark)
+
+	var coat_inner := PackedVector2Array([
+		Vector2(-6.0, -6.0), Vector2(6.0, -6.0),
+		Vector2(8.4, 7.2), Vector2(3.8, 10.4 + bob),
+		Vector2(-3.8, 10.4 + bob), Vector2(-8.4, 7.2),
+	])
+	draw_colored_polygon(coat_inner, coat)
+
+	draw_line(Vector2(-6.0, -6.0), Vector2(6.0, -6.0), trim, 2.0)
+	draw_line(Vector2(-8.4, 2.6), Vector2(8.4, 2.6), Color(0.22, 0.16, 0.11), 2.4)
+	draw_circle(Vector2(0.0, 2.6), 1.7, trim)
+	draw_circle(Vector2(0.0, -2.0), 1.1, trim)
+	draw_circle(Vector2(0.0, 1.0), 1.1, trim)
+
+	draw_circle(Vector2(-8.0, -5.5), 3.6, coat_dark)
+	draw_circle(Vector2(8.0, -5.5), 3.6, coat_dark)
+
+	draw_circle(Vector2(0.0, -9.5 + bob), 5.4, Color(0.90, 0.79, 0.64))
+
+	draw_set_transform(Vector2(0.0, -11.0 + bob), 0.0, Vector2(1.0, 0.55))
+	draw_circle(Vector2.ZERO, 11.5, Color(0.07, 0.11, 0.13))
+	draw_set_transform(Vector2(0.0, -12.4 + bob), 0.0, Vector2.ONE)
+	draw_circle(Vector2.ZERO, 6.2, Color(0.09, 0.14, 0.16))
+	draw_rect(Rect2(-6.2, -1.2, 12.4, 2.4), Color(0.55, 0.38, 0.16))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+	var hand := Vector2.from_angle(aim) * 7.0 + Vector2(0.0, 1.0)
+	var lantern := Vector2.from_angle(aim) * 14.0 + Vector2(0.0, 2.0)
+	var flicker := 0.85 + 0.15 * sin(_anim_time * 9.0)
+	draw_line(hand, lantern, Color(0.10, 0.10, 0.11), 1.8)
+	draw_circle(lantern, 8.0, Color(1.0, 0.80, 0.40, 0.18 * flicker))
+	draw_circle(lantern, 3.8, Color(1.0, 0.88, 0.55, 0.95))
+	draw_arc(lantern, 4.8, 0.0, TAU, 14, Color(0.16, 0.13, 0.09), 1.4)
+
 	if _iframes > 0.0:
-		draw_arc(Vector2.ZERO, 17.0, 0.0, TAU, 28, Color(1, 1, 1, 0.45), 2.0)
+		var alpha := clampf(_iframes / 0.35, 0.0, 1.0) * 0.7
+		draw_arc(Vector2.ZERO, 18.0, 0.0, TAU, 28, Color(0.85, 0.95, 1.0, alpha), 2.0)
 	if _dead:
 		draw_arc(Vector2.ZERO, 20.0, 0.0, TAU, 28, Color(0.78, 0.2, 0.24, 0.8), 3.0)
+		draw_circle(Vector2.ZERO, 10.0, Color(0.25, 0.03, 0.04, 0.45))
