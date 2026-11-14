@@ -20,6 +20,13 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   `data/enemies/*.tres` com custo de ameaça 3 e 4.
 - Testes: calor/imunidade da Boitatá e redução de dano do Mapinguari
   (71 asserções).
+- **Cuca** (`scripts/enemies/cuca.gd`): 2º chefe e guardiã do Farol. Enquanto
+  viva, aplica uma **aura** no `StatSheet` do jogador (`beam_range` ×0,65, origem
+  `cuca`) — some quando ela morre. Ataca com sopro que drena óleo, mergulho
+  (teleporte + rajada) e invocação de afogados. O `Main` agora escolhe o chefe
+  por sala (`_boss_for`) e o `Arena` recebe `boss: EnemyData`.
+- `Player.apply_aura()`: caminho único para modificadores temporários de inimigos.
+- Testes: aura aplicada/removida e chefe na sala final (74 asserções).
 
 ---
 

@@ -17,7 +17,6 @@ const ENEMY_BOTO: EnemyData = preload("res://data/enemies/boto.tres")
 const ENEMY_CURUPIRA: EnemyData = preload("res://data/enemies/curupira.tres")
 const ENEMY_BOITATA: EnemyData = preload("res://data/enemies/boitata.tres")
 const ENEMY_MAPINGUARI: EnemyData = preload("res://data/enemies/mapinguari.tres")
-const ENEMY_COBRA: EnemyData = preload("res://data/enemies/cobra_grande.tres")
 
 const FAROL_SCENE: PackedScene = preload("res://scenes/gameplay/farol.tscn")
 
@@ -30,6 +29,8 @@ const WAVE_BREAK: float = 0.7
 @export var room_index: int = 0
 @export var is_boss_room: bool = false
 @export var is_final_room: bool = false
+## Chefe da sala. Vazio = sala de ondas normais.
+@export var boss: EnemyData
 ## Chance de um inimigo nascer elite (a partir da 2ª sala).
 @export var elite_chance: float = 0.12
 
@@ -107,7 +108,7 @@ func _process(delta: float) -> void:
 
 
 func _waves_total() -> int:
-	return 1 if is_boss_room else WAVES_PER_ROOM
+	return 1 if boss != null else WAVES_PER_ROOM
 
 
 func _start_wave() -> void:
@@ -117,7 +118,7 @@ func _start_wave() -> void:
 		return
 
 	_wave_finished = false
-	if is_boss_room:
+	if boss != null:
 		_spawn_boss()
 		SignalBus.wave_started.emit(0, 1)
 		SignalBus.enemies_remaining_changed.emit(_alive)
@@ -131,15 +132,11 @@ func _start_wave() -> void:
 
 
 func _spawn_boss() -> void:
-	var boss := ENEMY_COBRA.scene.instantiate() as Enemy
-	boss.position = Vector2(0.0, -160.0)
-	boss.apply_data(ENEMY_COBRA)
-	boss.max_health = ENEMY_COBRA.health
-	boss.health = boss.max_health
-	boss.move_speed = ENEMY_COBRA.move_speed
-	boss.contact_damage = ENEMY_COBRA.contact_damage
-	boss.oil_drop = ENEMY_COBRA.oil_drop
-	add_child(boss)
+	var data := boss
+	var boss_enemy := data.scene.instantiate() as Enemy
+	boss_enemy.position = Vector2(0.0, -160.0)
+	boss_enemy.apply_data(data)
+	add_child(boss_enemy)
 	_alive += 1
 	SignalBus.enemies_remaining_changed.emit(_alive)
 

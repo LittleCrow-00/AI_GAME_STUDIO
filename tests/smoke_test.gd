@@ -26,8 +26,10 @@ func _ready() -> void:
 	_test_light_well()
 	_test_projectile_pool()
 	_test_boss_exposure()
-	_test_boitata()
-	_test_mapinguari()
+	await _test_boitata()
+	await _test_mapinguari()
+	await _test_cuca_aura()
+	await _test_final_room_boss()
 	_test_item_pool()
 	_test_sanctuary_shop()
 	_test_settings()
@@ -350,6 +352,50 @@ func _test_mapinguari() -> void:
 	await get_tree().process_frame
 
 
+func _test_cuca_aura() -> void:
+	var player := _spawn_player()
+	var base_range := player.stats.get_stat(&"beam_range")
+
+	var cuca := Cuca.new()
+	cuca.max_health = 400.0
+	cuca.health = 400.0
+	add_child(cuca)
+
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_check(player.stats.get_stat(&"beam_range") < base_range, "Cuca: encolhe o alcance do feixe")
+
+	cuca.take_damage(99999.0, Vector2.ZERO)
+	await get_tree().process_frame
+	_check(
+		is_equal_approx(player.stats.get_stat(&"beam_range"), base_range),
+		"Cuca: morte devolve o alcance",
+	)
+
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_final_room_boss() -> void:
+	var arena := Arena.new()
+	arena.setup(3)
+	arena.is_final_room = true
+	arena.boss = preload("res://data/enemies/cuca.tres") as EnemyData
+	add_child(arena)
+
+	await get_tree().create_timer(0.8, true, false, true).timeout
+
+	var found := false
+	for node in get_tree().get_nodes_in_group("enemies"):
+		if node is Cuca:
+			found = true
+	_check(found, "Sala final: Cuca aparece como chefe")
+
+	arena.stop()
+	arena.queue_free()
+	await get_tree().process_frame
+
+
 func _test_items_and_synergies() -> void:
 	var player := _spawn_player()
 	await get_tree().process_frame
@@ -452,6 +498,13 @@ func _test_farol() -> void:
 
 
 func _spawn_player() -> Player:
+	# Testes antigos podem ter deixado jogadores vivos: o Enemy procura o primeiro
+	# da fila, então garantimos que existe exatamente um.
+	for old in get_tree().get_nodes_in_group("player"):
+		if old.get_parent() != null:
+			old.get_parent().remove_child(old)
+		old.queue_free()
+
 	var scene := load("res://scenes/player/player.tscn") as PackedScene
 	var player := scene.instantiate() as Player
 	add_child(player)

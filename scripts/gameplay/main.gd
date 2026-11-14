@@ -13,6 +13,8 @@ const ARENA_SCENE: PackedScene = preload("res://scenes/gameplay/arena.tscn")
 const ROOM_TOTAL: int = 4
 const BOSS_ROOM: int = 2
 const FINAL_ROOM: int = 3
+const BOSS_COBRA: EnemyData = preload("res://data/enemies/cobra_grande.tres")
+const BOSS_CUCA: EnemyData = preload("res://data/enemies/cuca.tres")
 
 ## Economia da run. Preço sobe por andar para a cera continuar sendo decisão.
 @export var room_clear_cera: int = 5
@@ -71,7 +73,8 @@ func _start_room(index: int) -> void:
 
 	_arena = ARENA_SCENE.instantiate() as Arena
 	_arena.setup(index)
-	_arena.is_boss_room = index == BOSS_ROOM
+	_arena.boss = _boss_for(index)
+	_arena.is_boss_room = _arena.boss != null
 	_arena.is_final_room = index == FINAL_ROOM
 	add_child(_arena)
 	move_child(_arena, 0)
@@ -85,6 +88,15 @@ func _start_room(index: int) -> void:
 	_state = State.COMBAT
 	SignalBus.run_state_changed.emit(_state)
 	SignalBus.message_requested.emit("DESCEU %d" % (index + 1), 1.4)
+
+
+## Chefe por sala: a Cobra Grande guarda a descida; a Cuca guarda o Farol.
+func _boss_for(index: int) -> EnemyData:
+	if index == BOSS_ROOM:
+		return BOSS_COBRA
+	if index == FINAL_ROOM:
+		return BOSS_CUCA
+	return null
 
 
 func _on_room_cleared() -> void:

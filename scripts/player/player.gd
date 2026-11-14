@@ -135,6 +135,15 @@ func _refresh_stats(heal_delta: bool = true) -> void:
 	_dash_charges = mini(_dash_charges, _dash_charges_max)
 
 
+## Aura de inimigo (ex.: a escuridão da Cuca). Entra pelo mesmo caminho dos itens,
+## com origem própria para poder ser removida quando o inimigo morre.
+func apply_aura(source_id: StringName, modifiers: Array) -> void:
+	stats.remove_source(source_id)
+	for modifier in modifiers:
+		stats.add(stats.tag_source(modifier as StatModifier, source_id))
+	_refresh_stats()
+
+
 ## Adiciona um item ao inventário e recalcula tudo. Devolve `false` se o item já
 ## está no máximo de stacks (o Santuário usa isso para não oferecer repetidos).
 func apply_item(item: ItemData) -> bool:

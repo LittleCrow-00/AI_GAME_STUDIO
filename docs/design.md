@@ -213,7 +213,7 @@ Sala 0 nunca oferece maldição.
 
 ```
 Sala 1 (3 ondas) → Santuário → Sala 2 (3 ondas) → Santuário
-   → Sala 3: COBRA GRANDE → Santuário → Sala 4: FAROL (vitória)
+   → Sala 3: COBRA GRANDE → Santuário → Sala 4: CUCA + FAROL (vitória)
 ```
 
 - **Santuário (loja):** o jogo pausa e oferece **1 entre 3 itens**. A **primeira
@@ -223,6 +223,8 @@ Sala 1 (3 ondas) → Santuário → Sala 2 (3 ondas) → Santuário
 - **Cobra Grande:** a sala 3 é uma arena de chefe. Ela é **imune no escuro** e
   só pode ser ferida depois de receber luz contínua — a luta obriga a parar de
   desviar e apontar.
+- **Cuca:** a sala 4 é o último obstáculo antes do Farol. Enquanto vive, o
+  **alcance do feixe encolhe 35%** — a luta inteira acontece quase no escuro.
 - **Farol:** a sala 4 é a vitória. Depois de limpa, o Farol acende; o jogador
   precisa ficar 2 s dentro do círculo.
 
@@ -250,11 +252,23 @@ recorde, e é a nova cena inicial (`run/main_scene`).
 A leitura é simples e o HUD ajuda: um anel enche enquanto você segura a luz nela;
 quando enche, ela fica **exposta** e o anel vira vermelho.
 
+## 8.2 Cuca
+
+| Propriedade | Valor |
+|---|---|
+| Vida | 700 |
+| Aura | alcance do feixe ×0,65 enquanto viva |
+| Ataques | sopro (5 tiros que drenam óleo), mergulho (teleporte + 8 tiros), invocação (2 afogados) |
+
+A aura entra pelo `StatSheet` do jogador com origem `cuca`, o mesmo caminho dos
+itens — some quando ela morre. É a chefe que **não** pede pontaria: pede coragem
+para lutar com pouca luz.
+
 ---
 
 ## 9. O que ainda não existe
 
-- Biomas (paletas por profundidade já existem) e o 2º chefe.
+- Biomas (paletas por profundidade já existem) e mais inimigos.
 - Áudio.
 - Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.
 
