@@ -1,0 +1,20 @@
+# Godot
+.godot/
+.import/
+export.cfg
+export_presets.cfg.lock
+
+# Builds exportados
+build/
+export/
+*.pck
+*.zip
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp

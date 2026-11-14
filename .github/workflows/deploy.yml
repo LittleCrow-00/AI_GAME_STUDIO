@@ -1,25 +1,59 @@
 name: Build and Deploy Godot Web
+
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.7.2
+      image: barichello/godot-ci:4.4.1
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v4
-      - name: Criar pasta de saida
-        run: mkdir -v -p build/web
+
+      - name: Instalar templates de exportacao
+        run: |
+          set -euo pipefail
+          VERSION="4.4.1.stable"
+          DEST="$HOME/.local/share/godot/export_templates/$VERSION"
+          mkdir -p "$DEST"
+          curl -sL -o /tmp/templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz"
+          unzip -q -j /tmp/templates.tpz \
+            "templates/version.txt" \
+            "templates/web_debug.zip" \
+            "templates/web_release.zip" \
+            "templates/web_nothreads_debug.zip" \
+            "templates/web_nothreads_release.zip" \
+            -d "$DEST"
+
+      - name: Importar projeto
+        run: godot --headless --path . --import
+
+      - name: Rodar testes de fumaca
+        run: godot --headless --path . res://tests/smoke_test.tscn
+
       - name: Exportar jogo Godot
-        run: godot --headless --verbose --export-release "Web"
+        run: |
+          set -euo pipefail
+          mkdir -p build/web
+          godot --headless --path . --export-release "Web" build/web/index.html
+
+      - name: Ajustar GitHub Pages
+        run: touch build/web/.nojekyll
+
       - name: Preparar para GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
