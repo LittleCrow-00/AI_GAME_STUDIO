@@ -151,9 +151,10 @@ passando; falta o *benchmark* de estresse.
 
 ## Fase 8 — Publicação
 
-- [x] Export Web medido: `index.wasm` 43 MB → **9,5 MB gzip** (orçamento do
+- [x] Export Web medido: `index.wasm` 42 MB → **9,0 MB gzip** (orçamento do
       navegador), `index.pck` 0,5 MB. `tools/build_web.sh` roda testes + export
       + zip e imprime o tamanho de transferência
+- [x] Preset Web exclui `tests/*` (testes não viajam no build publicado)
 - [x] Build Web validado em navegador real: `tools/web_check.mjs` abre o export
       em Chromium headless (WebGL2), confirma canvas 1280×720, título
       desenhando, clique em DESCER abrindo a run e zero erros de console

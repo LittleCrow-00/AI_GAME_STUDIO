@@ -11,6 +11,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   Chromium headless com WebGL2 e confere título, canvas 1280×720, cena de
   título desenhando, clique em **DESCER** abrindo a run e zero erros de
   console. Documentado em `docs/publish.md`.
+- Preset Web passa a excluir `tests/*`: o build publicado não carrega mais os
+  testes de fumaça (gzip do `index.wasm` caiu de 9,5 MB para 9,0 MB).
 - **Fase 7 (passo 1) — inimigos que leem a luz.**
 - **Boitatá** (`scripts/enemies/boitata.gd`): serpente de fogo que só a luz fere.
   Cada tique de feixe enche um medidor de calor; cheio, ela explode (onda de

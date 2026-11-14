@@ -46,12 +46,16 @@ final fica em `https://<usuario>.github.io/<repo>/`.
 
 | Métrica | Valor medido |
 |---|---|
-| `index.wasm` | ~43 MB |
-| `index.wasm` gzip | ~9,5 MB |
+| `index.wasm` | ~42 MB |
+| `index.wasm` gzip | ~9,0 MB |
 | `index.pck` | ~0,5 MB |
+| `faroleiro-web.zip` | 9,5 MB |
 
-O número que importa é o gzip/transferência: ~10 MB. Se o itch reclamar do
+O número que importa é o gzip/transferência: ~9 MB. Se o itch reclamar do
 tamanho do upload, o `.zip` é a forma correta (ele comprime na entrega).
+
+O preset de exportação exclui `tests/*`: os testes de fumaça rodam no CI e no
+desenvolvimento, não viajam dentro do jogo publicado.
 ## Verificação no navegador
 
 Antes de publicar, o build exportado é aberto em um Chromium headless com
