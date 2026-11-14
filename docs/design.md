@@ -231,9 +231,12 @@ Duração alvo: **25–40 min**. Sem "continue".
 **Loop:** entrar → ler ameaças → combater (óleo/cadeia/dash) → limpar → santuário
 → descer.
 
-**Meta-progressão (Fase 6):** Cera acumulada desbloqueia **itens iniciais e
-personagens** (desbloqueios laterais), nunca apenas `+10% de dano` — para não
-achatar a curva.
+**Meta-progressão (Fase 6):** a Cera da run é depositada no fim (vitória ou
+morte) em `user://save.json`. Ela compra **desbloqueios laterais** — itens
+iniciais e personagens, nunca `+10% de dano` — para não achatar a curva.
+Implementado: 3 desbloqueios (`pavio_extra` 20, `oleo_frio` 30, `lente_estadio`
+60) que entregam 1 item no início da run. A tela de título mostra saldo, runs e
+recorde, e é a nova cena inicial (`run/main_scene`).
 
 ## 8.1 Cobra Grande
 
@@ -251,7 +254,6 @@ quando enche, ela fica **exposta** e o anel vira vermelho.
 
 ## 9. O que ainda não existe
 
-- Cera acumulada entre runs (meta-progressão) e itens iniciais desbloqueáveis.
 - Biomas, elite Boitatá e Mapinguari.
 - Áudio.
 - Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.

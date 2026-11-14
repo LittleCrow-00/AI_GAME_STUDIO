@@ -49,18 +49,22 @@ autoload/
   item_database.gd       lista de itens + sorteio (sem repetição, maldições)
   threshold_database.gd  limiares da Ressonância (10/25/50) + cruzamento
   settings.gd            preferências (tremor/flashes) em user://settings.cfg
+  unlock_database.gd     desbloqueios da meta-progressão + consulta de itens iniciais
+  save_system.gd         save JSON em user://save.json (cera, runs, recorde, unlocks)
 resources/
   stat_modifier.gd       modificador atômico (ADD/MULTIPLY)
   stat_sheet.gd          agregação com cache (base → ADD → MULTIPLY)
   item_data.gd           item de run (.tres): modificadores + 1 comportamento
   inventory.gd           itens → modificadores, sinergias compostas, comportamentos
   threshold_data.gd      recompensa de limiar (.tres): óleo, modificador, explosão
+  unlock_data.gd         desbloqueio (.tres): id, nome, custo, item inicial
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres) — ainda não usado
 data/
   enemies/               afogado, iara, boto, curupira, cobra_grande (.tres)
   items/                 25 itens (.tres)
   thresholds/            chain_10, chain_25, chain_50 (.tres)
+  unlocks/               pavio_extra, oleo_frio, lente_estadio (.tres)
 assets/
   sprites/               jogador, 4 inimigos e chefe em SVG (Sprite2D)
 scripts/
@@ -87,6 +91,7 @@ scripts/
   ui/hud.gd              barras, leitura, dicas, chefe
   ui/sanctuary.gd        escolha de 1 entre 3 oferendas (pausa a árvore)
   ui/summary.gd          recibo da run
+  ui/title.gd            tela de título: saldo, recorde e desbloqueios (scene root)
   vfx/light_factory.gd   texturas procedurais de luz
   vfx/screen_shake.gd    trauma-based shake na Camera2D
   vfx/damage_numbers.gd  números flutuantes com pool (Node2D, segue a câmera)
@@ -185,7 +190,9 @@ CobraGrande._on_beam_hit()    → exposure += 0.04/tick
   efeito, e um alvo em `Player`/`Beam` (`refraction`, `oil_on_hit`, `nova`,
   `pierce`).
 - **Refração/estados:** propriedades do `Beam` + `StatusSystem` (a criar).
-- **Meta-progressão:** `SaveSystem` (a criar), desbloqueios laterais.
+- **Meta-progressão:** `SaveSystem` + `UnlockDatabase`. Desbloqueios são dados
+  (`UnlockData`) e o único efeito em jogo é `starting_items()`, aplicado pelo
+  `Main` antes da primeira sala. Nenhuma regra nova no `Player`.
 
 ## 7. Convenções
 

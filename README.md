@@ -41,6 +41,10 @@ Santuário → **Cobra Grande** → Santuário → **Farol** (vitória).
 > A partir da 2ª sala, **elites** aparecem: mais vida, mais dano e 3× de cera — e
 > um anel dourado para você decidir se vale a pena gastar óleo nelas.
 
+> **Entre runs:** a Cera da run é depositada no fim (vitória ou morte) em
+> `user://save.json`. Na **tela de título** ela compra desbloqueios — itens que
+> você já começa a run tendo — além de mostrar runs e recorde.
+
 ---
 
 ## Controles
