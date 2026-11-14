@@ -6,8 +6,9 @@ O mar subiu e engoliu o litoral. Você é o último Faroleiro e desce pela Fossa
 reacender os Faróis — mas a luz que você carrega é a única coisa que os habitantes
 do escuro conseguem ver.
 
-**Status:** Fase 7 (polimento) — em desenvolvimento. Distribuição prevista:
-**itch.io, gratuita** (o projeto nasceu de IA; nada de paywall).
+**Status:** Fase 8 (publicação) — conteúdo e polimento concluídos. Distribuição
+prevista: **itch.io, gratuita** (o projeto nasceu de IA; nada de paywall). Veja
+`docs/publish.md`.
 
 ---
 
