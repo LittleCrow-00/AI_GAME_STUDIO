@@ -48,6 +48,7 @@ autoload/
   time_service.gd        hitstop global (altera Engine.time_scale)
   item_database.gd       lista de itens + sorteio (sem repetição, maldições)
   threshold_database.gd  limiares da Ressonância (10/25/50) + cruzamento
+  settings.gd            preferências (tremor/flashes) em user://settings.cfg
 resources/
   stat_modifier.gd       modificador atômico (ADD/MULTIPLY)
   stat_sheet.gd          agregação com cache (base → ADD → MULTIPLY)
@@ -77,6 +78,7 @@ scripts/
   vfx/screen_shake.gd    tremor por trauma
   ui/vignette.gd         vinheta em shader (camada 5, abaixo da UI)
   ui/item_sigil.gd       selo procedural do item (por tag)
+  ui/pause_menu.gd       pausa + acessibilidade (camada 40)
   systems/tutorial_director.gd dicas de alpha baixo, 1x por run
   gameplay/arena.gd      geometria, focos, pool, ondas, chefe, farol
   gameplay/light_well.gd foco de luz: recarrega óleo, penaliza movimento

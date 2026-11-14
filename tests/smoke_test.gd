@@ -28,6 +28,8 @@ func _ready() -> void:
 	_test_boss_exposure()
 	_test_item_pool()
 	_test_sanctuary_shop()
+	_test_settings()
+	await _test_pause_menu()
 	await _test_items_and_synergies()
 	await _test_farol()
 	await _test_arena_progression()
@@ -91,6 +93,54 @@ func _test_thresholds() -> void:
 	)
 
 	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_settings() -> void:
+	var shake_before := Settings.reduce_shake
+	var flash_before := Settings.reduce_flashes
+
+	Settings.set_reduce_shake(true)
+	_check(Settings.reduce_shake, "Settings: reduzir tremor é persistido")
+
+	var camera := ScreenShake.new()
+	camera.enabled = false
+	add_child(camera)
+	camera.add_trauma(0.5)
+	var reduced := camera._trauma
+	camera.queue_free()
+
+	Settings.set_reduce_shake(false)
+	var camera_normal := ScreenShake.new()
+	camera_normal.enabled = false
+	add_child(camera_normal)
+	camera_normal.add_trauma(0.5)
+	var normal := camera_normal._trauma
+	camera_normal.queue_free()
+
+	_check(reduced < normal, "Settings: tremor reduzido move menos a câmera")
+
+	Settings.set_reduce_flashes(true)
+	Settings.load_settings()
+	_check(Settings.reduce_flashes, "Settings: recarrega as opções do disco")
+
+	Settings.set_reduce_shake(shake_before)
+	Settings.set_reduce_flashes(flash_before)
+	await get_tree().process_frame
+
+
+func _test_pause_menu() -> void:
+	var menu := PauseMenu.new()
+	add_child(menu)
+	await get_tree().process_frame
+
+	_check(not menu.is_open(), "Pause: começa fechado")
+	menu._open_menu()
+	_check(menu.is_open() and get_tree().paused, "Pause: abre e pausa a árvore")
+	menu._close_menu()
+	_check(not menu.is_open() and not get_tree().paused, "Pause: fecha e retoma a árvore")
+
+	menu.queue_free()
 	await get_tree().process_frame
 
 

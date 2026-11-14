@@ -2,6 +2,24 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.7.0] — 2026-11-14
+
+### Adicionado
+
+- **Menu de pausa e acessibilidade** (`ui/pause_menu.gd`, `ESC`): continuar,
+  reduzir tremor de tela, reduzir flashes, reiniciar run e sair. Não abre sobre o
+  Santuário nem depois do fim da run.
+- **`Settings`** (autoload): preferências persistidas em `user://settings.cfg`.
+- `ScreenShake` respeita "reduzir tremor" (25% do trauma); inimigos respeitam
+  "reduzir flashes" (modulate mais suave).
+- README com tabela de controles.
+
+### Corrigido
+
+- Nada novo nesta versão (correções da 0.6.1 seguem valendo).
+
+---
+
 ## [0.6.1] — 2026-11-14
 
 ### Adicionado

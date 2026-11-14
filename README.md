@@ -6,7 +6,7 @@ O mar subiu e engoliu o litoral. Você é o último Faroleiro e desce pela Fossa
 reacender os Faróis — mas a luz que você carrega é a única coisa que os habitantes
 do escuro conseguem ver.
 
-**Status:** Fase 3 (estrutura de run) — em desenvolvimento.
+**Status:** Fase 7 (polimento) — em desenvolvimento.
 
 ---
 
@@ -37,6 +37,22 @@ Santuário → **Cobra Grande** → Santuário → **Farol** (vitória).
 
 > A Cobra Grande é **imune no escuro**. Você precisa segurar a luz nela por 2,5 s
 > para expô-la — a luta obriga a parar de desviar e apontar.
+
+---
+
+## Controles
+
+| Ação | Tecla |
+|---|---|
+| Mover | `WASD` / setas |
+| Mirar | mouse |
+| Feixe | botão esquerdo |
+| Dash | `espaço` |
+| Pausa e acessibilidade | `ESC` |
+| Reiniciar (fim de run) | `R` |
+
+No `ESC` você pode **reduzir o tremor de tela** e os **flashes** — as opções ficam
+salvas em `user://settings.cfg`.
 
 ---
 

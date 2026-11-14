@@ -228,7 +228,8 @@ func _spawn_projectile(
 
 func _update_tint() -> void:
 	if _flash_left > 0.0:
-		modulate = Color(4, 4, 4)
+		var intensity := 1.7 if Settings.reduce_flashes else 4.0
+		modulate = Color(intensity, intensity, intensity)
 	elif _telegraph_left > 0.0:
 		var progress := 1.0 - (_telegraph_left / _telegraph_total)
 		var pulse := 0.5 + 0.5 * sin(progress * TAU * 3.0)

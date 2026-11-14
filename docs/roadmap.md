@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.6.1 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.7.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -123,7 +123,8 @@ passando; falta o *benchmark* de estresse.
 - [ ] 8+ inimigos, 2º chefe, biomas
 - [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)
-- [ ] Acessibilidade (reduzir shake, flashes)
+- [x] Acessibilidade: menu de pausa (`ESC`) com reduzir tremor e flashes,
+      persistido em `user://settings.cfg`
 - [ ] Tutorial diegético no Farol inicial
 
 ---

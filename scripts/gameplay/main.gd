@@ -37,6 +37,7 @@ var _started_ms: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group("run")
 	RngService.new_run()
 	TimeService.clear()
 	_started_ms = Time.get_ticks_msec()

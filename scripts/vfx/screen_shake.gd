@@ -22,7 +22,8 @@ func _ready() -> void:
 
 
 func add_trauma(amount: float) -> void:
-	_trauma = clampf(_trauma + amount, 0.0, 1.0)
+	var scaled := amount * (0.25 if Settings.reduce_shake else 1.0)
+	_trauma = clampf(_trauma + scaled, 0.0, 1.0)
 
 
 func _process(delta: float) -> void:
