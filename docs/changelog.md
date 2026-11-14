@@ -6,6 +6,11 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Adicionado
 
+- **Fase 8 (publicação) — build web verificado em navegador real.**
+- `tools/web_check.mjs`: sobe um servidor estático, abre o export Web em
+  Chromium headless com WebGL2 e confere título, canvas 1280×720, cena de
+  título desenhando, clique em **DESCER** abrindo a run e zero erros de
+  console. Documentado em `docs/publish.md`.
 - **Fase 7 (passo 1) — inimigos que leem a luz.**
 - **Boitatá** (`scripts/enemies/boitata.gd`): serpente de fogo que só a luz fere.
   Cada tique de feixe enche um medidor de calor; cheio, ela explode (onda de
@@ -62,6 +67,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   andar.
 - **Mais 2 desbloqueios**: Casca Grossa (35) e Pavio Duplo (50) — 5 no total.
 - Testes: gaits e curva de dificuldade (95 asserções).
+
+### Corrigido
+
+- `TitleScreen` chamava `set_input_as_handled()` depois de trocar de cena, o que
+  gerava `Condition "!is_inside_tree()" is true` no console ao clicar em
+  **DESCER**. O envio do evento agora é protegido por `is_inside_tree()`.
 
 ---
 

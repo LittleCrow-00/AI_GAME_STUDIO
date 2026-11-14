@@ -154,6 +154,9 @@ passando; falta o *benchmark* de estresse.
 - [x] Export Web medido: `index.wasm` 43 MB → **9,5 MB gzip** (orçamento do
       navegador), `index.pck` 0,5 MB. `tools/build_web.sh` roda testes + export
       + zip e imprime o tamanho de transferência
+- [x] Build Web validado em navegador real: `tools/web_check.mjs` abre o export
+      em Chromium headless (WebGL2), confirma canvas 1280×720, título
+      desenhando, clique em DESCER abrindo a run e zero erros de console
 - [ ] Deploy no GitHub Pages verificado (workflow pronto; falta confirmar na
       conta: Settings → Pages → Source: GitHub Actions)
 - [ ] PWA opcional (desligado de propósito: não é necessário para jogar)

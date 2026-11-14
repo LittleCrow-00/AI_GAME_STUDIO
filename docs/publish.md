@@ -52,3 +52,33 @@ final fica em `https://<usuario>.github.io/<repo>/`.
 
 O número que importa é o gzip/transferência: ~10 MB. Se o itch reclamar do
 tamanho do upload, o `.zip` é a forma correta (ele comprime na entrega).
+## Verificação no navegador
+
+Antes de publicar, o build exportado é aberto em um Chromium headless com
+WebGL2 real (SwiftShader). O teste prova o que o `--headless` do Godot não
+prova: que o WASM sobe no navegador, que o canvas nasce em 1280×720, que a
+tela de título desenha e que o clique em **DESCER** abre a run — tudo sem erro
+de console.
+
+```bash
+npm i playwright-core
+npx playwright-core install chromium
+node tools/web_check.mjs build/web
+```
+
+Resultado medido em 2026-11-14:
+
+```
+PASS  titulo da pagina (FAROLEIRO)
+PASS  canvas presente (1280,720)
+PASS  canvas 1280x720
+PASS  WebGL2 disponivel
+PASS  titulo desenha (78 cores)
+PASS  run abre apos o clique (62 cores)
+PASS  sem erros de console (0)
+WEB CHECK: OK
+```
+
+O FPS medido nesse ambiente (~14) é do rasterizador por software e não
+representa hardware real; use `--headless --path .` e o teste de estresse
+(60 inimigos + 48 projéteis) para orçamento de CPU.

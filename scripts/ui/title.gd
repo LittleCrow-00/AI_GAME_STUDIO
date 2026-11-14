@@ -132,7 +132,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 		_:
 			return
-	get_viewport().set_input_as_handled()
+	_accept_input()
+
+
+func _accept_input() -> void:
+	# A cena pode já ter sido trocada pelo clique; aí o nó não recebe mais eventos.
+	if is_inside_tree():
+		get_viewport().set_input_as_handled()
 
 
 func _activate(index: int) -> void:
@@ -153,7 +159,7 @@ func _on_row_input(event: InputEvent, index: int) -> void:
 		return
 	_selected = index
 	_activate(index)
-	get_viewport().set_input_as_handled()
+	_accept_input()
 
 
 func _on_row_hover(index: int, entered: bool) -> void:
