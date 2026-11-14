@@ -45,6 +45,9 @@ jobs:
       - name: Rodar testes de fumaca
         run: godot --headless --path . res://tests/smoke_test.tscn
 
+      - name: Rodar teste de run ponta a ponta
+        run: godot --headless --path . res://tests/run_test.tscn
+
       - name: Exportar jogo Godot
         run: |
           set -euo pipefail

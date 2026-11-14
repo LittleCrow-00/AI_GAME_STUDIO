@@ -37,7 +37,24 @@ func _think(delta: float) -> void:
 func _on_telegraph_end() -> void:
 	if _target == null:
 		return
-	var angle := randf() * TAU
-	global_position = _target.global_position + Vector2.RIGHT.rotated(angle) * blink_distance
-	_attack_timer = minf(_attack_timer, 0.8)
-	SignalBus.shake_requested.emit(0.06)
+	var target_position := _target.global_position
+	for attempt in range(8):
+		var angle := randf() * TAU
+		var candidate := target_position + Vector2.RIGHT.rotated(angle) * blink_distance
+		if _is_free(candidate):
+			global_position = candidate
+			_attack_timer = minf(_attack_timer, 0.8)
+			SignalBus.shake_requested.emit(0.06)
+			return
+	# Sem lugar livre por perto: desiste em vez de atravessar a parede.
+	_attack_timer = 0.4
+
+
+## Ponto livre de colisão? (mascara 1 = mundo)
+func _is_free(point: Vector2) -> bool:
+	var space := get_world_2d().direct_space_state
+	var query := PhysicsPointQueryParameters2D.new()
+	query.position = point
+	query.collision_mask = 1
+	query.exclude = [get_rid()]
+	return space.intersect_point(query, 1).is_empty()

@@ -73,11 +73,15 @@ foco você anda a 40% da velocidade. Sem óleo, você fica cego por 1,5 s.
 ## Testes
 
 ```bash
+# peças isoladas (stats, itens, sinergias, limiares, loja, estresse)
 godot --headless --path . res://tests/smoke_test.tscn
+
+# run completa de ponta a ponta (4 salas → santuário → farol → vitória)
+godot --headless --path . res://tests/run_test.tscn
 ```
 
-Cobre os sistemas que sustentam a arquitetura: `StatSheet`, `Ressonância`,
-morte de inimigos e o acerto do feixe.
+O `smoke_test` cobre os sistemas que sustentam a arquitetura; o `run_test` dirige
+a `Main` de verdade e é o gate do fluxo (pausa, compra, progressão e fim de run).
 
 ---
 

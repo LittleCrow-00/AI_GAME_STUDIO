@@ -2,6 +2,26 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.6.1] — 2026-11-14
+
+### Adicionado
+
+- **`tests/run_test.tscn`** — teste de run ponta a ponta: limpa as 4 salas, compra
+  um item no Santuário, acende o Farol e valida a vitória (6 asserções). Entra no
+  CI e em `AGENTS.md`.
+
+### Corrigido
+
+- **Curupira** podia piscar para dentro de paredes: agora testa até 8 pontos
+  livres (`intersect_point`) e desiste se não houver lugar.
+
+### Alterado
+
+- Sprites ganham animação por código: balanço ao andar, achatamento ao apanhar e
+  pulso ao telegrafar (sem sprites animados).
+
+---
+
 ## [0.6.0] — 2026-11-14
 
 ### Adicionado

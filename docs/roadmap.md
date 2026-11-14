@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.6.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.6.1 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 

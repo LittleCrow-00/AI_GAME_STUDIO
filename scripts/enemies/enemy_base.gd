@@ -29,6 +29,8 @@ var _flash_left: float = 0.0
 var _dead: bool = false
 var _glow: Polygon2D
 var _sprite_node: Sprite2D
+var _base_scale: Vector2 = Vector2.ONE
+var _anim_time: float = 0.0
 var _target: Player
 
 var _telegraph_left: float = 0.0
@@ -63,10 +65,31 @@ func _fit_sprite() -> void:
 		return
 	_sprite_node.scale = Vector2.ONE * (body_radius * 2.8 / height)
 	_sprite_node.position = Vector2(0.0, -1.0)
+	_base_scale = _sprite_node.scale
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_anim_time += delta
 	_update_sprite_facing()
+	_animate_sprite()
+
+
+## "Respiração" por código: o sprite balança ao andar e achata ao apanhar.
+func _animate_sprite() -> void:
+	if _sprite_node == null:
+		return
+
+	var moving := velocity.length() > 20.0
+	var bob := sin(_anim_time * (9.0 if moving else 3.0)) * (1.5 if moving else 0.7)
+	_sprite_node.position.y = -1.0 + bob
+
+	var squash := 1.0
+	if _flash_left > 0.0:
+		squash += 0.10 * (_flash_left / 0.08)
+	if _telegraph_left > 0.0:
+		var progress := 1.0 - (_telegraph_left / maxf(0.01, _telegraph_total))
+		squash += 0.06 * sin(progress * TAU * 3.0)
+	_sprite_node.scale = Vector2(_base_scale.x / squash, _base_scale.y * squash)
 
 
 ## Sprites são desenhados "para cima"; giramos para o alvo (ou para a velocidade).

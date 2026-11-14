@@ -29,6 +29,9 @@ godot --headless --path . --quit-after 600
 # testes de fumaça (sempre rode antes de reportar conclusão)
 godot --headless --path . res://tests/smoke_test.tscn
 
+# teste da run completa (ponta a ponta)
+godot --headless --path . res://tests/run_test.tscn
+
 # exportar web
 mkdir -p build/web
 godot --headless --path . --export-release "Web" build/web/index.html
