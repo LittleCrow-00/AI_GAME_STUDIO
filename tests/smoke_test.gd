@@ -331,6 +331,9 @@ func _test_stress() -> void:
 		enemy.position = Vector2.from_angle(angle) * 320.0
 		spawned.append(enemy)
 
+	for i in range(30):
+		await get_tree().process_frame
+
 	var frames := 120
 	var start := Time.get_ticks_usec()
 	for i in range(frames):

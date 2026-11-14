@@ -192,7 +192,7 @@ func _on_spawn_enemy(data: EnemyData) -> void:
 	SignalBus.enemies_remaining_changed.emit(_alive)
 
 
-func _on_enemy_died(_enemy: Node, _position: Vector2) -> void:
+func _on_enemy_died(enemy: Node, position: Vector2) -> void:
 	if not _active:
 		return
 	_alive = maxi(0, _alive - 1)
@@ -200,6 +200,16 @@ func _on_enemy_died(_enemy: Node, _position: Vector2) -> void:
 	SignalBus.enemies_remaining_changed.emit(_alive)
 	TimeService.hitstop(45)
 	SignalBus.shake_requested.emit(0.22)
+	_spawn_death_burst(enemy, position)
+
+
+func _spawn_death_burst(enemy: Node, position: Vector2) -> void:
+	var burst := DeathBurst.new()
+	burst.position = position
+	var body := enemy as Enemy
+	if body != null:
+		burst.tint = body.body_color
+	add_child(burst)
 
 
 func _on_enemy_killed(position: Vector2, oil_drop: float) -> void:
@@ -268,15 +278,68 @@ func _build_room() -> void:
 func _draw() -> void:
 	var half := arena_size * 0.5
 	var floor_rect := Rect2(-half, arena_size)
-	draw_rect(floor_rect, Color(0.043, 0.078, 0.094))
-	draw_rect(floor_rect, Color(0.11, 0.19, 0.22), false, 3.0)
+
+	draw_rect(floor_rect, Color(0.030, 0.055, 0.068))
 
 	var step := 80.0
-	var x := -half.x + step
-	while x < half.x:
-		draw_line(Vector2(x, -half.y), Vector2(x, half.y), Color(0.09, 0.15, 0.18), 1.0)
-		x += step
-	var y := -half.y + step
-	while y < half.y:
-		draw_line(Vector2(-half.x, y), Vector2(half.x, y), Color(0.09, 0.15, 0.18), 1.0)
+	var y := -half.y
+	while y < half.y - 0.5:
+		var x := -half.x
+		while x < half.x - 0.5:
+			var tile_hash := absi(int(x) * 73856093 ^ int(y) * 19349663)
+			var shade := 0.88 + float(tile_hash % 9) * 0.025
+			var w := minf(step, half.x - x)
+			var h := minf(step, half.y - y)
+			draw_rect(
+				Rect2(x + 1.5, y + 1.5, w - 3.0, h - 3.0),
+				Color(0.052 * shade, 0.090 * shade, 0.104 * shade),
+			)
+			x += step
 		y += step
+
+	_draw_puddles(half)
+	_draw_walls(half)
+
+
+func _draw_puddles(half: Vector2) -> void:
+	var spots: Array[Vector3] = [
+		Vector3(-0.28, -0.18, 62.0),
+		Vector3(0.31, 0.22, 48.0),
+		Vector3(0.05, 0.34, 38.0),
+		Vector3(-0.12, 0.05, 30.0),
+	]
+	for spot in spots:
+		var center := Vector2(spot.x * half.x, spot.y * half.y)
+		var radius := spot.z
+		draw_set_transform(center, 0.0, Vector2(1.0, 0.55))
+		draw_circle(Vector2.ZERO, radius, Color(0.10, 0.20, 0.24, 0.55))
+		draw_circle(Vector2.ZERO, radius * 0.72, Color(0.14, 0.27, 0.31, 0.35))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		draw_arc(center, radius * 0.9, PI * 0.15, PI * 0.85, 18, Color(0.45, 0.62, 0.66, 0.18), 1.6)
+
+
+func _draw_walls(half: Vector2) -> void:
+	var thickness := 60.0
+	var wall_color := Color(0.020, 0.032, 0.040)
+	var edge := Color(0.16, 0.27, 0.31)
+	var rim := Color(0.30, 0.44, 0.48, 0.55)
+
+	var outer := Rect2(
+		-half - Vector2(thickness, thickness),
+		arena_size + Vector2(thickness, thickness) * 2.0,
+	)
+	draw_rect(outer, wall_color)
+
+	var inner := Rect2(-half, arena_size)
+	draw_rect(inner, edge, false, 3.0)
+	draw_rect(Rect2(-half + Vector2(3, 3), arena_size - Vector2(6, 6)), rim, false, 1.0)
+
+	var pillar := 26.0
+	for corner in [
+		-half + Vector2(-pillar * 0.5, -pillar * 0.5),
+		Vector2(half.x - pillar * 0.5, -half.y - pillar * 0.5),
+		Vector2(-half.x - pillar * 0.5, half.y - pillar * 0.5),
+		half - Vector2(pillar * 0.5, pillar * 0.5),
+	]:
+		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(0.05, 0.08, 0.09))
+		draw_rect(Rect2(corner, Vector2(pillar, pillar)), Color(0.24, 0.36, 0.39), false, 1.5)

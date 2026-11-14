@@ -61,5 +61,18 @@ func _draw() -> void:
 	var pulse := 0.5 + 0.5 * sin(_pulse * 1.6)
 	draw_circle(Vector2.ZERO, radius, Color(1.0, 0.78, 0.42, 0.04 + 0.02 * pulse))
 	draw_circle(Vector2.ZERO, radius * 0.55, Color(1.0, 0.82, 0.50, 0.05 + 0.03 * pulse))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(1.0, 0.80, 0.45, 0.20 + 0.12 * pulse), 2.0)
-	draw_circle(Vector2.ZERO, 3.0, Color(1.0, 0.9, 0.7, 0.5))
+
+	var spin := _pulse * 0.35
+	for i in range(8):
+		var angle := spin + TAU * float(i) / 8.0
+		var mark := Vector2.from_angle(angle) * radius * 0.92
+		draw_circle(mark, 2.2, Color(1.0, 0.85, 0.50, 0.30 + 0.22 * pulse))
+
+	for i in range(5):
+		var t := fmod(_pulse * 0.45 + float(i) * 0.2, 1.0)
+		var angle := float(i) * 1.7 + _pulse * 0.2
+		var ember := Vector2.from_angle(angle) * (10.0 + 20.0 * t)
+		ember.y -= t * 28.0
+		draw_circle(ember, 1.8 * (1.0 - t) + 0.4, Color(1.0, 0.86, 0.55, 0.55 * (1.0 - t)))
+
+	draw_circle(Vector2.ZERO, 4.0, Color(1.0, 0.92, 0.72, 0.35 + 0.25 * pulse))

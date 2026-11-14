@@ -13,6 +13,7 @@ var _attack_timer: float = 1.2
 
 
 func _ready() -> void:
+	sprite_texture = preload("res://assets/sprites/curupira.svg")
 	super._ready()
 	move_speed = 95.0
 	contact_damage = 9.0

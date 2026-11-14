@@ -30,6 +30,8 @@ var _extra_lines: Array[Line2D] = []
 var _glow: PointLight2D
 var _tick_accum: float = 0.0
 var _half_angle: float = 0.0
+var _impact_left: float = 0.0
+var _impact_position: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -90,6 +92,9 @@ func _process(delta: float) -> void:
 	for line in _extra_lines:
 		line.visible = visible_now and line.get_meta("enabled", false)
 	_glow.energy = 0.7 if visible_now else 0.0
+
+	_impact_left = maxf(0.0, _impact_left - delta)
+	queue_redraw()
 
 	if not visible_now:
 		_tick_accum = 0.0
@@ -186,6 +191,25 @@ func _damage_cone(
 		hit_already[enemy.get_instance_id()] = true
 		enemy.take_damage(damage_per_tick, origin)
 		SignalBus.beam_hit_enemy.emit(enemy, damage_per_tick)
+		_impact_position = enemy.global_position
+		_impact_left = 0.12
+
+
+## Faísca no ponto de impacto. Some em 0,12 s.
+func _draw() -> void:
+	if _impact_left <= 0.0:
+		return
+	var t := clampf(_impact_left / 0.12, 0.0, 1.0)
+	var local := to_local(_impact_position)
+	draw_circle(local, 10.0 * t + 3.0, Color(1.0, 0.90, 0.62, 0.30 * t))
+	for i in range(4):
+		var angle := TAU * float(i) / 4.0 + 0.6
+		draw_line(
+			local,
+			local + Vector2.from_angle(angle) * (9.0 * t),
+			Color(1.0, 0.95, 0.75, 0.8 * t),
+			1.6,
+		)
 
 
 func _is_blocked(from: Vector2, to: Vector2, space: PhysicsDirectSpaceState2D, blocker_rid: RID) -> bool:

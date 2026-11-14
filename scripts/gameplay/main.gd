@@ -158,6 +158,7 @@ func _summary_lines() -> Array:
 		"salas limpas      %d / %d" % [_rooms_cleared, ROOM_TOTAL],
 		"abates            %d" % _kills,
 		"pontos            %d" % _ressonancia.score,
+		"cera              %d" % _cera,
 		"tempo             %02d:%02d" % [minutes, rest],
 		"semente           %d" % RngService.run_seed,
 	]

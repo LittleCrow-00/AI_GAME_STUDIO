@@ -47,5 +47,9 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var pulse := 1.0 + sin(_age * 10.0) * 0.12
-	draw_circle(Vector2.ZERO, 6.0 * pulse, Color(1.0, 0.78, 0.32, 0.25))
-	draw_circle(Vector2.ZERO, 3.4 * pulse, Color(1.0, 0.85, 0.45))
+	var spin := _age * 2.4
+	draw_circle(Vector2.ZERO, 10.0 * pulse, Color(1.0, 0.72, 0.26, 0.10))
+	draw_arc(Vector2.ZERO, 8.0 * pulse, spin, spin + TAU * 0.75, 14, Color(1.0, 0.80, 0.35, 0.35), 1.4)
+	draw_circle(Vector2.ZERO, 5.4 * pulse, Color(1.0, 0.78, 0.32, 0.30))
+	draw_circle(Vector2.ZERO, 3.2 * pulse, Color(1.0, 0.88, 0.50))
+	draw_circle(Vector2(-1.0, -1.0), 1.2, Color(1.0, 0.97, 0.85, 0.9))

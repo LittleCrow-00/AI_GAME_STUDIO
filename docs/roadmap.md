@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.5.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.6.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -113,7 +113,15 @@ passando; falta o *benchmark* de estresse.
 
 ## Fase 7 — Conteúdo e polimento
 
+- [x] Sprites SVG para jogador, 4 inimigos e chefe (fallback procedural)
+- [x] Arena: lajes irregulares, poças, paredes e pilares
+- [x] Vinheta em shader (abaixo do HUD)
+- [x] VFX: explosão de morte, faísca de impacto do feixe, rastro do dash,
+      rastro de projétil, gota de óleo com anel
+- [x] HUD com ícones, moeda de cera e barra do próximo limiar
+- [x] Santuário com selo por tag
 - [ ] 8+ inimigos, 2º chefe, biomas
+- [ ] Animação por frames (hoje os sprites são estáticos, com movimento por código)
 - [ ] Áudio (drone, ping, clique seco, sino)
 - [ ] Acessibilidade (reduzir shake, flashes)
 - [ ] Tutorial diegético no Farol inicial

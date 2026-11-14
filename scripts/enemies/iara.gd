@@ -14,6 +14,7 @@ var _attack_timer: float = 1.4
 
 
 func _ready() -> void:
+	sprite_texture = preload("res://assets/sprites/iara.svg")
 	super._ready()
 	keep_distance = preferred_range
 	contact_damage = 4.0

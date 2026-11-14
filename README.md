@@ -93,6 +93,16 @@ O deploy para GitHub Pages é automático via GitHub Actions a cada push em `mai
 
 ---
 
+## Arte
+
+- **Sprites:** `assets/sprites/*.svg` (jogador, 4 inimigos e chefe). O Godot importa
+  SVG nativamente; `Enemy.sprite_texture` + `Sprite2D` cuidam de escala e rotação.
+  Sem sprite, o desenho procedural antigo continua como fallback.
+- **Ambiente, HUD e VFX:** procedurais (`_draw` + shader de vinheta). Nenhuma fonte,
+  textura ou plugin externo.
+- **Efeitos:** explosão de morte, faísca no impacto do feixe, rastro do dash, rastro
+  do projétil e gota de óleo com anel.
+
 ## Documentação
 
 | Arquivo | Conteúdo |

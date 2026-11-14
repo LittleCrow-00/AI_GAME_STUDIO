@@ -76,6 +76,7 @@ var _threshold_timers: Dictionary = {}
 ## Apresentação: tempo de animação e rastro do dash (desenho procedural).
 var _anim_time: float = 0.0
 var _trail: Array[Vector2] = []
+var _sprite: Sprite2D
 
 
 func _ready() -> void:
@@ -92,6 +93,7 @@ func _ready() -> void:
 	stats.set_base(&"light_oil_per_second", base_light_oil)
 	inventory = Inventory.new()
 	_refresh_stats(false)
+	_build_sprite()
 
 	health = max_health
 	oil = max_oil
@@ -237,6 +239,18 @@ func _tick_thresholds(delta: float) -> void:
 		_apply_threshold_modifiers()
 
 
+func _build_sprite() -> void:
+	_sprite = Sprite2D.new()
+	_sprite.name = "Body"
+	_sprite.texture = preload("res://assets/sprites/player.svg")
+	_sprite.position = Vector2(0.0, -2.0)
+	var height := float(_sprite.texture.get_height())
+	if height > 0.0:
+		_sprite.scale = Vector2.ONE * (46.0 / height)
+	add_child(_sprite)
+	move_child(_sprite, 0)
+
+
 func _process(delta: float) -> void:
 	_anim_time += delta
 	if _dash_time_left > 0.0:
@@ -245,6 +259,11 @@ func _process(delta: float) -> void:
 			_trail.pop_back()
 	elif not _trail.is_empty():
 		_trail.pop_back()
+
+	if _sprite != null:
+		var aim := beam.global_rotation - global_rotation
+		_sprite.rotation = aim + PI * 0.5
+		_sprite.position.y = -2.0 + (0.0 if _dead else sin(_anim_time * 4.0) * 0.8)
 	queue_redraw()
 
 
@@ -475,37 +494,38 @@ func _draw() -> void:
 	var coat_dark := Color(0.07, 0.15, 0.17)
 	var trim := Color(0.82, 0.68, 0.38)
 
-	var coat_shape := PackedVector2Array([
-		Vector2(-7.5, -7.0), Vector2(7.5, -7.0),
-		Vector2(10.5, 8.0), Vector2(5.0, 12.0 + bob),
-		Vector2(-5.0, 12.0 + bob), Vector2(-10.5, 8.0),
-	])
-	draw_colored_polygon(coat_shape, coat_dark)
+	if _sprite == null:
+		var coat_shape := PackedVector2Array([
+			Vector2(-7.5, -7.0), Vector2(7.5, -7.0),
+			Vector2(10.5, 8.0), Vector2(5.0, 12.0 + bob),
+			Vector2(-5.0, 12.0 + bob), Vector2(-10.5, 8.0),
+		])
+		draw_colored_polygon(coat_shape, coat_dark)
 
-	var coat_inner := PackedVector2Array([
-		Vector2(-6.0, -6.0), Vector2(6.0, -6.0),
-		Vector2(8.4, 7.2), Vector2(3.8, 10.4 + bob),
-		Vector2(-3.8, 10.4 + bob), Vector2(-8.4, 7.2),
-	])
-	draw_colored_polygon(coat_inner, coat)
+		var coat_inner := PackedVector2Array([
+			Vector2(-6.0, -6.0), Vector2(6.0, -6.0),
+			Vector2(8.4, 7.2), Vector2(3.8, 10.4 + bob),
+			Vector2(-3.8, 10.4 + bob), Vector2(-8.4, 7.2),
+		])
+		draw_colored_polygon(coat_inner, coat)
 
-	draw_line(Vector2(-6.0, -6.0), Vector2(6.0, -6.0), trim, 2.0)
-	draw_line(Vector2(-8.4, 2.6), Vector2(8.4, 2.6), Color(0.22, 0.16, 0.11), 2.4)
-	draw_circle(Vector2(0.0, 2.6), 1.7, trim)
-	draw_circle(Vector2(0.0, -2.0), 1.1, trim)
-	draw_circle(Vector2(0.0, 1.0), 1.1, trim)
+		draw_line(Vector2(-6.0, -6.0), Vector2(6.0, -6.0), trim, 2.0)
+		draw_line(Vector2(-8.4, 2.6), Vector2(8.4, 2.6), Color(0.22, 0.16, 0.11), 2.4)
+		draw_circle(Vector2(0.0, 2.6), 1.7, trim)
+		draw_circle(Vector2(0.0, -2.0), 1.1, trim)
+		draw_circle(Vector2(0.0, 1.0), 1.1, trim)
 
-	draw_circle(Vector2(-8.0, -5.5), 3.6, coat_dark)
-	draw_circle(Vector2(8.0, -5.5), 3.6, coat_dark)
+		draw_circle(Vector2(-8.0, -5.5), 3.6, coat_dark)
+		draw_circle(Vector2(8.0, -5.5), 3.6, coat_dark)
 
-	draw_circle(Vector2(0.0, -9.5 + bob), 5.4, Color(0.90, 0.79, 0.64))
+		draw_circle(Vector2(0.0, -9.5 + bob), 5.4, Color(0.90, 0.79, 0.64))
 
-	draw_set_transform(Vector2(0.0, -11.0 + bob), 0.0, Vector2(1.0, 0.55))
-	draw_circle(Vector2.ZERO, 11.5, Color(0.07, 0.11, 0.13))
-	draw_set_transform(Vector2(0.0, -12.4 + bob), 0.0, Vector2.ONE)
-	draw_circle(Vector2.ZERO, 6.2, Color(0.09, 0.14, 0.16))
-	draw_rect(Rect2(-6.2, -1.2, 12.4, 2.4), Color(0.55, 0.38, 0.16))
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		draw_set_transform(Vector2(0.0, -11.0 + bob), 0.0, Vector2(1.0, 0.55))
+		draw_circle(Vector2.ZERO, 11.5, Color(0.07, 0.11, 0.13))
+		draw_set_transform(Vector2(0.0, -12.4 + bob), 0.0, Vector2.ONE)
+		draw_circle(Vector2.ZERO, 6.2, Color(0.09, 0.14, 0.16))
+		draw_rect(Rect2(-6.2, -1.2, 12.4, 2.4), Color(0.55, 0.38, 0.16))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	var hand := Vector2.from_angle(aim) * 7.0 + Vector2(0.0, 1.0)
 	var lantern := Vector2.from_angle(aim) * 14.0 + Vector2(0.0, 2.0)

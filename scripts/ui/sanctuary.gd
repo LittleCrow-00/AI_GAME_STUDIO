@@ -30,6 +30,7 @@ var _descriptions: Array[Label] = []
 var _rarity_labels: Array[Label] = []
 var _tags_labels: Array[Label] = []
 var _price_labels: Array[Label] = []
+var _sigils: Array[ItemSigil] = []
 var _taken: Array[bool] = []
 
 var _cera: int = 0
@@ -171,6 +172,12 @@ func _build() -> void:
 		key_label.size = Vector2(46.0, 40.0)
 		card.add_child(key_label)
 
+		var sigil := ItemSigil.new()
+		sigil.position = Vector2(CARD_SIZE.x - 56.0, 12.0)
+		sigil.size = Vector2(40.0, 40.0)
+		card.add_child(sigil)
+		_sigils.append(sigil)
+
 
 func _fill_card(index: int, item: ItemData) -> void:
 	_names[index].text = item.display_name
@@ -178,6 +185,7 @@ func _fill_card(index: int, item: ItemData) -> void:
 	_rarity_labels[index].text = _rarity_name(item.rarity)
 	_rarity_labels[index].add_theme_color_override("font_color", _rarity_color(item.rarity))
 	_tags_labels[index].text = _tags_text(item)
+	_sigils[index].setup(item.tags, _rarity_color(item.rarity))
 	_refresh_price(index)
 
 

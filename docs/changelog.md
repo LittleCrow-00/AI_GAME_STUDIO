@@ -2,6 +2,34 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.6.0] — 2026-11-14
+
+### Adicionado
+
+- **Identidade visual (Fase 7, parcial).**
+- **Sprites SVG** em `assets/sprites/`: jogador, Afogado, Iara, Boto, Curupira e
+  Cobra Grande. `Enemy` ganha `sprite_texture` + `Sprite2D` escalado pelo
+  `body_radius`, com rotação para o alvo; sem sprite, o desenho procedural antigo
+  continua como fallback.
+- **Arena** redesenhada: lajes com variação determinística, poças com brilho,
+  paredes com borda e pilares nos cantos.
+- **Vinheta** em shader (`ui/vignette.gd`), entre o mundo e a UI.
+- **VFX:** `DeathBurst` (fragmentos ao matar), faísca no impacto do feixe, rastro
+  do dash, rastro e brilho do projétil, gota de óleo com anel girando.
+- **HUD:** ícones de vida/óleo/dash, moeda de cera desenhada, barra do próximo
+  limiar da cadeia.
+- **Santuário:** selo procedural por tag (`ui/item_sigil.gd`) no card.
+- **Sumário:** régua divisória e linha de cera.
+
+### Alterado
+
+- `Player` desenha o corpo via sprite e mantém lanterna, sombra, rastro e
+  i-frames em código (lanterna aponta para a mira).
+- `LightWell` ganha anel de runas e brasas subindo.
+- UI do jogo passa a viver na camada 10; vinheta na 5.
+
+---
+
 ## [0.5.0] — 2026-11-14
 
 ### Adicionado

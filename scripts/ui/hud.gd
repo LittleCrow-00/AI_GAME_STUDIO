@@ -213,24 +213,56 @@ func _on_beam_dried() -> void:
 
 
 func _draw() -> void:
-	_draw_bar(BAR_ORIGIN, _health / _health_max, COL_HEALTH, "VIDA")
+	_draw_bar(BAR_ORIGIN, _health / _health_max, COL_HEALTH, "VIDA", "health")
 	var oil_ratio := clampf(_oil / _oil_max, 0.0, 1.0)
 	var oil_origin := BAR_ORIGIN + Vector2(0, BAR_HEIGHT + BAR_GAP)
-	_draw_bar(oil_origin, oil_ratio, COL_OIL, "OLEO")
+	_draw_bar(oil_origin, oil_ratio, COL_OIL, "OLEO", "oil")
 	if oil_ratio < 0.25:
 		var urgency := 1.0 - (oil_ratio / 0.25)
 		var alpha := (0.18 + 0.22 * (0.5 + 0.5 * sin(_pulse * 6.0))) * urgency
 		draw_rect(Rect2(oil_origin - Vector2(2, 2), Vector2(BAR_WIDTH + 4, BAR_HEIGHT + 4)), Color(1.0, 0.6, 0.25, alpha), false, 2.0)
 	_draw_dash(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 2.0 + 6.0))
 	_draw_chain(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 3.0 + 6.0))
+	_draw_cera(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 4.0 + 14.0))
 
-	_readout.text = "SALA %d / %d\nONDA %d / %d\nINIMIGOS  %d\n\nCADEIA  %d\nx%.1f\n\nPONTOS  %d\nCERA    %d" % [
-		_room, _room_total, _wave, _wave_total, _enemies, _chain, _multiplier, _score, _cera,
+	_readout.text = "SALA %d / %d\nONDA %d / %d\nINIMIGOS  %d\n\nCADEIA  %d\nx%.1f\n\nPONTOS  %d" % [
+		_room, _room_total, _wave, _wave_total, _enemies, _chain, _multiplier, _score,
 	]
 	_readout.add_theme_color_override("font_color", COL_HEALTH if _dry_flash > 0.0 else COL_TEXT)
 
 	if _boss_active:
 		_draw_boss_bar()
+
+
+## Glifos pequenos a esquerda das barras. Desenho procedural, sem fonte de icones.
+func _draw_icon(origin: Vector2, color: Color, kind: String) -> void:
+	match kind:
+		"health":
+			draw_rect(Rect2(origin + Vector2(-2.0, -8.0), Vector2(4.0, 13.0)), color)
+			draw_rect(Rect2(origin + Vector2(-6.5, -3.5), Vector2(13.0, 4.0)), color)
+		"oil":
+			draw_colored_polygon(
+				PackedVector2Array([
+					origin + Vector2(0.0, -8.0),
+					origin + Vector2(4.5, -1.0),
+					origin + Vector2(0.0, 5.0),
+					origin + Vector2(-4.5, -1.0),
+				]),
+				color,
+			)
+			draw_circle(origin + Vector2(0.0, 0.5), 1.8, Color(1.0, 0.95, 0.8, 0.85))
+		"dash":
+			draw_polyline(
+				PackedVector2Array([
+					origin + Vector2(-5.0, 4.0),
+					origin + Vector2(0.0, -3.0),
+					origin + Vector2(5.0, 4.0),
+				]),
+				color,
+				2.2,
+			)
+		_:
+			draw_circle(origin, 3.0, color)
 
 
 func _draw_boss_bar() -> void:
@@ -245,7 +277,7 @@ func _draw_boss_bar() -> void:
 	draw_rect(Rect2(x, y, width, 12), Color(0.25, 0.32, 0.34), false, 1.0)
 
 
-func _draw_bar(origin: Vector2, ratio: float, color: Color, caption: String) -> void:
+func _draw_bar(origin: Vector2, ratio: float, color: Color, caption: String, icon: String) -> void:
 	var clamped := clampf(ratio, 0.0, 1.0)
 	var background := Rect2(origin, Vector2(BAR_WIDTH, BAR_HEIGHT))
 	draw_rect(background, Color(0.03, 0.05, 0.06))
@@ -254,15 +286,34 @@ func _draw_bar(origin: Vector2, ratio: float, color: Color, caption: String) -> 
 
 	var font := ThemeDB.fallback_font
 	draw_string(font, origin + Vector2(0, -6), caption, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, COL_DIM)
+	_draw_icon(origin + Vector2(-18.0, 1.0), color, icon)
 
 
 func _draw_dash(origin: Vector2) -> void:
 	var font := ThemeDB.fallback_font
 	draw_string(font, origin + Vector2(0, -6), "DASH", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, COL_DIM)
+	_draw_icon(origin + Vector2(-18.0, 2.0), COL_DASH, "dash")
 	for i in range(_dash_max):
 		var center := origin + Vector2(48.0 + float(i) * 24.0, 7.0)
 		var color := COL_DASH if i < _dash else Color(0.12, 0.18, 0.2)
 		draw_circle(center, 7.0, color)
+
+
+## Moeda de cera: círculo com brilho, ao lado do saldo.
+func _draw_cera(origin: Vector2) -> void:
+	var font := ThemeDB.fallback_font
+	draw_circle(origin + Vector2(0.0, 6.0), 7.5, Color(0.55, 0.40, 0.14))
+	draw_circle(origin + Vector2(0.0, 6.0), 6.0, Color(0.92, 0.74, 0.32))
+	draw_circle(origin + Vector2(-1.6, 4.4), 2.2, Color(1.0, 0.92, 0.66, 0.9))
+	draw_string(
+		font,
+		origin + Vector2(14.0, 11.0),
+		"%d" % _cera,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		-1,
+		15,
+		COL_SCORE,
+	)
 
 
 ## Barra fina do próximo limiar. Sem limiar restante, a barra fica cheia e apagada.

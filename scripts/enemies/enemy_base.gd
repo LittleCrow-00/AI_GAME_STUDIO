@@ -19,6 +19,8 @@ const ACCEL: float = 900.0
 @export var body_color: Color = Color(0.34, 0.88, 0.85)
 @export var body_radius: float = 11.0
 @export var keep_distance: float = 0.0
+## Sprite opcional (SVG). Vazio = corpo procedural de reserva.
+@export var sprite_texture: Texture2D
 
 var health: float = 30.0
 
@@ -26,6 +28,7 @@ var _contact_cooldown: float = 0.0
 var _flash_left: float = 0.0
 var _dead: bool = false
 var _glow: Polygon2D
+var _sprite_node: Sprite2D
 var _target: Player
 
 var _telegraph_left: float = 0.0
@@ -36,6 +39,46 @@ func _ready() -> void:
 	add_to_group("enemies")
 	health = max_health
 	_build_glow()
+	_build_sprite()
+
+
+## Cria o sprite a partir de `sprite_texture`, escalado para o corpo.
+func _build_sprite() -> void:
+	if sprite_texture == null:
+		return
+	_sprite_node = Sprite2D.new()
+	_sprite_node.name = "Sprite"
+	_sprite_node.texture = sprite_texture
+	add_child(_sprite_node)
+	move_child(_sprite_node, 0)
+	_fit_sprite()
+
+
+## Ajusta a escala para que o sprite tenha ~2.8x o diâmetro de colisão.
+func _fit_sprite() -> void:
+	if _sprite_node == null or _sprite_node.texture == null:
+		return
+	var height := float(_sprite_node.texture.get_height())
+	if height <= 0.0:
+		return
+	_sprite_node.scale = Vector2.ONE * (body_radius * 2.8 / height)
+	_sprite_node.position = Vector2(0.0, -1.0)
+
+
+func _process(_delta: float) -> void:
+	_update_sprite_facing()
+
+
+## Sprites são desenhados "para cima"; giramos para o alvo (ou para a velocidade).
+func _update_sprite_facing() -> void:
+	if _sprite_node == null:
+		return
+	var heading := velocity
+	if heading.length_squared() < 16.0 and _target != null:
+		heading = _target.global_position - global_position
+	if heading.length_squared() < 0.01:
+		return
+	_sprite_node.rotation = heading.angle() + PI * 0.5
 
 
 func apply_data(data: EnemyData) -> void:
@@ -184,6 +227,8 @@ func _build_glow() -> void:
 
 
 func _draw() -> void:
+	if _sprite_node != null:
+		return
 	var body := body_color.darkened(0.35)
 	draw_circle(Vector2.ZERO, body_radius, Color(0.03, 0.06, 0.07))
 	draw_circle(Vector2.ZERO, body_radius - 2.0, body)

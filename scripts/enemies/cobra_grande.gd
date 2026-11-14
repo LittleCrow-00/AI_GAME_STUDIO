@@ -30,8 +30,10 @@ var _summon_cooldown: float = 0.0
 
 
 func _ready() -> void:
+	sprite_texture = preload("res://assets/sprites/cobra_grande.svg")
 	super._ready()
 	body_radius = 34.0
+	_fit_sprite()
 	contact_damage = 18.0
 	contact_interval = 1.0
 	SignalBus.beam_hit_enemy.connect(_on_beam_hit)
@@ -172,15 +174,16 @@ func exposure_ratio() -> float:
 
 
 func _draw() -> void:
-	var body := body_color.darkened(0.45)
-	draw_circle(Vector2.ZERO, body_radius, Color(0.02, 0.05, 0.06))
-	draw_circle(Vector2.ZERO, body_radius - 3.0, body)
+	if _sprite_node == null:
+		var body := body_color.darkened(0.45)
+		draw_circle(Vector2.ZERO, body_radius, Color(0.02, 0.05, 0.06))
+		draw_circle(Vector2.ZERO, body_radius - 3.0, body)
 
-	var segment_count := 7
-	for i in range(segment_count):
-		var t := float(i) / float(segment_count - 1)
-		var offset := Vector2(-body_radius * 1.35 + t * body_radius * 2.7, 0.0)
-		draw_circle(offset, 9.0 - t * 4.0, body_color.darkened(0.25))
+		var segment_count := 7
+		for i in range(segment_count):
+			var t := float(i) / float(segment_count - 1)
+			var offset := Vector2(-body_radius * 1.35 + t * body_radius * 2.7, 0.0)
+			draw_circle(offset, 9.0 - t * 4.0, body_color.darkened(0.25))
 
 	if is_exposed():
 		draw_arc(Vector2.ZERO, body_radius + 6.0, 0.0, TAU, 40, Color(1.0, 0.55, 0.35, 0.85), 3.0)

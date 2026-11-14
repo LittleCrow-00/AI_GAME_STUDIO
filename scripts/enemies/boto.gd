@@ -16,6 +16,7 @@ var _dash_heading: Vector2 = Vector2.RIGHT
 
 
 func _ready() -> void:
+	sprite_texture = preload("res://assets/sprites/boto.svg")
 	super._ready()
 	keep_distance = orbit_range
 	contact_damage = 14.0

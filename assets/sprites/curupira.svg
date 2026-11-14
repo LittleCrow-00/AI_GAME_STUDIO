@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="body" cx="0.5" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#8a5f34"/>
+      <stop offset="1" stop-color="#4a3018"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f5c542"/>
+      <stop offset="0.5" stop-color="#e0662a"/>
+      <stop offset="1" stop-color="#a1271b"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="32" cy="37" r="12.5" fill="url(#body)" stroke="#2f1f10" stroke-width="1.6"/>
+  <path d="M24 33 Q32 37 40 33" fill="none" stroke="#2f1f10" stroke-width="1.4" opacity="0.8"/>
+  <path d="M26 43 Q32 46.5 38 43" fill="none" stroke="#2a1a10" stroke-width="1.7" stroke-linecap="round"/>
+
+  <circle cx="27" cy="35" r="1.9" fill="#ffe9a8"/>
+  <circle cx="37" cy="35" r="1.9" fill="#ffe9a8"/>
+
+  <path d="M32 4 C36.5 13 41 15 38.5 24 C43 19.5 45 24 42.5 31 C38 24.5 34 22 32 22 C30 22 26 24.5 21.5 31 C19 24 21 19.5 25.5 24 C23 15 27.5 13 32 4 Z"
+        fill="url(#flame)"/>
+  <path d="M32 11 C34 17 36.5 19.5 34.5 26 C32.5 22 30.5 22 30 26 C28 19.5 30 17 32 11 Z"
+        fill="#ffe9a8" opacity="0.9"/>
+
+  <ellipse cx="23" cy="51" rx="5.2" ry="2.7" fill="#2f1f10" transform="rotate(-22 23 51)"/>
+  <ellipse cx="41" cy="51" rx="5.2" ry="2.7" fill="#2f1f10" transform="rotate(22 41 51)"/>
+  <path d="M18 52 L13 54 M46 52 L51 54" stroke="#2f1f10" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

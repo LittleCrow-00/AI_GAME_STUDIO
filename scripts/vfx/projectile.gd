@@ -75,6 +75,8 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _draw() -> void:
-	draw_circle(Vector2.ZERO, 6.0, Color(tint.r, tint.g, tint.b, 0.22))
-	draw_circle(Vector2.ZERO, 3.4, tint)
-	draw_circle(-direction * 4.0, 1.8, Color(tint.r, tint.g, tint.b, 0.5))
+	draw_line(-direction * 16.0, Vector2.ZERO, Color(tint.r, tint.g, tint.b, 0.18), 4.0)
+	draw_circle(Vector2.ZERO, 7.5, Color(tint.r, tint.g, tint.b, 0.16))
+	draw_circle(Vector2.ZERO, 4.6, Color(tint.r, tint.g, tint.b, 0.35))
+	draw_circle(Vector2.ZERO, 2.8, tint)
+	draw_circle(-direction * 5.0, 1.6, Color(tint.r, tint.g, tint.b, 0.55))

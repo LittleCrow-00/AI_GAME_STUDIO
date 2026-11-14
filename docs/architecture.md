@@ -60,6 +60,8 @@ data/
   enemies/               afogado, iara, boto, curupira, cobra_grande (.tres)
   items/                 25 itens (.tres)
   thresholds/            chain_10, chain_25, chain_50 (.tres)
+assets/
+  sprites/               jogador, 4 inimigos e chefe em SVG (Sprite2D)
 scripts/
   player/player.gd       movimento, dash, óleo, focos, visão, StatSheet
   beam/beam.gd           cone de luz: dano por tick + LOS + visual procedural
@@ -71,6 +73,10 @@ scripts/
   enemies/cobra_grande.gd chefe: blindagem/exposição + 3 ataques
   systems/ressonancia.gd cadeia de acertos, multiplicador, pontos
   systems/spawn_director.gd orçamento de ameaça + teto de vivos
+  vfx/death_burst.gd     explosão de fragmentos ao matar (visual puro)
+  vfx/screen_shake.gd    tremor por trauma
+  ui/vignette.gd         vinheta em shader (camada 5, abaixo da UI)
+  ui/item_sigil.gd       selo procedural do item (por tag)
   systems/tutorial_director.gd dicas de alpha baixo, 1x por run
   gameplay/arena.gd      geometria, focos, pool, ondas, chefe, farol
   gameplay/light_well.gd foco de luz: recarrega óleo, penaliza movimento

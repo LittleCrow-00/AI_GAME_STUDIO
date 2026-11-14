@@ -48,8 +48,15 @@ func _build() -> void:
 	_title.size = Vector2(1280.0, 60.0)
 	root.add_child(_title)
 
+	var rule := ColorRect.new()
+	rule.color = Color(0.85, 0.72, 0.42, 0.55)
+	rule.position = Vector2(440.0, 268.0)
+	rule.size = Vector2(400.0, 1.0)
+	rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(rule)
+
 	_body = _make_label("", 20, COL_TEXT, HORIZONTAL_ALIGNMENT_CENTER)
-	_body.position = Vector2(340.0, 280.0)
+	_body.position = Vector2(340.0, 292.0)
 	_body.size = Vector2(600.0, 220.0)
 	root.add_child(_body)
 
