@@ -47,16 +47,19 @@ autoload/
   rng_service.gd         aleatoriedade determinística por stream
   time_service.gd        hitstop global (altera Engine.time_scale)
   item_database.gd       lista de itens + sorteio (sem repetição, maldições)
+  threshold_database.gd  limiares da Ressonância (10/25/50) + cruzamento
 resources/
   stat_modifier.gd       modificador atômico (ADD/MULTIPLY)
   stat_sheet.gd          agregação com cache (base → ADD → MULTIPLY)
   item_data.gd           item de run (.tres): modificadores + 1 comportamento
   inventory.gd           itens → modificadores, sinergias compostas, comportamentos
+  threshold_data.gd      recompensa de limiar (.tres): óleo, modificador, explosão
   enemy_data.gd          template de inimigo (.tres)
   wave_data.gd           definição de onda (.tres) — ainda não usado
 data/
   enemies/               afogado, iara, boto, curupira, cobra_grande (.tres)
   items/                 25 itens (.tres)
+  thresholds/            chain_10, chain_25, chain_50 (.tres)
 scripts/
   player/player.gd       movimento, dash, óleo, focos, visão, StatSheet
   beam/beam.gd           cone de luz: dano por tick + LOS + visual procedural
@@ -94,10 +97,21 @@ Main._start_room(index)
   → Arena.setup(index) → add_child → Arena._ready
       → ProjectilePool + LightWells + (Farol?) + SpawnDirector
       → start() → _start_wave()
-  → sala limpa → Main pausa a árvore → Sanctuary.open(3 itens)
-      → jogador escolhe → Main.apply_item() → _start_room(index + 1)
+  → sala limpa → Main pausa a árvore → Sanctuary.open(itens, cera, preço)
+      → Sanctuary.purchase_requested(item, price)
+      → Main valida a carteira → Player.apply_item() → sanctuary.set_cera()
+      → ESC → sanctuary.closed → Main._start_room(index + 1)
   → sala 4 (Farol) acesa → VITÓRIA
 ```
+
+### Economia
+```
+Enemy._die() → SignalBus.enemy_died(enemy, pos) → Main._add_cera(enemy.cera_drop)
+sala limpa   → Main._add_cera(room_clear_cera)
+Ressonancia.register_hit() → SignalBus.threshold_reached(ThresholdData)
+                             → Player aplica óleo/modificador/explosão
+```
+O `Main` é a única autoridade da carteira; o Santuário só mostra e pede.
 
 ### Combate
 ```

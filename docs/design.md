@@ -150,8 +150,17 @@ A cadeia multiplica **Pontos** e **Cera**, premiando agressividade sem
 trivializar o combate. Assim os eixos "dano" e "pontuação" permanecem
 independentes — e a ganância (continuar atacando = gastar óleo) vira decisão.
 
-**Limiares (planejado):** 10 → +5% cadência; 25 → feixe perfura 1 alvo;
-50 → "Estouro" (onda de luz).
+**Limiares (implementados, `data/thresholds/`):**
+
+| Cadeia | Limiar | Efeito |
+|---|---|---|
+| 10 | Estopim | +10 de óleo na hora |
+| 25 | Alcance Longo | +20% de alcance do feixe por 6 s |
+| 50 | Estouro | explosão de luz (40 de dano, raio 130) |
+
+A passagem de limiar é detectada pelo `Ressonancia` e emitida como
+`SignalBus.threshold_reached`; quem aplica é o `Player` (óleo, modificadores
+temporários via `StatSheet`, explosão). Nada de `if chain == 25` no combate.
 
 ---
 
@@ -207,8 +216,10 @@ Sala 1 (3 ondas) → Santuário → Sala 2 (3 ondas) → Santuário
    → Sala 3: COBRA GRANDE → Santuário → Sala 4: FAROL (vitória)
 ```
 
-- **Santuário:** o jogo pausa e oferece **1 entre 3 oferendas**. Cada oferenda
-  muda um modificador do `StatSheet` (não um número solto no script).
+- **Santuário (loja):** o jogo pausa e oferece **1 entre 3 itens**. A **primeira
+  escolha é grátis**; as seguintes custam **cera** (10 + 4 por andar). O Santuário
+  mostra e pede (`purchase_requested`); o `Main` é a autoridade da carteira.
+  `ESC` desce sem comprar.
 - **Cobra Grande:** a sala 3 é uma arena de chefe. Ela é **imune no escuro** e
   só pode ser ferida depois de receber luz contínua — a luta obriga a parar de
   desviar e apontar.
@@ -240,8 +251,7 @@ quando enche, ela fica **exposta** e o anel vira vermelho.
 
 ## 9. O que ainda não existe
 
-- Itens de run (só oferendas de santuário) e sinergias compostas.
-- Cera, loja e meta-progressão.
+- Cera acumulada entre runs (meta-progressão) e itens iniciais desbloqueáveis.
 - Biomas, elite Boitatá e Mapinguari.
 - Áudio.
 - Cancelamento de dash e *benchmark* de estresse com 40+ inimigos.

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/threshold_data.gd" id="1_threshold"]
+
+[resource]
+script = ExtResource("1_threshold")
+id = &"estouro"
+display_name = "Estouro"
+description = "A 50 de cadeia, a lanterna estoura: explosão de luz ao redor."
+at_chain = 50
+duration = 0.0
+nova_on_trigger = true
+nova_damage = 40.0
+nova_radius = 130.0

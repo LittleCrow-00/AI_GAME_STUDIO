@@ -19,6 +19,9 @@ const DASH_COOLDOWN := 0.45
 ## Dentro de um foco de luz o Faroleiro recarrega, mas quase não anda.
 const LIGHT_SLOW_FACTOR := 0.4
 
+## Origem única dos bônus temporários de limiar da Ressonância.
+const THRESHOLD_SOURCE := &"threshold"
+
 # --- Valores base (ponto de partida do StatSheet) ---
 @export var base_max_health: float = 100.0
 @export var base_max_oil: float = 100.0
@@ -67,6 +70,8 @@ var _in_light: bool = false
 var _light_rate: float = 0.0
 var _in_nova: bool = false
 var _known_synergies: Array[StringName] = []
+var _active_thresholds: Array[ThresholdData] = []
+var _threshold_timers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -88,6 +93,7 @@ func _ready() -> void:
 	oil = max_oil
 	SignalBus.enemy_died.connect(_on_enemy_died)
 	SignalBus.enemy_hit.connect(_on_enemy_hit)
+	SignalBus.threshold_reached.connect(_on_threshold_reached)
 	_emit_all()
 
 
@@ -173,6 +179,60 @@ func _recompute_inventory() -> void:
 	_emit_dash()
 
 
+## Limiar da Ressonância alcançado. O `ThresholdData` diz o que acontece; aqui só
+## executamos (óleo, explosão, modificadores temporários).
+func _on_threshold_reached(threshold: ThresholdData) -> void:
+	if threshold == null:
+		return
+
+	if threshold.oil_on_trigger > 0.0:
+		add_oil(threshold.oil_on_trigger)
+
+	if threshold.nova_on_trigger:
+		_detonate(global_position, threshold.nova_damage, threshold.nova_radius)
+
+	if threshold.duration > 0.0 and not threshold.modifiers.is_empty():
+		if not _active_thresholds.has(threshold):
+			_active_thresholds.append(threshold)
+		_threshold_timers[threshold.id] = threshold.duration
+		_apply_threshold_modifiers()
+
+	SignalBus.message_requested.emit(threshold.display_name, 1.6)
+
+
+func _apply_threshold_modifiers() -> void:
+	stats.remove_source(THRESHOLD_SOURCE)
+	for threshold in _active_thresholds:
+		for modifier in threshold.modifiers_for():
+			var copy := modifier.duplicate() as StatModifier
+			if copy == null:
+				continue
+			copy.set_meta("source_id", THRESHOLD_SOURCE)
+			stats.add(copy)
+	_refresh_stats(true)
+
+
+func _tick_thresholds(delta: float) -> void:
+	if _threshold_timers.is_empty():
+		return
+
+	var changed := false
+	for threshold_id in _threshold_timers.keys():
+		var left: float = float(_threshold_timers[threshold_id]) - delta
+		if left > 0.0:
+			_threshold_timers[threshold_id] = left
+			continue
+		_threshold_timers.erase(threshold_id)
+		changed = true
+		for i in range(_active_thresholds.size()):
+			if _active_thresholds[i].id == threshold_id:
+				_active_thresholds.remove_at(i)
+				break
+
+	if changed:
+		_apply_threshold_modifiers()
+
+
 func _physics_process(delta: float) -> void:
 	_tick_timers(delta)
 	if _dead:
@@ -188,6 +248,7 @@ func _tick_timers(delta: float) -> void:
 	_iframes = maxf(0.0, _iframes - delta)
 	_dash_cooldown_left = maxf(0.0, _dash_cooldown_left - delta)
 	_dry_left = maxf(0.0, _dry_left - delta)
+	_tick_thresholds(delta)
 
 
 func _handle_light_wells(delta: float) -> void:
@@ -351,19 +412,19 @@ func _on_enemy_died(_enemy: Node, position: Vector2) -> void:
 		add_oil(_oil_on_kill_bonus)
 
 	if _nova_damage > 0.0 and _nova_radius > 0.0 and not _in_nova:
-		_detonate_nova(position)
+		_detonate(position, _nova_damage, _nova_radius)
 
 
-## Explosão de luz ao matar. `_in_nova` impede que a explosão se auto-alimente.
-func _detonate_nova(position: Vector2) -> void:
+## Explosão de luz. `_in_nova` impede que a explosão se auto-alimente.
+func _detonate(position: Vector2, damage: float, radius: float) -> void:
 	_in_nova = true
 	for node in get_tree().get_nodes_in_group("enemies"):
 		var enemy := node as Enemy
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		if enemy.global_position.distance_to(position) > _nova_radius:
+		if enemy.global_position.distance_to(position) > radius:
 			continue
-		enemy.take_damage(_nova_damage, position)
+		enemy.take_damage(damage, position)
 	_in_nova = false
 	SignalBus.shake_requested.emit(0.18)
 

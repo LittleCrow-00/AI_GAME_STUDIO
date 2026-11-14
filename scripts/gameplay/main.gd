@@ -14,6 +14,11 @@ const ROOM_TOTAL: int = 4
 const BOSS_ROOM: int = 2
 const FINAL_ROOM: int = 3
 
+## Economia da run. Preço sobe por andar para a cera continuar sendo decisão.
+@export var room_clear_cera: int = 5
+@export var shop_price_base: int = 10
+@export var shop_price_step: int = 4
+
 @onready var player: Player = $Player
 @onready var hud: Hud = $UI/Hud
 @onready var sanctuary: Sanctuary = $UI/Sanctuary
@@ -26,6 +31,7 @@ var _room_index: int = 0
 var _transitioning: bool = false
 var _kills: int = 0
 var _rooms_cleared: int = 0
+var _cera: int = 0
 var _started_ms: int = 0
 
 
@@ -45,6 +51,7 @@ func _ready() -> void:
 
 	SignalBus.player_died.connect(_on_player_died)
 	SignalBus.enemy_died.connect(_on_enemy_died)
+	sanctuary.purchase_requested.connect(_on_purchase_requested)
 	_start_room(0)
 
 
@@ -88,22 +95,41 @@ func _on_room_cleared() -> void:
 	_state = State.SANCTUARY
 	SignalBus.run_state_changed.emit(_state)
 
-	var items := ItemDatabase.draw(3, _room_index + 1)
+	_add_cera(room_clear_cera)
+	var price := shop_price_base + shop_price_step * _room_index
 	get_tree().paused = true
-	sanctuary.open(items)
-	var chosen: ItemData = await sanctuary.item_chosen
+	sanctuary.open(ItemDatabase.draw(3, _room_index + 1), _cera, price, true)
+	await sanctuary.closed
 	sanctuary.close()
 	get_tree().paused = false
-
-	if chosen != null:
-		player.apply_item(chosen)
 
 	_transitioning = false
 	_start_room(_room_index + 1)
 
 
-func _on_enemy_died(_enemy: Node, _position: Vector2) -> void:
+## O Santuário pede; o Main é a autoridade da carteira.
+func _on_purchase_requested(item: ItemData, price: int) -> void:
+	if item == null:
+		return
+	if price > _cera:
+		sanctuary.deny_purchase(-1)
+		return
+	if price > 0:
+		_add_cera(-price)
+	player.apply_item(item)
+	sanctuary.set_cera(_cera)
+
+
+func _add_cera(amount: int) -> void:
+	_cera = maxi(0, _cera + amount)
+	SignalBus.cera_changed.emit(_cera)
+
+
+func _on_enemy_died(enemy: Node, _position: Vector2) -> void:
 	_kills += 1
+	var fallen := enemy as Enemy
+	if fallen != null:
+		_add_cera(fallen.cera_drop)
 
 
 func _on_player_died() -> void:

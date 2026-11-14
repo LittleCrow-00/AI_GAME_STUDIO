@@ -1,22 +1,27 @@
 class_name Sanctuary
 extends CanvasLayer
-## Santuário: escolha de 1 entre 3 itens.
+## Santuário: loja de itens.
 ##
-## É a única tela "grande" do jogo — e por isso ela é deliberadamente silenciosa:
-## sem comparação de dano, só o que o item muda na sua relação com a luz, as tags
-## que abrem sinergias e se a coisa é amaldiçoada. O `Main` pausa a árvore e
-## espera o sinal `item_chosen`.
+## A primeira escolha da visita é grátis; as seguintes custam **cera**. É a única
+## tela "grande" do jogo — e por isso ela é deliberadamente silenciosa: sem
+## comparação de dano, só o que o item muda na sua relação com a luz, as tags que
+## abrem sinergias, o preço e se a coisa é amaldiçoada.
+##
+## O Santuário é uma **visão**: ele mostra e pede. Quem tem a carteira é o `Main`
+## (`purchase_requested`), que valida, cobra e devolve o saldo com `set_cera`.
 
-signal item_chosen(item: ItemData)
+signal purchase_requested(item: ItemData, price: int)
+signal closed
 
-const CARD_SIZE := Vector2(300.0, 264.0)
-const CARD_Y := 250.0
+const CARD_SIZE := Vector2(300.0, 288.0)
+const CARD_Y := 232.0
 const CARD_GAP := 30.0
 
 const COL_TEXT := Color(0.88, 0.91, 0.92)
 const COL_DIM := Color(0.52, 0.62, 0.65)
 const COL_ACCENT := Color(1.0, 0.72, 0.28)
 const COL_CURSED := Color(0.82, 0.32, 0.38)
+const COL_DENIED := Color(0.9, 0.3, 0.3)
 
 var _items: Array[ItemData] = []
 var _cards: Array[Panel] = []
@@ -24,6 +29,12 @@ var _names: Array[Label] = []
 var _descriptions: Array[Label] = []
 var _rarity_labels: Array[Label] = []
 var _tags_labels: Array[Label] = []
+var _price_labels: Array[Label] = []
+var _taken: Array[bool] = []
+
+var _cera: int = 0
+var _price: int = 0
+var _free_pick: bool = true
 var _open: bool = false
 
 
@@ -34,12 +45,19 @@ func _ready() -> void:
 	visible = false
 
 
-func open(items: Array[ItemData]) -> void:
+## `price` 0 = loja desativada. `free_pick` define se a 1ª escolha é grátis.
+func open(items: Array[ItemData], cera: int = 0, price: int = 0, free_pick: bool = true) -> void:
 	_items = items
+	_cera = cera
+	_price = price
+	_free_pick = free_pick
+	_taken.clear()
 	for i in range(_cards.size()):
+		_taken.append(false)
 		if i < items.size():
 			_fill_card(i, items[i])
 			_cards[i].visible = true
+			_cards[i].modulate = Color.WHITE
 		else:
 			_cards[i].visible = false
 	_open = true
@@ -47,12 +65,30 @@ func open(items: Array[ItemData]) -> void:
 
 
 func close() -> void:
+	if not _open:
+		return
 	_open = false
 	visible = false
+	closed.emit()
 
 
 func is_open() -> bool:
 	return _open
+
+
+func set_cera(value: int) -> void:
+	_cera = maxi(0, value)
+	for i in range(_price_labels.size()):
+		_refresh_price(i)
+
+
+func deny_purchase(index: int) -> void:
+	if index < 0 or index >= _cards.size():
+		return
+	var card := _cards[index]
+	card.modulate = Color(1.6, 0.6, 0.6)
+	var tween := create_tween()
+	tween.tween_property(card, "modulate", Color.WHITE, 0.35)
 
 
 func _build() -> void:
@@ -68,17 +104,17 @@ func _build() -> void:
 	root.add_child(backdrop)
 
 	var title := _make_label("SANTUÁRIO", 40, COL_ACCENT, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(0.0, 130.0)
+	title.position = Vector2(0.0, 104.0)
 	title.size = Vector2(1280.0, 54.0)
 	root.add_child(title)
 
 	var subtitle := _make_label(
-		"o mar devolve o que você merece · escolha uma oferenda",
+		"a primeira escolha é sua · as outras custam cera · ESC para descer",
 		17,
 		COL_DIM,
 		HORIZONTAL_ALIGNMENT_CENTER,
 	)
-	subtitle.position = Vector2(0.0, 186.0)
+	subtitle.position = Vector2(0.0, 160.0)
 	subtitle.size = Vector2(1280.0, 30.0)
 	root.add_child(subtitle)
 
@@ -99,33 +135,39 @@ func _build() -> void:
 		_cards.append(card)
 
 		var name_label := _make_label("", 22, COL_TEXT, HORIZONTAL_ALIGNMENT_LEFT)
-		name_label.position = Vector2(18.0, 18.0)
+		name_label.position = Vector2(18.0, 16.0)
 		name_label.size = Vector2(CARD_SIZE.x - 36.0, 32.0)
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		card.add_child(name_label)
 		_names.append(name_label)
 
 		var rarity_label := _make_label("", 13, COL_DIM, HORIZONTAL_ALIGNMENT_LEFT)
-		rarity_label.position = Vector2(18.0, 52.0)
+		rarity_label.position = Vector2(18.0, 50.0)
 		rarity_label.size = Vector2(CARD_SIZE.x - 36.0, 22.0)
 		card.add_child(rarity_label)
 		_rarity_labels.append(rarity_label)
 
 		var description_label := _make_label("", 16, COL_DIM, HORIZONTAL_ALIGNMENT_LEFT)
-		description_label.position = Vector2(18.0, 96.0)
-		description_label.size = Vector2(CARD_SIZE.x - 36.0, 84.0)
+		description_label.position = Vector2(18.0, 92.0)
+		description_label.size = Vector2(CARD_SIZE.x - 36.0, 90.0)
 		description_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		card.add_child(description_label)
 		_descriptions.append(description_label)
 
 		var tags_label := _make_label("", 13, COL_ACCENT, HORIZONTAL_ALIGNMENT_LEFT)
-		tags_label.position = Vector2(18.0, 186.0)
+		tags_label.position = Vector2(18.0, 188.0)
 		tags_label.size = Vector2(CARD_SIZE.x - 36.0, 24.0)
 		card.add_child(tags_label)
 		_tags_labels.append(tags_label)
 
+		var price_label := _make_label("", 17, COL_TEXT, HORIZONTAL_ALIGNMENT_LEFT)
+		price_label.position = Vector2(18.0, 228.0)
+		price_label.size = Vector2(CARD_SIZE.x - 120.0, 30.0)
+		card.add_child(price_label)
+		_price_labels.append(price_label)
+
 		var key_label := _make_label("%d" % (i + 1), 30, COL_ACCENT, HORIZONTAL_ALIGNMENT_RIGHT)
-		key_label.position = Vector2(CARD_SIZE.x - 64.0, CARD_SIZE.y - 60.0)
+		key_label.position = Vector2(CARD_SIZE.x - 64.0, CARD_SIZE.y - 56.0)
 		key_label.size = Vector2(46.0, 40.0)
 		card.add_child(key_label)
 
@@ -136,6 +178,29 @@ func _fill_card(index: int, item: ItemData) -> void:
 	_rarity_labels[index].text = _rarity_name(item.rarity)
 	_rarity_labels[index].add_theme_color_override("font_color", _rarity_color(item.rarity))
 	_tags_labels[index].text = _tags_text(item)
+	_refresh_price(index)
+
+
+func _refresh_price(index: int) -> void:
+	if index >= _price_labels.size():
+		return
+	var label := _price_labels[index]
+	if _taken[index]:
+		label.text = "LEVADO"
+		label.add_theme_color_override("font_color", COL_DIM)
+		_cards[index].modulate = Color(0.55, 0.6, 0.62)
+		return
+
+	var price := 0 if _free_pick else _price
+	if price <= 0:
+		label.text = "GRÁTIS"
+		label.add_theme_color_override("font_color", COL_ACCENT)
+	elif price <= _cera:
+		label.text = "%d CERA" % price
+		label.add_theme_color_override("font_color", COL_TEXT)
+	else:
+		label.text = "%d CERA" % price
+		label.add_theme_color_override("font_color", COL_DENIED)
 
 
 func _tags_text(item: ItemData) -> String:
@@ -157,7 +222,7 @@ func _on_card_input(event: InputEvent, index: int) -> void:
 
 
 func _on_card_hover(index: int, entered: bool) -> void:
-	if index >= _cards.size():
+	if index >= _cards.size() or _taken[index]:
 		return
 	_cards[index].modulate = Color(1.25, 1.2, 1.1) if entered else Color.WHITE
 
@@ -175,16 +240,24 @@ func _unhandled_input(event: InputEvent) -> void:
 			_choose(1)
 		KEY_3:
 			_choose(2)
-		KEY_ESCAPE:
-			_choose(0)
+		KEY_ESCAPE, KEY_ENTER:
+			close()
 
 
 func _choose(index: int) -> void:
-	if not _open or index >= _items.size():
+	if not _open or index >= _items.size() or _taken[index]:
 		return
-	var item := _items[index]
-	close()
-	item_chosen.emit(item)
+
+	var price := 0 if _free_pick else _price
+	if price > _cera:
+		deny_purchase(index)
+		return
+
+	if _free_pick:
+		_free_pick = false
+	_taken[index] = true
+	_refresh_price(index)
+	purchase_requested.emit(_items[index], price)
 
 
 func _card_style() -> StyleBoxFlat:

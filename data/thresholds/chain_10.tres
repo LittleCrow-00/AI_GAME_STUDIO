@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/threshold_data.gd" id="1_threshold"]
+
+[resource]
+script = ExtResource("1_threshold")
+id = &"estopim"
+display_name = "Estopim"
+description = "A 10 de cadeia, o óleo queima: +10 de óleo na hora."
+at_chain = 10
+duration = 0.0
+oil_on_trigger = 10.0

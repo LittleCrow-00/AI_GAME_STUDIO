@@ -28,6 +28,7 @@ signal light_well_entered(well: Node)
 signal light_well_exited(well: Node)
 signal item_acquired(item: ItemData, stacks: int)
 signal synergy_activated(synergy: StringName)
+signal cera_changed(amount: int)
 
 # --- Feixe ---
 signal beam_hit_enemy(enemy: Node, damage: float)
@@ -42,3 +43,4 @@ signal message_requested(text: String, duration: float)
 # --- Pontuacao (eixo Balatro) ---
 signal ressonancia_changed(chain: int, multiplier: float)
 signal score_changed(score: int)
+signal threshold_reached(threshold: ThresholdData)

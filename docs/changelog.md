@@ -2,6 +2,36 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
+## [0.5.0] — 2026-11-14
+
+### Adicionado
+
+- **Fase 5 — Ressonância e economia.**
+- **Limiares de cadeia** data-driven (`data/thresholds/chain_10|25|50.tres`):
+  - **10 · Estopim** — +10 de óleo na hora
+  - **25 · Alcance Longo** — +20% de alcance do feixe por 6 s
+  - **50 · Estouro** — explosão de luz (40 de dano, raio 130)
+- **`ThresholdData`** + **`ThresholdDatabase`** (autoload): o `Ressonancia`
+  detecta a passagem e emite `threshold_reached`; o `Player` aplica (óleo,
+  modificadores temporários com `StatSheet.remove_source`, explosão). Buffs
+  temporários expiram e restauram os atributos.
+- **Cera** como moeda da run: `EnemyData.cera_drop` / `Enemy.cera_drop` (1 por
+  abate, por tipo), bônus por sala limpa (`room_clear_cera`), `SignalBus.cera_changed`.
+- **Loja no Santuário:** a 1ª escolha é grátis, as seguintes custam cera
+  (`shop_price_base` + `shop_price_step` por andar). O Santuário emite
+  `purchase_requested`; o `Main` valida a carteira, cobra e devolve o saldo com
+  `set_cera()`. `ESC`/`ENTER` desce sem comprar; item comprado fica "LEVADO".
+- **HUD:** saldo de cera no readout e barra do próximo limiar da cadeia.
+
+### Alterado
+
+- `Sanctuary` virou loja (preço por card, recusa visual sem cera suficiente).
+- `Player._detonate()` parametrizado (dano/raio), usado por itens e limiares.
+- Testes de fumaça: limiares, loja, `cera_drop` e estresse de 60 inimigos
+  (**47 asserções, 0 falhas**; 6,9 ms/frame headless).
+
+---
+
 ## [0.4.0] — 2026-11-14
 
 ### Adicionado

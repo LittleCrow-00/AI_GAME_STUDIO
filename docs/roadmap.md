@@ -2,7 +2,7 @@
 
 > Estado real do repositório. Atualize a cada entrega (ver `AGENTS.md` §5).
 
-**Versão:** 0.4.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
+**Versão:** 0.5.0 · **Motor:** Godot 4.4.x · **Alvo:** Web (GitHub Pages)
 
 ---
 
@@ -58,7 +58,7 @@ ataques especiais, focos de luz.
 - [x] Telegrafia de ataques (0,35–0,55 s, com *tint* pulsante)
 - [x] **Tutorial quase imperceptível**: dicas em alpha 0,34, uma vez por run,
       sem modal e sem bloquear *input*; lanterna encolhe com o óleo (diegético)
-- [ ] Medição de FPS com 40+ inimigos (o teto atual é 14 vivos por sala)
+- [x] Medição de estresse: 60 inimigos em 6,9 ms/frame (headless, CPU)
 
 **Critério de aceite:** parcialmente atendido — peso perceptível e 16/16 testes
 passando; falta o *benchmark* de estresse.
@@ -93,11 +93,14 @@ passando; falta o *benchmark* de estresse.
 
 ---
 
-## Fase 5 — Ressonância e economia
+## Fase 5 — Ressonância e economia ✅ (parcial)
 
-- [ ] Limiares de cadeia (10/25/50) com buffs
-- [ ] Cera (moeda) e loja
-- [ ] Curva de dificuldade calibrada
+- [x] Limiares de cadeia (10/25/50) com buffs, em `data/thresholds/*.tres`
+- [x] Cera: ganha por abate (`Enemy.cera_drop`) e por sala limpa
+- [x] Loja no Santuário: 1ª escolha grátis, extras custam cera (10 + 4/andar)
+- [x] HUD mostra saldo de cera e o próximo limiar da cadeia
+- [ ] Curva de dificuldade calibrada (inimigos/ondas por andar)
+- [ ] Cera acumulada entre runs (meta-progressão → Fase 6)
 
 ---
 

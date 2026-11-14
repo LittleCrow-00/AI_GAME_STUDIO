@@ -19,6 +19,7 @@ func _ready() -> void:
 
 	_test_stat_sheet()
 	_test_ressonancia()
+	await _test_thresholds()
 	_test_enemy_death()
 	await _test_beam_damage()
 	await _test_hitstop()
@@ -26,9 +27,11 @@ func _ready() -> void:
 	_test_projectile_pool()
 	_test_boss_exposure()
 	_test_item_pool()
+	_test_sanctuary_shop()
 	await _test_items_and_synergies()
 	await _test_farol()
 	await _test_arena_progression()
+	await _test_stress()
 
 	var status := "OK" if _failures == 0 else "FAILED"
 	print("SMOKE TEST: %s (%d checks, %d failures)" % [status, _checks, _failures])
@@ -53,6 +56,42 @@ func _test_ressonancia() -> void:
 	_check(is_equal_approx(ressonancia.multiplier, 1.2), "Ressonancia: multiplicador 1.2")
 	ressonancia.reset()
 	_check(ressonancia.chain == 0, "Ressonancia: reset zera cadeia")
+
+
+func _test_thresholds() -> void:
+	var crossed := ThresholdDatabase.crossed(9, 11)
+	_check(crossed.size() == 1 and crossed[0].id == &"estopim", "Limiar: detecta passagem de 10")
+	_check(ThresholdDatabase.crossed(10, 12).is_empty(), "Limiar: não dispara duas vezes")
+	_check(ThresholdDatabase.next_after(0).at_chain == 10, "Limiar: próximo é 10")
+	_check(ThresholdDatabase.next_after(50) == null, "Limiar: sem próximo após 50")
+
+	var ressonancia := Ressonancia.new()
+	add_child(ressonancia)
+	var emitted := [false]
+	SignalBus.threshold_reached.connect(func(_t: ThresholdData) -> void: emitted[0] = true)
+	for i in range(10):
+		ressonancia.register_hit(5.0)
+	_check(emitted[0], "Ressonancia: emite threshold_reached ao cruzar 10")
+	ressonancia.queue_free()
+
+	var player := _spawn_player()
+	await get_tree().process_frame
+	player.remove_oil(50.0)
+	var oil_before := player.oil
+	player._on_threshold_reached(ThresholdDatabase.get_threshold(&"estopim"))
+	_check(player.oil > oil_before, "Limiar: estopim devolve óleo")
+
+	var range_before := player.stats.get_stat(&"beam_range")
+	player._on_threshold_reached(ThresholdDatabase.get_threshold(&"alcance_longo"))
+	_check(player.stats.get_stat(&"beam_range") > range_before, "Limiar: alcance_longo aumenta o alcance")
+	player._tick_thresholds(7.0)
+	_check(
+		is_equal_approx(player.stats.get_stat(&"beam_range"), range_before),
+		"Limiar: expira e restaura o alcance",
+	)
+
+	player.queue_free()
+	await get_tree().process_frame
 
 
 func _test_enemy_death() -> void:
@@ -194,6 +233,40 @@ func _test_item_pool() -> void:
 		_check(item.rarity != ItemData.Rarity.CURSED, "ItemDatabase: sala 0 não oferece maldição")
 
 
+func _test_sanctuary_shop() -> void:
+	var sanctuary := Sanctuary.new()
+	add_child(sanctuary)
+	await get_tree().process_frame
+
+	var requests: Array = []
+	sanctuary.purchase_requested.connect(
+		func(item: ItemData, price: int) -> void: requests.append([item, price]),
+	)
+
+	sanctuary.open(ItemDatabase.draw(3, 1), 5, 10, true)
+	sanctuary._choose(0)
+	_check(requests.size() == 1 and int(requests[0][1]) == 0, "Loja: 1ª escolha é grátis")
+
+	sanctuary._choose(1)
+	_check(requests.size() == 1, "Loja: recusa compra sem cera")
+
+	sanctuary.set_cera(20)
+	sanctuary._choose(1)
+	_check(requests.size() == 2 and int(requests[1][1]) == 10, "Loja: cobra cera na 2ª escolha")
+
+	var enemy := ENEMY_SCRIPT.new() as Enemy
+	var data := EnemyData.new()
+	data.cera_drop = 7
+	enemy.apply_data(data)
+	_check(enemy.cera_drop == 7, "EnemyData: aplica cera_drop")
+
+	sanctuary.close()
+	_check(not sanctuary.is_open(), "Loja: fecha e emite closed")
+	sanctuary.queue_free()
+	enemy.queue_free()
+	await get_tree().process_frame
+
+
 func _test_farol() -> void:
 	var farol := Farol.new()
 	farol.position = Vector2.ZERO
@@ -238,6 +311,39 @@ func _test_arena_progression() -> void:
 	_check(cleared[0], "Arena: limpa 3 ondas e emite room_cleared")
 	arena.stop()
 	arena.queue_free()
+
+
+func _test_stress() -> void:
+	var player := _spawn_player()
+	player.stats.set_base(&"max_health", 1.0e9)
+	player._refresh_stats(false)
+	player.position = Vector2.ZERO
+	await get_tree().process_frame
+
+	var spawned: Array[Enemy] = []
+	for i in range(60):
+		var enemy := ENEMY_SCRIPT.new() as Enemy
+		enemy.max_health = 1.0e9
+		enemy.health = 1.0e9
+		enemy.move_speed = 60.0
+		add_child(enemy)
+		var angle := TAU * float(i) / 60.0
+		enemy.position = Vector2.from_angle(angle) * 320.0
+		spawned.append(enemy)
+
+	var frames := 120
+	var start := Time.get_ticks_usec()
+	for i in range(frames):
+		await get_tree().process_frame
+	var elapsed_ms := float(Time.get_ticks_usec() - start) / 1000.0
+	var average := elapsed_ms / float(frames)
+	print("  INFO  60 inimigos: %.2f ms/frame (headless, CPU)" % average)
+	_check(average < 12.0, "Estresse: 60 inimigos abaixo de 12 ms/frame")
+
+	for enemy in spawned:
+		enemy.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
 
 
 func _check(condition: bool, label: String) -> void:

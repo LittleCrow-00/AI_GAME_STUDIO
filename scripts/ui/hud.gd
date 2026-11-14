@@ -11,6 +11,7 @@ const BAR_GAP := 10.0
 const COL_HEALTH := Color(0.78, 0.20, 0.24)
 const COL_OIL := Color(1.0, 0.72, 0.28)
 const COL_DASH := Color(0.34, 0.88, 0.85)
+const COL_SCORE := Color(0.95, 0.84, 0.45)
 const COL_TEXT := Color(0.80, 0.86, 0.88)
 const COL_DIM := Color(0.45, 0.55, 0.58)
 
@@ -22,7 +23,10 @@ var _dash: int = 1
 var _dash_max: int = 1
 var _chain: int = 0
 var _multiplier: float = 1.0
+var _next_threshold: int = 0
+var _next_threshold_name: String = ""
 var _score: int = 0
+var _cera: int = 0
 var _room: int = 1
 var _room_total: int = 3
 var _wave: int = 0
@@ -80,6 +84,7 @@ func _connect() -> void:
 	SignalBus.dash_charges_changed.connect(_on_dash_changed)
 	SignalBus.ressonancia_changed.connect(_on_ressonancia_changed)
 	SignalBus.score_changed.connect(_on_score_changed)
+	SignalBus.cera_changed.connect(_on_cera_changed)
 	SignalBus.wave_started.connect(_on_wave_started)
 	SignalBus.enemies_remaining_changed.connect(_on_enemies_changed)
 	SignalBus.message_requested.connect(show_banner)
@@ -175,10 +180,21 @@ func _on_dash_changed(current: int, maximum: int) -> void:
 func _on_ressonancia_changed(chain: int, multiplier: float) -> void:
 	_chain = chain
 	_multiplier = multiplier
+	var next := ThresholdDatabase.next_after(chain)
+	if next == null:
+		_next_threshold = 0
+		_next_threshold_name = ""
+	else:
+		_next_threshold = next.at_chain
+		_next_threshold_name = next.display_name
 
 
 func _on_score_changed(score: int) -> void:
 	_score = score
+
+
+func _on_cera_changed(amount: int) -> void:
+	_cera = amount
 
 
 func _on_wave_started(index: int, total: int) -> void:
@@ -206,9 +222,10 @@ func _draw() -> void:
 		var alpha := (0.18 + 0.22 * (0.5 + 0.5 * sin(_pulse * 6.0))) * urgency
 		draw_rect(Rect2(oil_origin - Vector2(2, 2), Vector2(BAR_WIDTH + 4, BAR_HEIGHT + 4)), Color(1.0, 0.6, 0.25, alpha), false, 2.0)
 	_draw_dash(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 2.0 + 6.0))
+	_draw_chain(BAR_ORIGIN + Vector2(0, (BAR_HEIGHT + BAR_GAP) * 3.0 + 6.0))
 
-	_readout.text = "SALA %d / %d\nONDA %d / %d\nINIMIGOS  %d\n\nCADEIA  %d\nx%.1f\n\nPONTOS  %d" % [
-		_room, _room_total, _wave, _wave_total, _enemies, _chain, _multiplier, _score,
+	_readout.text = "SALA %d / %d\nONDA %d / %d\nINIMIGOS  %d\n\nCADEIA  %d\nx%.1f\n\nPONTOS  %d\nCERA    %d" % [
+		_room, _room_total, _wave, _wave_total, _enemies, _chain, _multiplier, _score, _cera,
 	]
 	_readout.add_theme_color_override("font_color", COL_HEALTH if _dry_flash > 0.0 else COL_TEXT)
 
@@ -246,3 +263,20 @@ func _draw_dash(origin: Vector2) -> void:
 		var center := origin + Vector2(48.0 + float(i) * 24.0, 7.0)
 		var color := COL_DASH if i < _dash else Color(0.12, 0.18, 0.2)
 		draw_circle(center, 7.0, color)
+
+
+## Barra fina do próximo limiar. Sem limiar restante, a barra fica cheia e apagada.
+func _draw_chain(origin: Vector2) -> void:
+	var font := ThemeDB.fallback_font
+	var label := "CADEIA"
+	if _next_threshold > 0:
+		label = "CADEIA  →  %d · %s" % [_next_threshold, _next_threshold_name]
+	draw_string(font, origin + Vector2(0, -6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, COL_DIM)
+
+	var ratio := 1.0
+	if _next_threshold > 0:
+		ratio = clampf(float(_chain) / float(_next_threshold), 0.0, 1.0)
+	var background := Rect2(origin, Vector2(BAR_WIDTH, 6.0))
+	draw_rect(background, Color(0.03, 0.05, 0.06))
+	draw_rect(Rect2(origin, Vector2(BAR_WIDTH * ratio, 6.0)), COL_SCORE)
+	draw_rect(background, Color(0.16, 0.24, 0.27), false, 1.0)

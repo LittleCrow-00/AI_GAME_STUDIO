@@ -30,6 +30,10 @@ Santuário → **Cobra Grande** → Santuário → **Farol** (vitória).
 > Os itens têm **tags** (`lente`, `oleo`, `corpo`, `resonancia`). Combiná-las
 > acende **sinergias** (Luz de Estádio, Cera Viva, Casco, Brasa Viva) que mudam
 > mais do que um número — e as maldições aparecem só a partir da 2ª sala.
+>
+> **Cera** é a moeda da run: cai de abates e de salas limpas. No Santuário a
+> 1ª escolha é grátis; as outras custam cera. A **cadeia** de acertos (10/25/50)
+> devolve óleo, alcance e uma explosão de luz.
 
 > A Cobra Grande é **imune no escuro**. Você precisa segurar a luz nela por 2,5 s
 > para expô-la — a luta obriga a parar de desviar e apontar.

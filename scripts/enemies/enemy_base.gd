@@ -15,6 +15,7 @@ const ACCEL: float = 900.0
 @export var contact_damage: float = 10.0
 @export var contact_interval: float = 0.8
 @export var oil_drop: float = 6.0
+@export var cera_drop: int = 1
 @export var body_color: Color = Color(0.34, 0.88, 0.85)
 @export var body_radius: float = 11.0
 @export var keep_distance: float = 0.0
@@ -43,6 +44,7 @@ func apply_data(data: EnemyData) -> void:
 	move_speed = data.move_speed
 	contact_damage = data.contact_damage
 	oil_drop = data.oil_drop
+	cera_drop = data.cera_drop
 	body_color = data.body_color
 
 

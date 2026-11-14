@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/threshold_data.gd" id="1_threshold"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_range"]
+script = ExtResource("2_mod")
+stat = &"beam_range"
+mode = 1
+value = 1.2
+
+[resource]
+script = ExtResource("1_threshold")
+id = &"alcance_longo"
+display_name = "Alcance Longo"
+description = "A 25 de cadeia, o feixe alcança 20% mais longe por 6 s."
+at_chain = 25
+duration = 6.0
+modifiers = [SubResource("mod_range")]

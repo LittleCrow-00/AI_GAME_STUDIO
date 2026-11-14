@@ -30,12 +30,20 @@ func _process(delta: float) -> void:
 
 
 func register_hit(damage: float) -> void:
+	var previous := chain
 	chain = mini(MAX_CHAIN, chain + 1)
 	_left = WINDOW
 	multiplier = 1.0 + STEP * float(chain)
 	score += int(round(damage * multiplier))
 	SignalBus.ressonancia_changed.emit(chain, multiplier)
 	SignalBus.score_changed.emit(score)
+	_emit_thresholds(previous, chain)
+
+
+## Detecta a passagem de limiar e avisa. Quem aplica a recompensa é o Player.
+func _emit_thresholds(previous: int, current: int) -> void:
+	for threshold in ThresholdDatabase.crossed(previous, current):
+		SignalBus.threshold_reached.emit(threshold)
 
 
 func reset() -> void:
