@@ -14,6 +14,10 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
   `.github/workflows/android.yml` para o APK: localmente o export aborta sem mensagem
   mesmo com SDK, build-tools 34, platform 34 e keystore de debug instalados, entao a
   rota do APK e o CI.
+- **Comecar no celular**: a tela de titulo aceita toque (qualquer ponto desce; tocar
+  numa linha seleciona o desbloqueio), a primeira linha vira `DESCER · toque para
+  comecar` e aparece a dica `toque na tela para comecar`. O aviso de orientacao
+  so e emitido em Android/iOS.
 - **Rim light** (`assets/shaders/rim_light.gdshader`): um texel de luz na borda superior esquerda do
   personagem e dos inimigos, para a silhueta sair do chao escuro sem mudar o sprite.
 - **6 itens novos**: Estopim (+1 dash), Pavio de Cera (+25% dano, -10% alcance),

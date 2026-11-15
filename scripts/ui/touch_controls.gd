@@ -56,6 +56,12 @@ func _ready() -> void:
 	set_process_input(true)
 	if enabled:
 		# O jogo é 16:9; no celular, forçar paisagem evita HUD cortado.
+		_force_landscape()
+
+
+# So chama em display que aceita (Android/iOS); no navegador da warning.
+func _force_landscape() -> void:
+	if OS.has_feature("mobile") and DisplayServer.get_name() != "headless":
 		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 
 
@@ -100,7 +106,7 @@ func _input(event: InputEvent) -> void:
 		if touch == null:
 			return
 		enabled = true
-		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
+		_force_landscape()
 	if touch != null:
 		if touch.pressed:
 			_press(touch.index, touch.position)

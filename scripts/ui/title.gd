@@ -17,11 +17,13 @@ var _rows: Array[Label] = []
 var _stats: Label
 var _selected: int = 0
 var _pulse: float = 0.0
+var _is_touch: bool = false
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_is_touch = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	_build()
 	_refresh()
 
@@ -76,9 +78,20 @@ func _build() -> void:
 		COL_DIM,
 		HORIZONTAL_ALIGNMENT_CENTER,
 	)
-	footer.position = Vector2(0.0, 620.0)
+	footer.position = Vector2(0.0, 612.0)
 	footer.size = Vector2(1280.0, 26.0)
 	add_child(footer)
+
+	if _is_touch:
+		var hint := _make_label(
+			"toque na tela para começar",
+			18,
+			COL_ACCENT,
+			HORIZONTAL_ALIGNMENT_CENTER,
+		)
+		hint.position = Vector2(0.0, 646.0)
+		hint.size = Vector2(1280.0, 28.0)
+		add_child(hint)
 
 
 func _refresh() -> void:
@@ -92,6 +105,8 @@ func _refresh() -> void:
 		return
 
 	_rows[0].text = "DESCER"
+	if _is_touch:
+		_rows[0].text = "DESCER   ·   toque para começar"
 	for i in range(1, _rows.size()):
 		var unlock := UnlockDatabase.ALL[i - 1]
 		var line: String
@@ -112,6 +127,27 @@ func _refresh() -> void:
 		if i > 0 and SaveSystem.has_unlock(UnlockDatabase.ALL[i - 1].id):
 			color = COL_OK if i != _selected else COL_ACCENT
 		_rows[i].add_theme_color_override("font_color", color)
+
+
+func _input(event: InputEvent) -> void:
+	# Toque na tela: linha tocada entra na selecao; qualquer outro ponto desce.
+	var touch := event as InputEventScreenTouch
+	if touch == null or not touch.pressed:
+		return
+
+	var index := _row_at(touch.position)
+	if index >= 0:
+		_selected = index
+		_refresh()
+	_activate(_selected)
+	_accept_input()
+
+
+func _row_at(pos: Vector2) -> int:
+	for i in range(_rows.size()):
+		if Rect2(_rows[i].position, _rows[i].size).has_point(pos):
+			return i
+	return -1
 
 
 func _unhandled_input(event: InputEvent) -> void:
