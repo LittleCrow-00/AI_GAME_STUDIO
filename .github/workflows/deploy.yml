@@ -49,19 +49,19 @@ jobs:
             -d "$DEST"
 
       - name: Importar projeto
-        run: godot --headless --path "${{ github.workspace }}" --import
+        run: godot --headless --path "$GITHUB_WORKSPACE" --import
 
       - name: Rodar testes de fumaca
-        run: godot --headless --path "${{ github.workspace }}" res://tests/smoke_test.tscn
+        run: godot --headless --path "$GITHUB_WORKSPACE" res://tests/smoke_test.tscn
 
       - name: Rodar teste de run ponta a ponta
-        run: godot --headless --path "${{ github.workspace }}" res://tests/run_test.tscn
+        run: godot --headless --path "$GITHUB_WORKSPACE" res://tests/run_test.tscn
 
       - name: Exportar jogo Godot
         run: |
           set -eu
           mkdir -p build/web
-          godot --headless --path "${{ github.workspace }}" --export-release "Web" "${{ github.workspace }}/build/web/index.html"
+          godot --headless --path "$GITHUB_WORKSPACE" --export-release "Web" "$GITHUB_WORKSPACE/build/web/index.html"
 
       - name: Ajustar GitHub Pages
         run: touch build/web/.nojekyll
