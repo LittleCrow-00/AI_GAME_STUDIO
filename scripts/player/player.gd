@@ -26,6 +26,9 @@ const THRESHOLD_SOURCE := &"threshold"
 ## art não nascer com meio-pixel (filtro nearest).
 const SPRITE_HEIGHT := 64.0
 
+# Mesmo material de borda dos inimigos: um texel de luz na silhueta.
+const RIM_MATERIAL: ShaderMaterial = preload("res://assets/shaders/rim_material.tres")
+
 # --- Valores base (ponto de partida do StatSheet) ---
 @export var base_max_health: float = 100.0
 @export var base_max_oil: float = 100.0
@@ -259,6 +262,7 @@ func _build_sprite() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.name = "Body"
 	_sprite.texture = preload("res://assets/sprites/player.svg")
+	_sprite.material = RIM_MATERIAL
 	var size := _sprite.texture.get_size()
 	# Pixel art: escala inteira e âncora nos pés (nada de meia-pixel).
 	var scale_factor := maxf(1.0, roundf(SPRITE_HEIGHT / size.y))

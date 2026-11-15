@@ -34,6 +34,8 @@ const GAITS := {
 ## Sprite opcional (SVG). Vazio = corpo procedural de reserva.
 @export var sprite_texture: Texture2D
 
+const RIM_MATERIAL: ShaderMaterial = preload("res://assets/shaders/rim_material.tres")
+
 var health: float = 30.0
 ## Variante de elite: mais vida, mais dano, mais cera e um anel dourado.
 var elite: bool = false
@@ -67,6 +69,7 @@ func _build_sprite() -> void:
 	_sprite_node = Sprite2D.new()
 	_sprite_node.name = "Sprite"
 	_sprite_node.texture = sprite_texture
+	_sprite_node.material = RIM_MATERIAL
 	add_child(_sprite_node)
 	move_child(_sprite_node, 0)
 	_fit_sprite()

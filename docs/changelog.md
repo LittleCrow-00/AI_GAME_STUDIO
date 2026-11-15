@@ -8,6 +8,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 - **Feedback de impacto**: `SparkPool` (pool fixo, 4 faíscas por acerto), sombra
   elíptica sob os inimigos e props no chão (pedras e tufos determinísticos).
+- **Rim light** (`assets/shaders/rim_light.gdshader`): um texel de luz na borda superior esquerda do
+  personagem e dos inimigos, para a silhueta sair do chao escuro sem mudar o sprite.
 - **6 itens novos**: Estopim (+1 dash), Pavio de Cera (+25% dano, -10% alcance),
   Olho de Vidro (+1 refração, -15% dano), Bolsão de Óleo (+30 óleo, -5% velocidade),
   Anzol de Osso (óleo por acerto) e Óleo Velho (-15% gasto, -10% dano). Banco em 31.
