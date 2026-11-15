@@ -31,6 +31,12 @@ const ALL: Array[ItemData] = [
 	preload("res://data/items/contagio.tres"),
 	preload("res://data/items/sangue_quente.tres"),
 	preload("res://data/items/furador.tres"),
+	preload("res://data/items/estopim.tres"),
+	preload("res://data/items/pavio_de_cera.tres"),
+	preload("res://data/items/olho_de_vidro.tres"),
+	preload("res://data/items/bolsao_de_oleo.tres"),
+	preload("res://data/items/anzol_de_osso.tres"),
+	preload("res://data/items/oleo_velho.tres"),
 ]
 
 const CURSED_CHANCE: float = 0.12

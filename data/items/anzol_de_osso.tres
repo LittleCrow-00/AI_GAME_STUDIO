@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"anzol_de_osso"
+display_name = "Anzol de Osso"
+description = "Cada acerto devolve um fio de óleo."
+rarity = 1
+tags = [&"oleo"]
+behavior_id = &"oil_on_hit"
+behavior_value = 0.5
+max_stacks = 3

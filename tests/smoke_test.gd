@@ -703,7 +703,10 @@ func _test_items_and_synergies() -> void:
 
 
 func _test_item_pool() -> void:
-	_check(ItemDatabase.count() >= 25, "ItemDatabase: ao menos 25 itens")
+	_check(ItemDatabase.count() >= 31, "ItemDatabase: ao menos 31 itens")
+	for item in ItemDatabase.ALL:
+		_check(item.display_name != "" and item.description != "", "Item: %s tem nome e descrição" % item.id)
+		_check(item.modifiers.size() > 0 or item.behavior_id != &"", "Item: %s muda algo" % item.id)
 	for item in ItemDatabase.draw(3, 0):
 		_check(item.rarity != ItemData.Rarity.CURSED, "ItemDatabase: sala 0 não oferece maldição")
 

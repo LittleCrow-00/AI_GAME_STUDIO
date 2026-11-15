@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://resources/item_data.gd" id="1_item"]
+[ext_resource type="Script" path="res://resources/stat_modifier.gd" id="2_mod"]
+
+[sub_resource type="Resource" id="mod_oil"]
+script = ExtResource("2_mod")
+stat = &"max_oil"
+mode = 0
+value = 30.0
+
+[sub_resource type="Resource" id="mod_speed"]
+script = ExtResource("2_mod")
+stat = &"move_speed"
+mode = 1
+value = 0.95
+
+[resource]
+script = ExtResource("1_item")
+id = &"bolsao_de_oleo"
+display_name = "Bolsão de Óleo"
+description = "+30 de óleo máximo, -5% de velocidade. Mais tempo na luz."
+rarity = 0
+tags = [&"oleo"]
+modifiers = [SubResource("mod_oil"), SubResource("mod_speed")]
+max_stacks = 3
