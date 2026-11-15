@@ -203,6 +203,7 @@ Plano detalhado em **`docs/polish.md`**. Resumo:
       mais próximo (`scripts/ui/touch_controls.gd`)
 - [x] Ativação no primeiro toque, paisagem forçada, mesmo `InputMap` do PC
 - [x] Testes de toque no `smoke_test` (mover, soltar, atirar, mirar)
+- [x] Build Windows (`Faroleiro.exe`) exportada e validada
 - [x] Preset Android + workflow de APK (CI, chave de debug)
 - [x] Rim light de 1 texel em jogador e inimigos
 - [x] 6 itens novos (31 no banco), todos com nome, descrição e efeito composto

@@ -8,10 +8,12 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 - **Feedback de impacto**: `SparkPool` (pool fixo, 4 faíscas por acerto), sombra
   elíptica sob os inimigos e props no chão (pedras e tufos determinísticos).
-- **Distribuicao Android**: preset `Android` em `export_presets.cfg` (arm64, `com.littlecrow.faroleiro`,
-  filtro `tests/ *`) e workflow `.github/workflows/android.yml` que instala JDK 17, Godot 4.4.1 e os
-  templates, gera chave de debug e publica o APK como artefato. O SDK Android local esta
-  bloqueado neste container, entao a rota e o CI.
+- **Distribuicao**: preset `Windows Desktop` (x86_64, PCK embutido) gera
+  `build/windows/Faroleiro.exe` (98 MB, template Godot 4.4.1, header `MZ` conferido).
+  Preset `Android` (arm64, `com.littlecrow.faroleiro`) e workflow
+  `.github/workflows/android.yml` para o APK: localmente o export aborta sem mensagem
+  mesmo com SDK, build-tools 34, platform 34 e keystore de debug instalados, entao a
+  rota do APK e o CI.
 - **Rim light** (`assets/shaders/rim_light.gdshader`): um texel de luz na borda superior esquerda do
   personagem e dos inimigos, para a silhueta sair do chao escuro sem mudar o sprite.
 - **6 itens novos**: Estopim (+1 dash), Pavio de Cera (+25% dano, -10% alcance),
