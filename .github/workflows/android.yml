@@ -27,18 +27,27 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build tools e platform
+      - name: Android SDK (build-tools, platform, platform-tools)
+        env:
+          ANDROID_HOME: /opt/android-sdk
         run: |
-          set -euo pipefail
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "build-tools;34.0.0" "platforms;android-34" "platform-tools"
+          set -eu
+          mkdir -p "$ANDROID_HOME/build-tools" "$ANDROID_HOME/platforms"
+          curl -sSL -o /tmp/bt.zip https://dl.google.com/android/repository/build-tools_r34-linux.zip
+          unzip -qo /tmp/bt.zip -d /tmp/btx
+          mv /tmp/btx/android-14 "$ANDROID_HOME/build-tools/34.0.0"
+          curl -sSL -o /tmp/pt.zip https://dl.google.com/android/repository/platform-tools-latest-linux.zip
+          unzip -qo /tmp/pt.zip -d "$ANDROID_HOME"
+          curl -sSL -o /tmp/plat.zip https://dl.google.com/android/repository/platform-34-ext7_r03.zip
+          unzip -qo /tmp/plat.zip -d "$ANDROID_HOME/platforms"
+          test -x "$ANDROID_HOME/build-tools/34.0.0/apksigner"
+          test -x "$ANDROID_HOME/platform-tools/adb"
 
       - name: Godot 4.4.1 e templates
+        env:
+          ANDROID_HOME: /opt/android-sdk
         run: |
-          set -euo pipefail
+          set -eu
           DEST="$HOME/.local/share/godot/export_templates/4.4.1.stable"
           mkdir -p /opt/godot "$DEST"
           curl -sSL -o /tmp/godot.zip \
@@ -54,8 +63,10 @@ jobs:
           test -f "$DEST/android_debug.apk"
 
       - name: Chave de debug e ajustes do editor
+        env:
+          ANDROID_HOME: /opt/android-sdk
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p "$HOME/.android" "$HOME/.local/share/godot/keystores"
           keytool -genkeypair -v \
             -keystore "$HOME/.local/share/godot/keystores/debug.keystore" \
@@ -74,7 +85,7 @@ jobs:
 
       - name: Exportar APK
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p build/android
           godot --headless --path "${{ github.workspace }}" --import
           godot --headless --path "${{ github.workspace }}" --export-debug "Android" "${{ github.workspace }}/build/android/Faroleiro.apk"

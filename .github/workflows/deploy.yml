@@ -25,7 +25,7 @@ jobs:
 
       - name: Instalar templates de exportacao
         run: |
-          set -euo pipefail
+          set -eu
           VERSION="4.4.1.stable"
           DEST="$HOME/.local/share/godot/export_templates/$VERSION"
           mkdir -p "$DEST"
@@ -50,7 +50,7 @@ jobs:
 
       - name: Exportar jogo Godot
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p build/web
           godot --headless --path "${{ github.workspace }}" --export-release "Web" "${{ github.workspace }}/build/web/index.html"
 
