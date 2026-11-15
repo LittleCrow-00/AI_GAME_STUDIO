@@ -23,6 +23,15 @@ jobs:
       - name: Baixar codigo
         uses: actions/checkout@v4
 
+      - name: Preparar ambiente
+        run: |
+          set -eu
+          if [ -f /etc/alpine-release ]; then
+            apk add --no-cache curl unzip
+          else
+            apt-get update && apt-get install -y curl unzip
+          fi
+
       - name: Instalar templates de exportacao
         run: |
           set -eu
