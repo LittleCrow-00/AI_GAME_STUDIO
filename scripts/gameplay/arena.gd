@@ -333,6 +333,7 @@ func _draw() -> void:
 			x += step
 		y += step
 
+	_draw_props(half, palette)
 	_draw_puddles(half, palette["puddle"] as Color)
 	_draw_walls(half, palette)
 
@@ -348,6 +349,32 @@ func _palette() -> Dictionary:
 		"edge": palette.edge_color,
 		"rim": palette.rim_color,
 	}
+
+
+## Pedras e tufos de mato: desenho determinístico, sem sprite e sem colisão.
+## Existem para dar escala e para o chão não parecer um vazio liso.
+func _draw_props(half: Vector2, _palette: Dictionary) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 0x5EED1234
+	for i in range(34):
+		var at := Vector2(
+			rng.randf_range(-half.x + 48.0, half.x - 48.0),
+			rng.randf_range(-half.y + 48.0, half.y - 48.0),
+		)
+		var radius := rng.randf_range(2.5, 6.5)
+		draw_set_transform(at, 0.0, Vector2(1.0, 0.5))
+		draw_circle(Vector2.ZERO, radius, Color(0.02, 0.03, 0.035, 0.6))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		draw_arc(at + Vector2(0.0, -0.8), radius, PI * 1.05, TAU * 0.98, 8, Color(0.32, 0.42, 0.45, 0.30), 1.0)
+		if i % 3 == 0:
+			for blade in range(3):
+				var off := Vector2(-2.0 + float(blade) * 2.0, 0.0)
+				draw_line(
+					at + off,
+					at + off + Vector2(-1.5 + float(blade), -5.0 - float(blade)),
+					Color(0.12, 0.24, 0.18, 0.75),
+					1.2,
+				)
 
 
 func _draw_puddles(half: Vector2, tint: Color) -> void:

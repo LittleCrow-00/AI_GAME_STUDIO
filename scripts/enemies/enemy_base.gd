@@ -296,6 +296,7 @@ func _build_glow() -> void:
 
 
 func _draw() -> void:
+	_draw_shadow()
 	if _sprite_node != null:
 		if elite:
 			draw_arc(
@@ -322,3 +323,11 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, body_radius, Color(0.03, 0.06, 0.07))
 	draw_circle(Vector2.ZERO, body_radius - 2.0, body)
 	draw_circle(Vector2.ZERO, body_radius * 0.45, body_color.darkened(0.15))
+
+
+## Sombra no chão: assenta o inimigo no piso e separa a silhueta do fundo.
+func _draw_shadow() -> void:
+	var foot := Vector2(0.0, body_radius * 1.05)
+	draw_set_transform(foot, 0.0, Vector2(1.0, 0.36))
+	draw_circle(Vector2.ZERO, body_radius * 0.95, Color(0.0, 0.0, 0.0, 0.42))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

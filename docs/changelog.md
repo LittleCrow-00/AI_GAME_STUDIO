@@ -6,6 +6,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Adicionado
 
+- **Feedback de impacto**: `SparkPool` (pool fixo, 4 faíscas por acerto), sombra
+  elíptica sob os inimigos e props no chão (pedras e tufos determinísticos).
 - **Controles de toque** (`scripts/ui/touch_controls.gd`): direcional analógico
   flutuante, botão de feixe (segurar) e dash, com mira automática no inimigo
   mais próximo — o mesmo `InputMap`, sem tocar no combate. Ativa no primeiro

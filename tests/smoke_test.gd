@@ -46,6 +46,7 @@ func _ready() -> void:
 	await _test_title_screen()
 	await _test_pause_menu()
 	await _test_touch_controls()
+	await _test_sparks()
 	await _test_items_and_synergies()
 	await _test_farol()
 	await _test_arena_progression()
@@ -255,6 +256,18 @@ func _test_touch_controls() -> void:
 
 	touch.queue_free()
 	enemy.queue_free()
+	await get_tree().process_frame
+
+
+func _test_sparks() -> void:
+	var pool := SparkPool.new()
+	add_child(pool)
+	await get_tree().process_frame
+	pool._on_enemy_hit(null, 1.0, Vector2(50.0, 50.0))
+	_check(pool._life[0] > 0.0, "Faísca: acerto acende partícula")
+	await get_tree().create_timer(0.3).timeout
+	_check(pool._life[0] == 0.0, "Faísca: partícula expira")
+	pool.queue_free()
 	await get_tree().process_frame
 
 

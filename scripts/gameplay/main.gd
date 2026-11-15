@@ -61,6 +61,10 @@ func _ready() -> void:
 	tutorial.name = "TutorialDirector"
 	add_child(tutorial)
 
+	var sparks := SparkPool.new()
+	sparks.name = "Sparks"
+	add_child(sparks)
+
 	var touch := TouchControls.new()
 	touch.name = "TouchControls"
 	add_child(touch)
