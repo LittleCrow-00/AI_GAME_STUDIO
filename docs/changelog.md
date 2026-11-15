@@ -8,6 +8,10 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 - **Feedback de impacto**: `SparkPool` (pool fixo, 4 faíscas por acerto), sombra
   elíptica sob os inimigos e props no chão (pedras e tufos determinísticos).
+- **Distribuicao Android**: preset `Android` em `export_presets.cfg` (arm64, `com.littlecrow.faroleiro`,
+  filtro `tests/ *`) e workflow `.github/workflows/android.yml` que instala JDK 17, Godot 4.4.1 e os
+  templates, gera chave de debug e publica o APK como artefato. O SDK Android local esta
+  bloqueado neste container, entao a rota e o CI.
 - **Rim light** (`assets/shaders/rim_light.gdshader`): um texel de luz na borda superior esquerda do
   personagem e dos inimigos, para a silhueta sair do chao escuro sem mudar o sprite.
 - **6 itens novos**: Estopim (+1 dash), Pavio de Cera (+25% dano, -10% alcance),
