@@ -6,6 +6,11 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 ### Adicionado
 
+- **Controles de toque** (`scripts/ui/touch_controls.gd`): direcional analógico
+  flutuante, botão de feixe (segurar) e dash, com mira automática no inimigo
+  mais próximo — o mesmo `InputMap`, sem tocar no combate. Ativa no primeiro
+  toque e força paisagem no celular.
+- Testes: toque move, solta, atira e mira (101 asserções no `smoke_test`).
 - **Fase 10 (passo visual) — pixel art.**
 - Faroleiro redesenhado em 32×32 com paleta fixa (`tools/gen_sprites.mjs`), e os
   10 inimigos convertidos para a mesma paleta em 64×64

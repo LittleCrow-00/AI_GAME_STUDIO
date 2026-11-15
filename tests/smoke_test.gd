@@ -45,6 +45,7 @@ func _ready() -> void:
 	_test_elite_and_palette()
 	await _test_title_screen()
 	await _test_pause_menu()
+	await _test_touch_controls()
 	await _test_items_and_synergies()
 	await _test_farol()
 	await _test_arena_progression()
@@ -206,6 +207,55 @@ func _test_meta_progression() -> void:
 	SaveSystem.reset()
 	SaveSystem.path = real_path
 	SaveSystem.load_game()
+
+
+func _test_touch_controls() -> void:
+	var touch := TouchControls.new()
+	touch.name = "TouchTest"
+	add_child(touch)
+	touch.enabled = true
+	await get_tree().process_frame
+
+	var player := _spawn_player()
+	player.global_position = Vector2(100.0, 100.0)
+
+	touch._origin = Vector2(200.0, 400.0)
+	touch._touch_pos = Vector2(260.0, 400.0)
+	touch._touch_index = 0
+	touch._apply_move()
+	_check(Input.get_action_strength(&"move_right") > 0.5, "Toque: arrastar empurra o direcional")
+	touch._release(0)
+	_check(is_zero_approx(Input.get_action_strength(&"move_right")), "Toque: soltar zera o direcional")
+
+	touch._press(1, touch._beam_rect.get_center())
+	_check(Input.is_action_pressed(&"fire"), "Toque: botão do feixe atira")
+	touch._release(1)
+	_check(not Input.is_action_pressed(&"fire"), "Toque: soltar o feixe para o tiro")
+
+	var enemy := ENEMY_SCRIPT.new() as Enemy
+	enemy.position = Vector2(400.0, 100.0)
+	add_child(enemy)
+	touch._player = player
+	touch._beam_held = true
+	touch._update_aim()
+	var nearest := Vector2.INF
+	var best := INF
+	for node in get_tree().get_nodes_in_group("enemies"):
+		var other := node as Node2D
+		if other == null:
+			continue
+		var dist := other.global_position.distance_squared_to(player.global_position)
+		if dist < best:
+			best = dist
+			nearest = other.global_position
+	_check(player.aim_override.distance_to(nearest) < 2.0, "Toque: mira no inimigo mais próximo")
+	touch._beam_held = false
+	touch._update_aim()
+	_check(player.aim_override == Vector2.INF, "Toque: sem tiro, a mira volta ao mouse")
+
+	touch.queue_free()
+	enemy.queue_free()
+	await get_tree().process_frame
 
 
 func _test_title_screen() -> void:

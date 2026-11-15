@@ -50,6 +50,9 @@ var health: float = 100.0
 var oil: float = 100.0
 var is_firing: bool = false
 
+## Mira vinda do toque (ponto global). `INF` = usar o mouse.
+var aim_override: Vector2 = Vector2.INF
+
 var _oil_drain: float = 6.0
 var _move_speed: float = 220.0
 var _dash_charges_max: int = 1
@@ -357,7 +360,8 @@ func _handle_dash(delta: float) -> void:
 
 
 func _handle_beam(delta: float) -> void:
-	var aim := get_global_mouse_position() - global_position
+	var target := aim_override if aim_override != Vector2.INF else get_global_mouse_position()
+	var aim := target - global_position
 	if aim.length_squared() > 4.0:
 		beam.global_rotation = aim.angle()
 

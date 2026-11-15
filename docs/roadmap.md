@@ -197,6 +197,15 @@ Plano detalhado em **`docs/polish.md`**. Resumo:
 - [ ] Animação por quadros (passada, capa, lanterna) no lugar do bob atual
 - [ ] Revisão do jogador: feedback de dano, dash e óleo (ver `docs/polish.md`)
 
+## Fase 11 — Controles de toque e distribuição
+
+- [x] Direcional analógico + botão de feixe + dash, mira automática no inimigo
+      mais próximo (`scripts/ui/touch_controls.gd`)
+- [x] Ativação no primeiro toque, paisagem forçada, mesmo `InputMap` do PC
+- [x] Testes de toque no `smoke_test` (mover, soltar, atirar, mirar)
+- [ ] Presets de exportação Windows Desktop e Android (`.exe` e `.apk`)
+- [ ] APK de fumaça gerado no CI para instalar no celular sem hospedar o jogo
+
 ---
 
 ## Dívida técnica conhecida

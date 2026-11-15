@@ -61,6 +61,10 @@ func _ready() -> void:
 	tutorial.name = "TutorialDirector"
 	add_child(tutorial)
 
+	var touch := TouchControls.new()
+	touch.name = "TouchControls"
+	add_child(touch)
+
 	SignalBus.player_died.connect(_on_player_died)
 	SignalBus.enemy_died.connect(_on_enemy_died)
 	sanctuary.purchase_requested.connect(_on_purchase_requested)
