@@ -8,6 +8,9 @@ Formato: [Keep a Changelog](https://keepachangelog.com/). Projeto em 0.x.
 
 - **Feedback de impacto**: `SparkPool` (pool fixo, 4 faíscas por acerto), sombra
   elíptica sob os inimigos e props no chão (pedras e tufos determinísticos).
+- **Áudio**: 7 efeitos novos sintetizados (`item`, `synergy`, `boss`, `death`,
+  `ui_move`, `ui_confirm`, `unlock`), variação de pitch em hit, kill, pickup e
+  dash, som de sinergia e de compra no título, e o drone abaixa na morte.
 - **Controles de toque** (`scripts/ui/touch_controls.gd`): direcional analógico
   flutuante, botão de feixe (segurar) e dash, com mira automática no inimigo
   mais próximo — o mesmo `InputMap`, sem tocar no combate. Ativa no primeiro

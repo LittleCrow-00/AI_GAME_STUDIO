@@ -17,6 +17,8 @@ signal projectile_fired(position: Vector2, direction: Vector2)
 signal boss_spawned(boss: Node)
 signal boss_health_changed(current: float, maximum: float)
 signal boss_defeated
+signal item_collected(item: ItemData)
+signal synergy_changed(synergies: Array)
 signal farol_lit
 
 # --- Jogador / recursos ---

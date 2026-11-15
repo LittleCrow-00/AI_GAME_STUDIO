@@ -122,9 +122,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	match key.physical_keycode:
 		KEY_UP, KEY_W:
 			_selected = (_selected + _rows.size() - 1) % _rows.size()
+			AudioService.play_ui(&"ui_move")
 			_refresh()
 		KEY_DOWN, KEY_S:
 			_selected = (_selected + 1) % _rows.size()
+			AudioService.play_ui(&"ui_move")
 			_refresh()
 		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
 			_activate(_selected)
@@ -143,6 +145,7 @@ func _accept_input() -> void:
 
 func _activate(index: int) -> void:
 	if index <= 0:
+		AudioService.play_ui(&"ui_confirm")
 		get_tree().change_scene_to_file(MAIN_SCENE)
 		return
 
@@ -150,6 +153,7 @@ func _activate(index: int) -> void:
 	if SaveSystem.has_unlock(unlock.id):
 		return
 	if SaveSystem.purchase(unlock.id):
+		AudioService.play_ui(&"unlock")
 		_refresh()
 
 

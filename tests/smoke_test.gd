@@ -540,7 +540,8 @@ func _test_caipora() -> void:
 
 
 func _test_audio() -> void:
-	_check(AudioService.SOUNDS.size() == 8, "Audio: 8 efeitos carregados")
+	_check(AudioService.SOUNDS.size() == 15, "Audio: 15 efeitos carregados")
+	_check(AudioService.SOUNDS.has(&"item") and AudioService.SOUNDS.has(&"boss"), "Audio: efeitos novos presentes")
 	AudioService.set_muted(true)
 	_check(AudioService.is_muted(), "Audio: mute funciona")
 	AudioService.set_muted(false)

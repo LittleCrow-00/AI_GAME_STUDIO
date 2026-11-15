@@ -203,6 +203,8 @@ Plano detalhado em **`docs/polish.md`**. Resumo:
       mais próximo (`scripts/ui/touch_controls.gd`)
 - [x] Ativação no primeiro toque, paisagem forçada, mesmo `InputMap` do PC
 - [x] Testes de toque no `smoke_test` (mover, soltar, atirar, mirar)
+- [x] Áudio: 7 SFX novos, variação de pitch, som de sinergia/compra e drone
+      abaixando na morte
 - [ ] Presets de exportação Windows Desktop e Android (`.exe` e `.apk`)
 - [ ] APK de fumaça gerado no CI para instalar no celular sem hospedar o jogo
 

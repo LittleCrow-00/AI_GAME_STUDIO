@@ -24,8 +24,15 @@ func _initialize() -> void:
 	_write("hurt", _hurt(0.24))
 	_write("dry", _noise_burst(0.05, 0.008, 0.9))
 	_write("farol", _bell(1.30, 392.0, 523.25))
+	_write("item", _arpeggio(0.26, [523.25, 659.25, 880.0]))
+	_write("synergy", _chord(0.55, [261.63, 329.63, 392.0, 523.25]))
+	_write("boss", _growl(1.20))
+	_write("death", _fall(0.70))
+	_write("ui_move", _click(0.035, 1200.0))
+	_write("ui_confirm", _click(0.09, 660.0))
+	_write("unlock", _chord(0.70, [392.0, 493.88, 587.33]))
 
-	print("AUDIO: %d arquivos em %s" % [8, OUT_DIR])
+	print("AUDIO: %d arquivos em %s" % [15, OUT_DIR])
 	quit()
 
 
@@ -125,6 +132,84 @@ func _hurt(seconds: float) -> PackedFloat32Array:
 		var square := signf(sin(TAU * 110.0 * t))
 		lp = lerpf(lp, _rng(), 0.3)
 		samples[i] = (square * 0.22 + lp * 0.3) * env * 0.8
+	return samples
+
+
+func _arpeggio(seconds: float, notes: Array) -> PackedFloat32Array:
+	var total := _frames(seconds)
+	var samples := PackedFloat32Array()
+	samples.resize(total)
+	var step := seconds / float(maxi(1, notes.size()))
+	for i in range(total):
+		var t := float(i) / float(RATE)
+		var index := mini(notes.size() - 1, int(t / step))
+		var local_t := t - float(index) * step
+		var freq: float = notes[index]
+		var env := exp(-local_t / (step * 0.55)) * clampf(local_t / 0.004, 0.0, 1.0)
+		var tone := sin(TAU * freq * local_t) * 0.55
+		tone += sin(TAU * freq * 2.0 * local_t) * 0.16
+		samples[i] = tone * env * 0.7
+	return samples
+
+
+func _chord(seconds: float, notes: Array) -> PackedFloat32Array:
+	var total := _frames(seconds)
+	var samples := PackedFloat32Array()
+	samples.resize(total)
+	for i in range(total):
+		var t := float(i) / float(RATE)
+		var attack := clampf(t / 0.01, 0.0, 1.0)
+		var env := exp(-t / (seconds * 0.42)) * attack
+		var tone := 0.0
+		for freq in notes:
+			tone += sin(TAU * float(freq) * t) / float(maxi(1, notes.size()))
+		samples[i] = tone * env * 0.8
+	return samples
+
+
+func _growl(seconds: float) -> PackedFloat32Array:
+	var total := _frames(seconds)
+	var samples := PackedFloat32Array()
+	samples.resize(total)
+	var lp := 0.0
+	var phase := 0.0
+	for i in range(total):
+		var t := float(i) / float(RATE)
+		var progress := clampf(t / seconds, 0.0, 1.0)
+		var env := sin(progress * PI)
+		var freq := lerpf(58.0, 38.0, progress)
+		phase += TAU * freq / float(RATE)
+		var saw := fposmod(phase / TAU, 1.0) * 2.0 - 1.0
+		lp = lerpf(lp, _rng(), 0.08)
+		samples[i] = (saw * 0.35 + lp * 0.45 + sin(phase * 0.5) * 0.2) * env * 0.9
+	return samples
+
+
+func _fall(seconds: float) -> PackedFloat32Array:
+	var total := _frames(seconds)
+	var samples := PackedFloat32Array()
+	samples.resize(total)
+	var lp := 0.0
+	var phase := 0.0
+	for i in range(total):
+		var t := float(i) / float(RATE)
+		var progress := clampf(t / seconds, 0.0, 1.0)
+		var freq := lerpf(320.0, 48.0, progress * progress)
+		phase += TAU * freq / float(RATE)
+		var env := exp(-t / (seconds * 0.5))
+		lp = lerpf(lp, _rng(), 0.2)
+		samples[i] = (sin(phase) * 0.45 + lp * 0.3) * env * 0.85
+	return samples
+
+
+func _click(seconds: float, freq: float) -> PackedFloat32Array:
+	var total := _frames(seconds)
+	var samples := PackedFloat32Array()
+	samples.resize(total)
+	for i in range(total):
+		var t := float(i) / float(RATE)
+		var env := exp(-t / (seconds * 0.35))
+		samples[i] = sin(TAU * freq * t) * env * 0.5
 	return samples
 
 

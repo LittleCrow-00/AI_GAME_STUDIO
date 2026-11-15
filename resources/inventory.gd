@@ -27,6 +27,7 @@ const SYNERGY_SOURCE := &"synergies"
 
 var _items: Array[ItemData] = []
 var _stacks: Dictionary = {}
+var _synergies: Array[StringName] = []
 
 
 func add(item: ItemData) -> bool:
@@ -38,6 +39,7 @@ func add(item: ItemData) -> bool:
 	_stacks[item.id] = current + 1
 	if not _items.has(item):
 		_items.append(item)
+	SignalBus.item_collected.emit(item)
 	return true
 
 
@@ -142,6 +144,10 @@ func rebuild() -> Dictionary:
 		"pierce": pierce,
 		"synergies": synergies,
 	}
+
+	if synergies != _synergies:
+		_synergies = synergies
+		SignalBus.synergy_changed.emit(synergies)
 
 
 func _modifier(
